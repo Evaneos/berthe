@@ -30,6 +30,15 @@ abstract class Evaneos_Berthe_AbstractReader {
     }
     
     /**
+     * @param \Evaneos_Berthe_DbReader $db
+     * @return \Evaneos_Berthe_AbstractReader
+     */
+    public function setDb(Evaneos_Berthe_DbReader $db) {
+        $this->_db = $db;
+        return $this;
+    }
+    
+    /**
      * Returns the Class name of the VO for current package
      * @return string
      */

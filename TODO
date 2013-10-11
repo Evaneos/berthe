@@ -1,0 +1,38 @@
+1°) Remove "Evaneos_" class prefix
+=> Implies changes in all Evaneos code
+
+
+2°) Remove all calls to Zend_Registry
+=> Implies dependency injection in Evaneos code
+i.e. : Remove the Zend_Registry::get('dbReader') from Berthe_AbstractReader 
+implies a $reader->setDb($db) in Evaneos code to make the code works !
+
+
+3°) Remove all calls to Berthe_Modules
+=> i.e. : Instanciation of Memcached requires the Site object
+(there are also extra magic strings in that same class that have to be removed as well)
+
+4°) Switch to namespace
+
+
+5°) Reorganize folder tree :
+Berthe
+    Model
+        AbstractService.php
+        AbstractManager.php
+        AbstractValidator.php
+        ErrorHandler.php
+    DAL
+        Store
+            AbstractStore.php
+            StoreArray.php
+            StoreDatabase.php
+            StoreMemcached.php
+        AbstractStorage.php
+        AbstractVO.php
+        ComplexPaginator.php
+    Component
+        Memcached.php
+        Redis.php
+...
+        
