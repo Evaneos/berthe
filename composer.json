@@ -1,0 +1,29 @@
+{
+    "name": "Evaneos/berthe",
+    "description": "The model Framework made by Evaneos",
+    "version": "1.0.0",
+    "type": "library",
+    "homepage" : "http://github.com/Evaneos/berthe",
+    "keywords": [],
+    "time": "2013-10-11",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Olivier Madre",
+            "email": "terenas@gmail.com",
+            "homepage": "http://www.wools.io",
+            "role": "Developer"
+        },
+        {
+            "name" : "Evaneos",
+            "email" : "dev@evaneos.com",
+            "homepage" : "http://www.evaneos.com",
+            "role" : "Developer"
+        }
+    ],
+    "autoload" : {
+        "psr-0" : {
+            "" : "src/"
+        }
+    }
+}
