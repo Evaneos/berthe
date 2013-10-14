@@ -35,4 +35,13 @@ Berthe
         Memcached.php
         Redis.php
 ...
-        
+
+6°) Remove dependency to Log_Logger
+
+7°) Remove dependency to ROOT_DIR constant
+
+8°) Refactor Berthe/Generator/Util so that it becomes 100% agnostic
+
+9°) Add an interface to Db/Mc/Redis components so that they can be used with any 
+implementation, not only Zend (even if we just make an interface that 
+matches zend one, (which will actually help, no need to create adapters in project impl!)
