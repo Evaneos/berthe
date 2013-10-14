@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Sandbox_Memcached extends Evaneos_Berthe_Memcached {
+class Berthe_Sandbox_Memcached extends Berthe_Memcached {
     private $_data = array();
     
     /**

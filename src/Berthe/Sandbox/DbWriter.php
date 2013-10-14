@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Sandbox_DbWriter extends Evaneos_Berthe_DbWriter {
+class Berthe_Sandbox_DbWriter extends Berthe_DbWriter {
     /**
      * Execute statement
      * @param string $sql

@@ -1,6 +1,6 @@
 <?php
 
-abstract class Evaneos_Berthe_Unit_AbstractData implements ArrayAccess {
+abstract class Berthe_Unit_AbstractData implements ArrayAccess {
     
     protected $_voClass = 'Berthe_Unit';
 
@@ -54,7 +54,7 @@ abstract class Evaneos_Berthe_Unit_AbstractData implements ArrayAccess {
     /**
      * Sets a VO is the datas
      * @param mixed                     $offset Not used','the id of the vo is used as key','so assignation should be like : $_data[] = $vo;
-     * @param Evaneos_Berthe_AbstractVO $value  The VO to set
+     * @param Berthe_AbstractVO $value  The VO to set
      * 
      * @return void
      */
@@ -86,7 +86,7 @@ abstract class Evaneos_Berthe_Unit_AbstractData implements ArrayAccess {
     /**
      * Generates and returns a randomly created vo
      * @param integer [OPTIONAL] id','if defined should force the id
-     * @return Evaneos_Berthe_AbstractVO
+     * @return Berthe_AbstractVO
      */
     abstract public function generateRandomObject($id = null);
     

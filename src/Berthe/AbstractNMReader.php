@@ -6,15 +6,14 @@
  * @author ghislain@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractNMReader.php
- * @package Evaneos/Berthe
- * @since Berthe
- * @see Evaneos/Berthe/AbstractReader.php
+ * @filesource Berthe/AbstractNMReader.php
+ * @package Berthe
+ * @see Berthe/AbstractReader.php
  */
-abstract class Evaneos_Berthe_AbstractNMReader extends Evaneos_Berthe_AbstractReader {
+abstract class Berthe_AbstractNMReader extends Berthe_AbstractReader {
     /**
      *
-     * @var Evaneos_Berthe_DbReader
+     * @var Berthe_DbReader
      */
     protected $_db = null;
 
@@ -209,7 +208,7 @@ EOQ;
     /**
      * Gets one row from their M and N id
      * @param type $ids
-     * @return Evaneos_Berthe_AbstractNMVO 
+     * @return Berthe_AbstractNMVO 
      */
     protected function selectByNAndMId($n_id, $m_id){
 

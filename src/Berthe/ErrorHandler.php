@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for error handler Evaneos_Berthe_ErrorHandler
+ * Class definition for error handler Berthe_ErrorHandler
  * 
- * @author anthony@evaneos.Com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/ErrorHandler.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/ErrorHandler.php
+ * @package Berthe
  */
-class Evaneos_Berthe_ErrorHandler extends LogicException {
+class Berthe_ErrorHandler extends LogicException {
     const CONST_START_GENERIC       = 1000000;
     const CONST_START_SERVICEAUTH   = 1001000;
     const CONST_START_TEMPMANAGER   = 1003000;
@@ -25,7 +24,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     const CONST_START_CRONCTRL      = 1012000;
     
     /**
-     * @var Evaneos_Berthe_ErrorHandler_Error[]
+     * @var Berthe_ErrorHandler_Error[]
      */
     protected $_stack = array();
     /**
@@ -45,27 +44,27 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
      */
     public function add($message, $code, $data = null, Exception $previous = null) {
         if($previous) {
-            $_error = new Evaneos_Berthe_ErrorHandler_Error($message, $code, $previous);
+            $_error = new Berthe_ErrorHandler_Error($message, $code, $previous);
         } else {
-            $_error = new Evaneos_Berthe_ErrorHandler_Error($message, $code);
+            $_error = new Berthe_ErrorHandler_Error($message, $code);
         }
         $_error->setData($data);
         $this->append($_error);
     }
     public function addException(Exception $e, $data) {
         if($e->getPrevious() instanceof Exception) {
-            $_error = new Evaneos_Berthe_ErrorHandler_Error($e->getMessage(), $e->getCode(), $e->getPrevious());
+            $_error = new Berthe_ErrorHandler_Error($e->getMessage(), $e->getCode(), $e->getPrevious());
         } else {
-            $_error = new Evaneos_Berthe_ErrorHandler_Error($e->getMessage(), $e->getCode());
+            $_error = new Berthe_ErrorHandler_Error($e->getMessage(), $e->getCode());
         }
         $_error->setData($data);
         $this->append($_error);
     }
     /**
-     * Appends an error to the stack (same as Evaneos_Berthe_ErrorHandler::add, but parametter is an already instanciated error
-     * @param Evaneos_Berthe_ErrorHandler_Error $error 
+     * Appends an error to the stack (same as Berthe_ErrorHandler::add, but parametter is an already instanciated error
+     * @param Berthe_ErrorHandler_Error $error 
      */
-    public function append(Evaneos_Berthe_ErrorHandler_Error $error) {
+    public function append(Berthe_ErrorHandler_Error $error) {
         $this->_stack[] = $error;
         $this->_compute();
     }
@@ -81,7 +80,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Gets current pointed error and Forward the pointer
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function fetch() {
         $_current = $this->current();
@@ -90,7 +89,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Gets current pointed error and rewind the pointer
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function fetchBack() {
         $_current = $this->current();
@@ -99,7 +98,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Forward the pointer and get the next error
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function next() {
         $this->forward();
@@ -107,7 +106,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Forward the pointer and get the previous error
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function previous() {
         $this->rewind();
@@ -139,7 +138,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Place pointer at the end of the stack and return last error
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function last() {
         $this->fastForward();
@@ -147,7 +146,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Place pointer at the start of the stack and return first error
-     * @return Evaneos_Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error 
      */
     public function first() {
         $this->reset();
@@ -161,7 +160,7 @@ class Evaneos_Berthe_ErrorHandler extends LogicException {
         reset($this->_stack);
     }
     /**
-     * Throws the Evaneos_Berthe_ErrorHandler as a LogicException
+     * Throws the Berthe_ErrorHandler as a LogicException
      */
     public function throwMe() {
         throw $this;

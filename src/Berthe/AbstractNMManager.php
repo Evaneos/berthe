@@ -6,12 +6,11 @@
  * @author ghislain@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractNMManager.php
- * @package Evaneos/Berthe
- * @since Berthe
- * @see Evaneos/Berthe/AbstractManager.php
+ * @filesource Berthe/AbstractNMManager.php
+ * @package Berthe
+ * @see Berthe/AbstractManager.php
  */
-abstract class Evaneos_Berthe_AbstractNMManager extends Evaneos_Berthe_AbstractManager {
+abstract class Berthe_AbstractNMManager extends Berthe_AbstractManager {
     /**
      *
      * @param Fetcher $paginator

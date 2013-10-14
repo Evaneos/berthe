@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_JsonServer {
+class Berthe_JsonServer {
     const ERROR_CODE_INVALID_REQUEST = 1;
     const ERROR_CODE_INVALID_SERVICE = 2;
     const ERROR_CODE_INVALID_METHOD  = 4;
@@ -134,7 +134,7 @@ class Evaneos_Berthe_JsonServer {
                     
                     $_buffer = ob_get_flush();
                     restore_error_handler();
-                } catch (Evaneos_Berthe_ErrorHandler $e) {
+                } catch (Berthe_ErrorHandler $e) {
                     $_res     = false;
                     $_success = false;
                     $e->reset();

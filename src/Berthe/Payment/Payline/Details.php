@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Payment_Payline_Details extends Evaneos_Berthe_Payment_Details {
+class Berthe_Payment_Payline_Details extends Berthe_Payment_Details {
     public function setDetails($details) {
         $this->_mode = Berthe_Modules_Transaction_VO::MODE_CARD_ONLINE;
         $this->_providerTransactionId = isset($details['transaction']['id']) ? $details['transaction']['id'] : '';

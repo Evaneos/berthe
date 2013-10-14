@@ -1,15 +1,14 @@
 <?php
 /**
- * Class definition for Berthe abstract Manager Evaneos_Berthe_AbstractValidator
+ * Class definition for Berthe abstract Manager Berthe_AbstractValidator
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Validator.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/Validator.php
+ * @package Berthe
  */
-interface Evaneos_Berthe_Validator {
+interface Berthe_Validator {
     /**
      * Validate the object before insert/update into DAO
      * @return boolean 
@@ -17,7 +16,7 @@ interface Evaneos_Berthe_Validator {
     public function validate($object);
     /**
      * returns the validator error handler
-     * @return Evaneos_Berthe_ErrorHandler
+     * @return Berthe_ErrorHandler
      */
     public function getErrors();
 }

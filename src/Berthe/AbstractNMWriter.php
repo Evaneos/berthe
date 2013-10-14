@@ -6,11 +6,10 @@
  * @author ghislain@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractNMWriter.php
- * @package Evaneos/Berthe
- * @since Berthe
- * @see Evaneos/Berthe/AbstractWriter.php
+ * @filesource Berthe/AbstractNMWriter.php
+ * @package Berthe
+ * @see Berthe/AbstractWriter.php
  */
-abstract class Evaneos_Berthe_AbstractNMWriter extends Evaneos_Berthe_AbstractWriter {
+abstract class Berthe_AbstractNMWriter extends Berthe_AbstractWriter {
     
 }

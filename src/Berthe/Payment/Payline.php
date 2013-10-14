@@ -4,7 +4,7 @@
     require_once 'Payline/configuration/options.php';
     require_once 'Evaneos/Payline.php';
 
-class Evaneos_Berthe_Payment_Payline extends Evaneos_Berthe_Payment_Abstract {
+class Berthe_Payment_Payline extends Berthe_Payment_Abstract {
 
     /**
      * @var PaylineSDK 

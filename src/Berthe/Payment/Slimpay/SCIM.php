@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Payment_Slimpay_SCIM {
+class Berthe_Payment_Slimpay_SCIM {
     const REQUEST_TYPE_COLLECT   = 'collectPayment';
     const REQUEST_TYPE_SIGNATURE = '';
     

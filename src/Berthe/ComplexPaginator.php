@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
+class Berthe_ComplexPaginator extends Berthe_Paginator {
     protected $filters = array();
     protected $filtersOperator = array();
     protected $sorts = array();
@@ -38,7 +38,7 @@ class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
      * @param int $typeFilter
      * @param string $value
      * @param mixed $groupName false if not in group, string if in group
-     * @return Evaneos_Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator 
      */
     public function addFilter($columnName, $typeFilter, $value, $groupName = false) {
         if ($typeFilter === self::TYPE_IN) {
@@ -61,7 +61,7 @@ class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
      * @param int $typeFilter
      * @param string $values
      * @param mixed $groupName false if not in group, string if in group
-     * @return Evaneos_Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator 
      */
     public function addFilters($columnName, $typeFilter, array $values, $groupName = false) {
         if ($typeFilter === self::TYPE_IN && count($values) === 0) {
@@ -143,7 +143,7 @@ class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
      *
      * @param string $columnName
      * @param string $sortType
-     * @return Evaneos_Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator 
      */
     public function addSort($columnName, $sortType) {
         if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC) {
@@ -157,7 +157,7 @@ class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
     
     /**
      * @param boolean $boolean
-     * @return Evaneos_Berthe_ComplexPaginator
+     * @return Berthe_ComplexPaginator
      */
     public function setRandomSort($boolean) {
         $this->isRandomSort = $boolean;
@@ -321,13 +321,13 @@ class Evaneos_Berthe_ComplexPaginator extends Evaneos_Berthe_Paginator {
     /**
      * @param int $page
      * @param int $nbByPage
-     * @return Evaneos_Berthe_ComplexPaginator
+     * @return Berthe_ComplexPaginator
      */
     public function copy($page = null, $nbByPage = null) {
         if (!$page)     {       $page       = $this->getPage();         }
         if (!$nbByPage) {       $nbByPage   = $this->getNbByPage();     }
         
-        $copy = new Evaneos_Berthe_ComplexPaginator($page, $nbByPage);
+        $copy = new Berthe_ComplexPaginator($page, $nbByPage);
         $copy->filters = $this->filters;
         $copy->sorts = $this->sorts;
         $copy->filtersOperator = $this->filtersOperator;

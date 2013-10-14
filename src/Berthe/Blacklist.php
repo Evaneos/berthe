@@ -10,10 +10,10 @@
  *
  * @author tony
  */
-class Evaneos_Berthe_Blacklist {
+class Berthe_Blacklist {
     /**
      *
-     * @var Evaneos_Berthe_Blacklist
+     * @var Berthe_Blacklist
      */
     protected static $_instance = null;
     
@@ -23,7 +23,7 @@ class Evaneos_Berthe_Blacklist {
     
     /**
      * 
-     * @return Evaneos_Berthe_Blacklist
+     * @return Berthe_Blacklist
      */
     public static function getInstance() {
         is_null(self::$_instance) and self::$_instance = new self();

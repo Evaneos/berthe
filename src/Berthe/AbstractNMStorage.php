@@ -6,12 +6,11 @@
  * @author ghislain@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractNMStorage.php
- * @package Evaneos/Berthe
- * @since Berthe
- * @see Evaneos/Berthe/AbstractStorage.php
+ * @filesource Berthe/AbstractNMStorage.php
+ * @package Berthe
+ * @see Berthe/AbstractStorage.php
  */
-abstract class Evaneos_Berthe_AbstractNMStorage extends Evaneos_Berthe_AbstractStorage {
+abstract class Berthe_AbstractNMStorage extends Berthe_AbstractStorage {
     /**
      * @param Fetcher $paginator
      * @return Fetcher 

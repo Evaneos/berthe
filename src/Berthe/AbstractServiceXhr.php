@@ -1,5 +1,5 @@
 <?php
-abstract class Evaneos_Berthe_AbstractServiceXhr {
+abstract class Berthe_AbstractServiceXhr {
     /**
      * @var Berthe_FactoryService
      */
@@ -67,7 +67,7 @@ abstract class Evaneos_Berthe_AbstractServiceXhr {
     /**
      * May (or may not) return the updated vo by its Id
      * @param integer $id
-     * @return Evaneos_Berthe_AbstractVO
+     * @return Berthe_AbstractVO
      */
     protected function _getupdatedVo($id) {
         return null;

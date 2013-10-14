@@ -4,7 +4,7 @@
  *
  * @author tony
  */
-class Evaneos_Berthe_Result {
+class Berthe_Result {
     /**
      * A stack of data
      * 

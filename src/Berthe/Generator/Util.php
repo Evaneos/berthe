@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_Generator_Util {
+class Berthe_Generator_Util {
     static $isTestMode = false;
     
     /**
@@ -46,13 +46,13 @@ class Evaneos_Berthe_Generator_Util {
      */
     protected static function _createPackage($fullName) {
         $classes = array();
-        $manager = Evaneos_Berthe_Generator_Template_Manager::getInstance()->get($fullName);
+        $manager = Berthe_Generator_Template_Manager::getInstance()->get($fullName);
         $classes[] = $manager;
-        $classes[] = Evaneos_Berthe_Generator_Template_VO::getInstance()->get($fullName);
-        $classes[] = Evaneos_Berthe_Generator_Template_Storage::getInstance()->get($fullName);
-        $classes[] = Evaneos_Berthe_Generator_Template_Reader::getInstance()->get($fullName);
-        $classes[] = Evaneos_Berthe_Generator_Template_Writer::getInstance()->get($fullName);
-        $classes[] = Evaneos_Berthe_Generator_Template_Validator::getInstance()->get($fullName);
+        $classes[] = Berthe_Generator_Template_VO::getInstance()->get($fullName);
+        $classes[] = Berthe_Generator_Template_Storage::getInstance()->get($fullName);
+        $classes[] = Berthe_Generator_Template_Reader::getInstance()->get($fullName);
+        $classes[] = Berthe_Generator_Template_Writer::getInstance()->get($fullName);
+        $classes[] = Berthe_Generator_Template_Validator::getInstance()->get($fullName);
         
         $folder = ROOT_DIR . '/app/' . $fullName . "/";
         
@@ -128,7 +128,7 @@ PHPCODE
                                     ),
                                     "parameter" => array(
                                         "name" => "manager",
-                                        "type" => "Evaneos_Berthe_AbstractManager"
+                                        "type" => "Berthe_AbstractManager"
                                     ),
                                 "body" => <<<PHPCODE
 \$manager->context = \$this->context;

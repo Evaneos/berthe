@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Memcached extends Memcached {
+class Berthe_Memcached extends Memcached {
 
     /**
      *
@@ -34,7 +34,7 @@ class Evaneos_Berthe_Memcached extends Memcached {
     private static $_memcachedInstance = null;
 
     /*
-     * @return Evaneos_Berthe_Memcached
+     * @return Berthe_Memcached
      */
     function __construct() {
         if (!self::$_memcachedInstance) {

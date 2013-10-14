@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Payment_Evaneos_Details extends Evaneos_Berthe_Payment_Details {
+class Berthe_Payment_Evaneos_Details extends Berthe_Payment_Details {
     public function setDetails($details) {
         $this->_transactionId         = (isset($details['transaction_id']) ? (int)$details['transaction_id'] : null);
         $this->_mode                  = (isset($details['mode']) ? $details['mode'] : null);

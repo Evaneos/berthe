@@ -1,16 +1,14 @@
 <?php
-require_once 'Evaneos/Berthe/DbAdapter.php';
 /**
- * Class definition for Berthe abstract Manager Evaneos_Berthe_DbReader
+ * Class definition for Berthe abstract Manager Berthe_DbReader
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/DbReader.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/DbReader.php
+ * @package Berthe
  */
-class Evaneos_Berthe_DbReader extends Evaneos_Berthe_DbAdapter {
+class Berthe_DbReader extends Berthe_DbAdapter {
     /**
      * @param string $sql
      * @param array $array

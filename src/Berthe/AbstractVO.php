@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for VO abstract Evaneos_Berthe_VO
+ * Class definition for VO abstract Berthe_VO
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/VO.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/VO.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractVO {
+abstract class Berthe_AbstractVO {
     public $version = 1;
     /**
      * Used to match the sql fields with the VO attributes

@@ -1,9 +1,9 @@
 <?php
 
-class Evaneos_Berthe_Payment_Slimpay_Details extends Evaneos_Berthe_Payment_Details {
+class Berthe_Payment_Slimpay_Details extends Berthe_Payment_Details {
     public function setDetails($details) {
         $this->_mode = Berthe_Modules_Transaction_VO::MODE_TRANSFER;
-        $_scim = new Evaneos_Berthe_Payment_Slimpay_SCIM();
+        $_scim = new Berthe_Payment_Slimpay_SCIM();
         $_result = $_scim->getResponse($details['blob']);
         $this->_success = ($_result['transactionStatus'] == 'success');
         $_errorCode = (int)$_result['transactionErrorCode'];
