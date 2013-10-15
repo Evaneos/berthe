@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_Generator_AnalyzerLength extends Evaneos_Berthe_Generator_Analyzer {
+class Berthe_Generator_AnalyzerLength extends Berthe_Generator_Analyzer {
     protected $sizeCheck = 30;
     
     public function __construct($size = 30) {

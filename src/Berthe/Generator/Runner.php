@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_Generator_Runner {
+class Berthe_Generator_Runner {
     protected $analyzers = array();
     protected $classNames = array();
     public $loggerOK = null;
@@ -10,7 +10,7 @@ class Evaneos_Berthe_Generator_Runner {
         $this->loggerOK = new Log_Logger();
     }
     
-    public function addAnalyzer(Evaneos_Berthe_Generator_Analyzer $analyzer) {
+    public function addAnalyzer(Berthe_Generator_Analyzer $analyzer) {
         $this->analyzers[] = $analyzer;
         $analyzer->loggerOK = $this->loggerOK;
         $analyzer->loggerKO = $this->loggerKO;

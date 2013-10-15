@@ -1,12 +1,12 @@
 <?php
 
-class Evaneos_Berthe_Payment_Slimpay extends Evaneos_Berthe_Payment_Abstract {
+class Berthe_Payment_Slimpay extends Berthe_Payment_Abstract {
     const ERROR_NOTLOGGED      = 1;
     const ERROR_DIFFERENT_MAIL = 2;
     
     /**
      *
-     * @var Evaneos_Berthe_Payment_Slimpay_SCIM 
+     * @var Berthe_Payment_Slimpay_SCIM 
      */
     protected $_scim = null;
     /**
@@ -16,7 +16,7 @@ class Evaneos_Berthe_Payment_Slimpay extends Evaneos_Berthe_Payment_Abstract {
     protected $_slimUrl = '';
     /**
      *
-     * @var Evaneos_Berthe_Payment_Slimpay_Properties 
+     * @var Berthe_Payment_Slimpay_Properties 
      */
     protected $_properties = null;
     /**
@@ -28,9 +28,9 @@ class Evaneos_Berthe_Payment_Slimpay extends Evaneos_Berthe_Payment_Abstract {
     
     protected function _init() {
         require 'Slimpay/tpe-php/include/common_php/variables.php';
-        $this->_scim = new Evaneos_Berthe_Payment_Slimpay_SCIM();
+        $this->_scim = new Berthe_Payment_Slimpay_SCIM();
 
-        $this->_properties = new Evaneos_Berthe_Payment_Slimpay_Properties($PROPERTIES_FILE_PATH);
+        $this->_properties = new Berthe_Payment_Slimpay_Properties($PROPERTIES_FILE_PATH);
         $mode = $this->_properties->getValue($CLIENT_PRODUCTION_FLAG);
         if ($mode == "true") {
             $this->_slimUrl = stripslashes($this->_properties->getValue($SERVER_CALL_URL_PROD));

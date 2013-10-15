@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_Generator_AnalyzerDoc extends Evaneos_Berthe_Generator_Analyzer {
+class Berthe_Generator_AnalyzerDoc extends Berthe_Generator_Analyzer {
     protected function _analyze(Zend_CodeGenerator_Php_Class $zendClass) {
         $methods = $zendClass->getMethods();
         foreach($methods as $method) {

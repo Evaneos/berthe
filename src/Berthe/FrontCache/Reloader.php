@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_FrontCache_Reloader {
+class Berthe_FrontCache_Reloader {
     const PREFIX_RELOADER = 'FCR:RL:'; 
     
     protected static $instance = null;
     protected $isEnabled = false;
     /**
-     * @return Evaneos_Berthe_FrontCache_Reloader
+     * @return Berthe_FrontCache_Reloader
      */
     public static function getInstance() {
         self::$instance === null && self::$instance = new static();
@@ -29,17 +29,17 @@ class Evaneos_Berthe_FrontCache_Reloader {
     /**
      * Return the unique redis key of a given berthe VO
      * @param string $guid
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      * @return string
      */
-    protected function generateKey($guid, Evaneos_Berthe_AbstractVO $object) {
+    protected function generateKey($guid, Berthe_AbstractVO $object) {
         return sprintf('%s%s:%d', self::PREFIX_RELOADER, $guid, $object->id);
     }
     
     /**
      * Add a relation between an URL and data (either a Berthe VO or an array of Berthe VO)
      * @param string $guid
-     * @param Evaneos_Berthe_AbstractVO[] $data
+     * @param Berthe_AbstractVO[] $data
      * @param string $url
      */
     public function addRelation($guid, $data, $url) {
@@ -61,7 +61,7 @@ class Evaneos_Berthe_FrontCache_Reloader {
                 }
             }
         }
-        elseif ($data instanceof Evaneos_Berthe_AbstractVO) {
+        elseif ($data instanceof Berthe_AbstractVO) {
             $isOK = $this->_addRelation($guid, $data, $url);
         }
         
@@ -71,7 +71,7 @@ class Evaneos_Berthe_FrontCache_Reloader {
     /**
      * PURGE all the URLs of the $data (either a Berthe VO, or an array of Berthe VO)
      * @param string $guid
-     * @param Evaneos_Berthe_AbstractVO[] $data
+     * @param Berthe_AbstractVO[] $data
      * @return boolean
      */
     public function flushRelation($guid, $data) {
@@ -93,7 +93,7 @@ class Evaneos_Berthe_FrontCache_Reloader {
                 }
             }
         }
-        elseif ($data instanceof Evaneos_Berthe_AbstractVO) {
+        elseif ($data instanceof Berthe_AbstractVO) {
             $isOK = $this->_flushRelation($guid, $data);
             if ($isOK) {
                 $db->del($this->generateKey($guid, $data));
@@ -106,11 +106,11 @@ class Evaneos_Berthe_FrontCache_Reloader {
     /**
      * Add a relation between an object and an url
      * @param string $guid
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      * @param string $url
      * @return boolean
      */
-    protected function _addRelation($guid, Evaneos_Berthe_AbstractVO $object, $url) {
+    protected function _addRelation($guid, Berthe_AbstractVO $object, $url) {
         $db = Redis_Db::getInstance()->getDb();
         $key = $this->generateKey($guid, $object);
         NewRelic_PluginAPI::getInstance()->incrementMetric(Berthe_Util_NewRelic::getKey(Berthe_Util_NewRelic::PING_FRONTCACHE_ADDRELATION_COUNT));
@@ -121,17 +121,17 @@ class Evaneos_Berthe_FrontCache_Reloader {
     /**
      * PURGE all URLs of a given object
      * @param string $guid
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      * @return boolean
      */
-    protected function _flushRelation($guid, Evaneos_Berthe_AbstractVO $object) {
+    protected function _flushRelation($guid, Berthe_AbstractVO $object) {
         $db = Redis_Db::getInstance()->getDb();
         $key = $this->generateKey($guid, $object);
 
         $urls = $db->sMembers($key);
         if (is_array($urls)) {
             NewRelic_PluginAPI::getInstance()->incrementMetric(Berthe_Util_NewRelic::getKey(Berthe_Util_NewRelic::PING_FRONTCACHE_FLUSHRELATION_COUNT));
-            Evaneos_Berthe_FrontCache_Varnish::getInstance()->purgeURLs($urls);
+            Berthe_FrontCache_Varnish::getInstance()->purgeURLs($urls);
         }
         return true;
     }

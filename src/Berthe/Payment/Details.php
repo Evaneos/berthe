@@ -1,6 +1,6 @@
 <?php
 
-abstract class Evaneos_Berthe_Payment_Details {
+abstract class Berthe_Payment_Details {
     const ERROR_NONE               = 0;
     const ERROR_PROVIDER           = 1;
     const ERROR_EVANEOS            = 2;

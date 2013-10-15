@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_StoreDatabase extends Evaneos_Berthe_AbstractStore {
+class Berthe_StoreDatabase extends Berthe_AbstractStore {
     /**
-     * @var Evaneos_Berthe_AbstractReader
+     * @var Berthe_AbstractReader
      */
     protected $_reader = null;
     /**
-     * @var Evaneos_Berthe_AbstractWriter
+     * @var Berthe_AbstractWriter
      */
     protected $_writer = null;
     /**
@@ -17,7 +17,7 @@ class Evaneos_Berthe_StoreDatabase extends Evaneos_Berthe_AbstractStore {
      */
     protected $isTTLAble = false;
     
-    public function __construct(Evaneos_Berthe_AbstractReader $reader, Evaneos_Berthe_AbstractWriter $writer) {
+    public function __construct(Berthe_AbstractReader $reader, Berthe_AbstractWriter $writer) {
         $this->_reader = $reader;
         $this->_writer = $writer;
     }
@@ -30,7 +30,7 @@ class Evaneos_Berthe_StoreDatabase extends Evaneos_Berthe_AbstractStore {
         return $this->_reader->selectByIds($ids);
     }
 
-    protected function _insert(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _insert(Berthe_AbstractVO &$vo) {
         $ret = $this->_writer->insert($vo);
         if ($ret) {
             $results = $this->load(array($vo->id));
@@ -41,7 +41,7 @@ class Evaneos_Berthe_StoreDatabase extends Evaneos_Berthe_AbstractStore {
         return $ret;
     }
 
-    protected function _update(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _update(Berthe_AbstractVO &$vo) {
         $ret = $this->_writer->update($vo);
         if ($ret) {
             $results = $this->load(array($vo->id));
@@ -52,7 +52,7 @@ class Evaneos_Berthe_StoreDatabase extends Evaneos_Berthe_AbstractStore {
         return $ret;
     }
 
-    protected function _delete(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _delete(Berthe_AbstractVO &$vo) {
         $ret = $this->_writer->delete($vo);
         return $ret;
     }

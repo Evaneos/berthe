@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_Generator_Template_Reader extends Evaneos_Berthe_Generator_Template_Abstract {
+class Berthe_Generator_Template_Reader extends Berthe_Generator_Template_Abstract {
     const CLASSNAME = "DAOReader";
     
     protected static $_instance = null;
     /**
      *
-     * @return Evaneos_Berthe_Generator_Template_Reader
+     * @return Berthe_Generator_Template_Reader
      */
     public static function getInstance() {
         self::$_instance === null && self::$_instance = new static();
@@ -27,7 +27,7 @@ class Evaneos_Berthe_Generator_Template_Reader extends Evaneos_Berthe_Generator_
     }
     
     protected function _loadSignature(Zend_CodeGenerator_Php_Class $zcg) {
-        $zcg->setExtendedClass("Evaneos_Berthe_AbstractReader");
+        $zcg->setExtendedClass("Berthe_AbstractReader");
         
         parent::_loadSignature($zcg);
     }

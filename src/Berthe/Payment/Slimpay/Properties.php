@@ -18,7 +18,7 @@
  * @brief Exploite les fichiers *.properties à la 
  * sauce Java.
  */
-class Evaneos_Berthe_Payment_Slimpay_Properties {
+class Berthe_Payment_Slimpay_Properties {
 
     private $_file = null;
     private $_keyValue = array();

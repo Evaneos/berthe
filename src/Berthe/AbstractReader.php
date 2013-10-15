@@ -1,26 +1,25 @@
 <?php
 /**
- * Class definition for Berthe abstract Reader Evaneos_Berthe_Reader
+ * Class definition for Berthe abstract Reader Berthe_Reader
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Reader.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/Reader.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractReader {
+abstract class Berthe_AbstractReader {
     /**
      * Class name of the VO for current package
      */
-    const VO_CLASS = 'Evaneos_Berthe_AbstractVO'; 
+    const VO_CLASS = 'Berthe_AbstractVO'; 
     /**
      * @var Berthe_Context
      */
     public $context = null;
     /**
      *
-     * @var Evaneos_Berthe_DbReader
+     * @var Berthe_DbReader
      */
     protected $_db = null;
     
@@ -30,10 +29,10 @@ abstract class Evaneos_Berthe_AbstractReader {
     }
     
     /**
-     * @param \Evaneos_Berthe_DbReader $db
-     * @return \Evaneos_Berthe_AbstractReader
+     * @param \Berthe_DbReader $db
+     * @return \Berthe_AbstractReader
      */
-    public function setDb(Evaneos_Berthe_DbReader $db) {
+    public function setDb(Berthe_DbReader $db) {
         $this->_db = $db;
         return $this;
     }
@@ -47,9 +46,9 @@ abstract class Evaneos_Berthe_AbstractReader {
     }
 
     /**
-     * Implements an bunch of Evaneos_Berthe_AbstractVO from datas
+     * Implements an bunch of Berthe_AbstractVO from datas
      * @param array $datas
-     * @return Evaneos_Berthe_AbstractVO
+     * @return Berthe_AbstractVO
      */
     protected function implementVOs(array $datas = array()) {
         $_ret = array();
@@ -92,7 +91,7 @@ EOQ;
     /**
      * Gets a bunch of Berthe_AbstractVO from database from their ids
      * @param array $ids
-     * @return Evaneos_Berthe_AbstractVO 
+     * @return Berthe_AbstractVO 
      */
     public function selectByIds(array $ids = array ()) {
         if (count($ids) === 0) {

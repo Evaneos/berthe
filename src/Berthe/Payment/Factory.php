@@ -1,6 +1,6 @@
 <?php
 
-class Evaneos_Berthe_Payment_Factory {
+class Berthe_Payment_Factory {
     const MODE_TRANSFER   = 'transfer';
     const MODE_CARDONLINE = 'cardonline';
     /**
@@ -18,7 +18,7 @@ class Evaneos_Berthe_Payment_Factory {
      * @return Evaneos_Payment_Slimpay 
      */
     public static function getInstanceSlimpay() {
-        is_null(self::$_slimpayInstance) and self::$_slimpayInstance = new Evaneos_Berthe_Payment_Slimpay();
+        is_null(self::$_slimpayInstance) and self::$_slimpayInstance = new Berthe_Payment_Slimpay();
         return self::$_slimpayInstance;
     }
     /**
@@ -26,7 +26,7 @@ class Evaneos_Berthe_Payment_Factory {
      * @return Evaneos_Payment_Payline 
      */
     public static function getInstancePayline() {
-        is_null(self::$_paylineInstance) and self::$_paylineInstance = new Evaneos_Berthe_Payment_Payline();
+        is_null(self::$_paylineInstance) and self::$_paylineInstance = new Berthe_Payment_Payline();
         return self::$_paylineInstance;
     }
     /**

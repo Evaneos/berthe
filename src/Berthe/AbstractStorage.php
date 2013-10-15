@@ -1,17 +1,16 @@
 <?php
 
 /**
- * Class definition for Berthe abstract Storage Evaneos_Berthe_Storage
+ * Class definition for Berthe abstract Storage Berthe_Storage
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Storage.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/Storage.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractStorage {
-    const STORAGE_GUID = 'Evaneos_Berthe_AbstractStorage_Package_GUID';
+abstract class Berthe_AbstractStorage {
+    const STORAGE_GUID = 'Berthe_AbstractStorage_Package_GUID';
     
     const STORE_LEVEL_1 = 'array_php';
     const STORE_VOLATILE_WITH_TTL = 'ramcache';
@@ -30,26 +29,26 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * Set to true if the frontcache has to know and register the object for further flush with its reloader
-     * @see Evaneos_Berthe_FrontCache_Reloader::addRelation
-     * @see Evaneos_Berthe_FrontCache_Reloader::flushRelation
+     * @see Berthe_FrontCache_Reloader::addRelation
+     * @see Berthe_FrontCache_Reloader::flushRelation
      * @var boolean 
      */
     protected $isFrontCacheAware = true;
 
     /**
-     * @var Evaneos_Berthe_AbstractStore[] 
+     * @var Berthe_AbstractStore[] 
      */
     protected $stores = array();
     /**
-     * @var Evaneos_Berthe_AbstractReader
+     * @var Berthe_AbstractReader
      */
     protected $_reader = null;
     /**
-     * @var Evaneos_Berthe_AbstractWriter
+     * @var Berthe_AbstractWriter
      */
     protected $_writer = null;
     /**
-     * @var Evaneos_Berthe_Memcached 
+     * @var Berthe_Memcached 
      */
     protected $_memcached = null;
     /**
@@ -64,13 +63,13 @@ abstract class Evaneos_Berthe_AbstractStorage {
     protected $_cacheKey = null;
     
     /**
-     * @return Evaneos_Berthe_StoreDatabase
+     * @return Berthe_StoreDatabase
      */
     protected function getStorePersistent() {
         return $this->stores[self::STORE_PERSISTENT];
     }
     /**
-     * @return Evaneos_Berthe_AbstractReader
+     * @return Berthe_AbstractReader
      */
     protected function getReader() {
         return $this->_reader;
@@ -88,21 +87,21 @@ abstract class Evaneos_Berthe_AbstractStorage {
     }
     
     /**
-     * @return Evaneos_Berthe_AbstractWriter
+     * @return Berthe_AbstractWriter
      */
     protected function getWriter() {
         return $this->_writer;
     }
     
     /**
-     * @return Evaneos_Berthe_StoreMemcached
+     * @return Berthe_StoreMemcached
      */
     protected function getStoreVolatile() {
         return $this->stores[self::STORE_VOLATILE_WITH_TTL];
     }
     
     /**
-     * @return Evaneos_Berthe_StoreArray
+     * @return Berthe_StoreArray
      */
     protected function getStoreLevel1() {
         return $this->stores[self::STORE_LEVEL_1];
@@ -125,8 +124,8 @@ abstract class Evaneos_Berthe_AbstractStorage {
         $cacheKey = $this->_cacheKey;
         $packageGUID = $this->getStorageGUID();
         
-        $this->stores[self::STORE_LEVEL_1] = new Evaneos_Berthe_StoreArray();
-        $this->stores[self::STORE_VOLATILE_WITH_TTL] = new Evaneos_Berthe_StoreMemcached($site, $cacheKey, $packageGUID);
+        $this->stores[self::STORE_LEVEL_1] = new Berthe_StoreArray();
+        $this->stores[self::STORE_VOLATILE_WITH_TTL] = new Berthe_StoreMemcached($site, $cacheKey, $packageGUID);
         
         if ($this->ignoreCache) {
             $this->stores[self::STORE_LEVEL_1]->isEnabled(false);
@@ -143,7 +142,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
         $this->_initStores();
         $this->_initDatabaseConnections();
         if ($this->_reader && $this->_writer) {
-            $this->stores[self::STORE_PERSISTENT] = new Evaneos_Berthe_StoreDatabase($this->_reader, $this->_writer);
+            $this->stores[self::STORE_PERSISTENT] = new Berthe_StoreDatabase($this->_reader, $this->_writer);
         }
     }
     
@@ -171,7 +170,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * @param int $id
-     * @return Evaneos_Berthe_AbstractVO
+     * @return Berthe_AbstractVO
      */
     public function getOriginalObject($id) {
         $this->ignoreAllCache(true);
@@ -183,7 +182,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * @param int $id
-     * @return Evaneos_Berthe_AbstractVO 
+     * @return Berthe_AbstractVO 
      */
     public function getById($id) {
         $id = (int)$id;
@@ -204,7 +203,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * @param array $ids
-     * @return Evaneos_Berthe_AbstractVO[] 
+     * @return Berthe_AbstractVO[] 
      */
     public function getByIds(array $ids = array()) {
         $ids = array_filter(array_unique($ids));
@@ -226,7 +225,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * @param array $ids
-     * @return Evaneos_Berthe_AbstractVO[] 
+     * @return Berthe_AbstractVO[] 
      */
     public function getColumnByIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
@@ -243,7 +242,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * @param array $ids
-     * @return Evaneos_Berthe_AbstractVO[] 
+     * @return Berthe_AbstractVO[] 
      */
     public function getColumnByIdsPreserveIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
@@ -320,14 +319,14 @@ abstract class Evaneos_Berthe_AbstractStorage {
 
     /**
      * TODO optimize that one !
-     * @param Evaneos_Berthe_AbstractVO $vo
+     * @param Berthe_AbstractVO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @param bool $loop
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER 
      */
-    public function getNextAndPreviousByPaginator(Evaneos_Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
+    public function getNextAndPreviousByPaginator(Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
         $page = $paginator->getPage();
         $nbByPage = $paginator->getNbByPage();
         
@@ -452,7 +451,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
                     
                     // notify redis that a database object has been loaded using the current url
                     if ($this->isFrontCacheAware()) {
-                        Evaneos_Berthe_FrontCache_Reloader::getInstance()->addRelation($this->getStorageGUID(), $objects, $url);
+                        Berthe_FrontCache_Reloader::getInstance()->addRelation($this->getStorageGUID(), $objects, $url);
                     }
                 }
                 
@@ -505,10 +504,10 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * Saves a VO
-     * @param Evaneos_Berthe_AbstractVO $vo
+     * @param Berthe_AbstractVO $vo
      * @return boolean
      */
-    public function save(Evaneos_Berthe_AbstractVO $vo) {
+    public function save(Berthe_AbstractVO $vo) {
         $storePersistent = $this->getStorePersistent();
         $storeVolatile = $this->getStoreVolatile();
         $storeLevel1 = $this->getStoreLevel1();
@@ -516,7 +515,7 @@ abstract class Evaneos_Berthe_AbstractStorage {
         $ret = $storePersistent->save($vo);
         if ($ret) {
             if ($this->isFrontCacheAware()) {
-                Evaneos_Berthe_FrontCache_Reloader::getInstance()->flushRelation($this->getStorageGUID(), $vo);
+                Berthe_FrontCache_Reloader::getInstance()->flushRelation($this->getStorageGUID(), $vo);
             }
             
             $storeVolatile->save($vo);
@@ -531,14 +530,14 @@ abstract class Evaneos_Berthe_AbstractStorage {
     
     /**
      * Deletes a VO
-     * @param Evaneos_Berthe_AbstractVO $vo 
+     * @param Berthe_AbstractVO $vo 
      */
-    public function delete(Evaneos_Berthe_AbstractVO $vo) {
+    public function delete(Berthe_AbstractVO $vo) {
         // We reverse because the last storage is supposed to be the persistent one, and others are faster/caching
         $storesReversed = array_reverse($this->stores);
         
         $ret = true;
-        foreach($storesReversed as /* @var $store Evaneos_Berthe_AbstractStore */ $store) {
+        foreach($storesReversed as /* @var $store Berthe_AbstractStore */ $store) {
             if ($ret) {
                 $ret = $store->delete($vo);
             }

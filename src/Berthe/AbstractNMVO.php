@@ -5,11 +5,10 @@
  * @author ghislain@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractNMVO.php
- * @package Evaneos/Berthe
- * @since Berthe
- * @see Evaneos/Berthe/AbstractVO.php
+ * @filesource Berthe/AbstractNMVO.php
+ * @package Berthe
+ * @see Berthe/AbstractVO.php
  */
-class Evaneos_Berthe_AbstractNMVO extends Evaneos_Berthe_AbstractVO {
+class Berthe_AbstractNMVO extends Berthe_AbstractVO {
     
 }

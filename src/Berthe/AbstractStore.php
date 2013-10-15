@@ -1,5 +1,5 @@
 <?php
-abstract class Evaneos_Berthe_AbstractStore {
+abstract class Berthe_AbstractStore {
     /**
      * @var boolean 
      */
@@ -52,10 +52,10 @@ abstract class Evaneos_Berthe_AbstractStore {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $vo
+     * @param Berthe_AbstractVO $vo
      * @return boolean success
      */
-    final public function save(Evaneos_Berthe_AbstractVO &$vo) {
+    final public function save(Berthe_AbstractVO &$vo) {
         $ret = null;
         if ($vo->id) {
             $ret = $this->_update($vo);
@@ -79,14 +79,14 @@ abstract class Evaneos_Berthe_AbstractStore {
     
     /**
      * Save multiple objects, returns true if all are saved, false if at least one failed
-     * @param Evaneos_Berthe_AbstractVO[] $vos
+     * @param Berthe_AbstractVO[] $vos
      * @return boolean false if at least one save has failed
      */
     final public function saveMulti(array $vos = array()) {
         return $this->_saveMulti($vos);
     }
     
-    final public function delete(Evaneos_Berthe_AbstractVO &$vo) {
+    final public function delete(Berthe_AbstractVO &$vo) {
         return $this->_delete($vo);
     }
     
@@ -112,10 +112,10 @@ abstract class Evaneos_Berthe_AbstractStore {
      */
     abstract protected function _load(array $ids = array());
     /**
-     * @param Evaneos_Berthe_AbstractVO $vo
+     * @param Berthe_AbstractVO $vo
      * @return boolean success
      */
-    abstract protected function _insert(Evaneos_Berthe_AbstractVO &$vo);
-    abstract protected function _update(Evaneos_Berthe_AbstractVO &$vo);
-    abstract protected function _delete(Evaneos_Berthe_AbstractVO &$vo);
+    abstract protected function _insert(Berthe_AbstractVO &$vo);
+    abstract protected function _update(Berthe_AbstractVO &$vo);
+    abstract protected function _delete(Berthe_AbstractVO &$vo);
 }

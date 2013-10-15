@@ -1,6 +1,6 @@
 <?php
 
-abstract class Evaneos_Berthe_Payment_Abstract {
+abstract class Berthe_Payment_Abstract {
     
     const MODE = 'payline';
     const CONST_ERROR_PLAYINE = 1005100;
@@ -23,12 +23,12 @@ abstract class Evaneos_Berthe_Payment_Abstract {
      */
     protected $_email = '';
     /**
-     * @var Evaneos_Berthe_ErrorHandler
+     * @var Berthe_ErrorHandler
      */
     protected $_errorHandler = null;
 
     public function __construct() {
-        $this->_errorHandler = new Evaneos_Berthe_ErrorHandler('Payment Error handler', 0, null);
+        $this->_errorHandler = new Berthe_ErrorHandler('Payment Error handler', 0, null);
         $_context = Berthe_Context::getInstance();
         $this->_factoryManager = Berthe_FactoryManager::getInstance($_context);
         $this->_transactionManager = $this->_factoryManager->getInstanceTransaction();

@@ -3,27 +3,26 @@
 /**
  * Class definition for DbRegistry
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/DbRegistry.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/DbRegistry.php
+ * @package Berthe
  */
-class Evaneos_Berthe_DbRegistry {
+class Berthe_DbRegistry {
     /**
      *
-     * @var Evaneos_Berthe_DbReader
+     * @var Berthe_DbReader
      */
     private static $_reader = null;
     /**
      * 
-     * @var Evaneos_Berthe_DbWriter
+     * @var Berthe_DbWriter
      */
     private static $_writer = null;
     /**
      * Returns the reader adapter
-     * @return Evaneos_Berthe_DbReader
+     * @return Berthe_DbReader
      */
     public static function getReader() {
         if(is_null(self::$_reader)) {
@@ -33,7 +32,7 @@ class Evaneos_Berthe_DbRegistry {
     }
     /**
      * Returns the writer adapter
-     * @return Evaneos_Berthe_DbWriter
+     * @return Berthe_DbWriter
      */
     public static function getWriter() {
         if(is_null(self::$_writer)) {
@@ -43,16 +42,16 @@ class Evaneos_Berthe_DbRegistry {
     }
     /**
      * Sets the reader adapter
-     * @param Evaneos_Berthe_DbReader $reader 
+     * @param Berthe_DbReader $reader 
      */
-    public static function setReader(Evaneos_Berthe_DbReader $reader) {
+    public static function setReader(Berthe_DbReader $reader) {
         self::$_reader = $reader;
     }
     /**
      * Sets the writer adapter
-     * @param Evaneos_Berthe_DbWriter $writer
+     * @param Berthe_DbWriter $writer
      */
-    public static function setWriter(Evaneos_Berthe_DbWriter $writer) {
+    public static function setWriter(Berthe_DbWriter $writer) {
         self::$_writer = $writer;
     }
 }

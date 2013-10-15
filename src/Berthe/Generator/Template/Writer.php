@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_Generator_Template_Writer extends Evaneos_Berthe_Generator_Template_Abstract {
+class Berthe_Generator_Template_Writer extends Berthe_Generator_Template_Abstract {
     const CLASSNAME = "DAOWriter";
     
     protected static $_instance = null;
     /**
      *
-     * @return Evaneos_Berthe_Generator_Template_Writer
+     * @return Berthe_Generator_Template_Writer
      */
     public static function getInstance() {
         self::$_instance === null && self::$_instance = new static();
@@ -17,7 +17,7 @@ class Evaneos_Berthe_Generator_Template_Writer extends Evaneos_Berthe_Generator_
     }
     
     protected function _loadSignature(Zend_CodeGenerator_Php_Class $zcg) {
-        $zcg->setExtendedClass("Evaneos_Berthe_AbstractWriter");
+        $zcg->setExtendedClass("Berthe_AbstractWriter");
         
         parent::_loadSignature($zcg);
     }
@@ -30,12 +30,12 @@ class Evaneos_Berthe_Generator_Template_Writer extends Evaneos_Berthe_Generator_
                                     "shortDescription" => "Delete an object (is_deleted flag setted to 1)",
                                     "tags" => array(array(
                                         "name" => "param",
-                                        "description" => 'Evaneos_Berthe_AbstractVO $object'
+                                        "description" => 'Berthe_AbstractVO $object'
                                     ))
                                 ),
                                 "parameter" => array(
                                     "name" => "object",
-                                    "type" => "Evaneos_Berthe_AbstractVO"
+                                    "type" => "Berthe_AbstractVO"
                                 ),
                                 "body" => <<<PHPCODE
 
@@ -69,12 +69,12 @@ PHPCODE
                                     "shortDescription" => "Insert an object",
                                     "tags" => array(array(
                                         "name" => "param",
-                                        "description" => 'Evaneos_Berthe_AbstractVO $object'
+                                        "description" => 'Berthe_AbstractVO $object'
                                     ))
                                 ),
                                 "parameter" => array(
                                     "name" => "object",
-                                    "type" => "Evaneos_Berthe_AbstractVO"
+                                    "type" => "Berthe_AbstractVO"
                                 ),
                                 "body" => <<<PHPCODE
 \$sql = "
@@ -114,12 +114,12 @@ PHPCODE
                                     "shortDescription" => "Update an object",
                                     "tags" => array(array(
                                         "name" => "param",
-                                        "description" => 'Evaneos_Berthe_AbstractVO $object'
+                                        "description" => 'Berthe_AbstractVO $object'
                                     ))
                                 ),
                                 "parameter" => array(
                                     "name" => "object",
-                                    "type" => "Evaneos_Berthe_AbstractVO"
+                                    "type" => "Berthe_AbstractVO"
                                 ),
                                 "body" => <<<PHPCODE
 \$sql = "

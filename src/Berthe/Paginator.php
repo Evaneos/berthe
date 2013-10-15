@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for VO Evaneos_Berthe_Paginator
+ * Class definition for VO Berthe_Paginator
  * 
- * @author anthony@evaneos.Com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
  * @filesource Berthe/Package/VO.php
  * @package Berthe/Package
- * @since Berthe
  */
-class Evaneos_Berthe_Paginator implements ArrayAccess {
+class Berthe_Paginator implements ArrayAccess {
     // Properties
     /**
      * Filters set
@@ -148,9 +147,9 @@ class Evaneos_Berthe_Paginator implements ArrayAccess {
     }
     
     public function getResultSet() {
-        if (reset($this->_elements) instanceof Evaneos_Berthe_AbstractVO) {
+        if (reset($this->_elements) instanceof Berthe_AbstractVO) {
             $res = array();
-            foreach($this->_elements as $key => /* @var $value Evaneos_Berthe_AbstractVO */ $value) {
+            foreach($this->_elements as $key => /* @var $value Berthe_AbstractVO */ $value) {
                 $res[$value->id] = $value;
             }
             return $res;

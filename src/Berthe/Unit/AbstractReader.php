@@ -1,7 +1,7 @@
 <?php
 
 
-abstract class Berthe_Unit_AbstractReader extends Evaneos_Berthe_AbstractReader {
+abstract class Berthe_Unit_AbstractReader extends Berthe_AbstractReader {
     
     abstract function getTableName();
     
@@ -45,11 +45,11 @@ abstract class Berthe_Unit_AbstractReader extends Evaneos_Berthe_AbstractReader 
     
     /**
      * Returns random ids, simulating a pagination
-     * @param Evaneos_Berthe_Paginator $paginator
+     * @param Berthe_Paginator $paginator
      * @param Berthe_Modules_Transaction_Filter $filter
      * @return array
      */
-    public function getIdsPaginatedByFilter(Evaneos_Berthe_Paginator $paginator, Berthe_Modules_Transaction_Filter $filter) {
+    public function getIdsPaginatedByFilter(Berthe_Paginator $paginator, Berthe_Modules_Transaction_Filter $filter) {
         $_nbResults = $paginator->getNbByPage();
         $_ids = array();
         for($i = 0; $i < $_nbResults; $i++) {
