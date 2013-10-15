@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for Writer abstract Evaneos_Berthe_Writer
+ * Class definition for Writer abstract Berthe_Writer
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Writer.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/Writer.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractWriter {
+abstract class Berthe_AbstractWriter {
     /**
      * @var Berthe_Context
      */
@@ -18,7 +17,7 @@ abstract class Evaneos_Berthe_AbstractWriter {
     
     /**
      *
-     * @var Evaneos_Berthe_DbWriter
+     * @var Berthe_DbWriter
      */
     protected $_db = null;
     
@@ -29,22 +28,22 @@ abstract class Evaneos_Berthe_AbstractWriter {
     
     /**
      * Insert the object in database
-     * @param Evaneos_Berthe_AbstractVO $object the object to insert
+     * @param Berthe_AbstractVO $object the object to insert
      * @return boolean 
      */
-    abstract public function insert(Evaneos_Berthe_AbstractVO $object);
+    abstract public function insert(Berthe_AbstractVO $object);
     /**
      * Update the object in database
-     * @param Evaneos_Berthe_AbstractVO $object the object to insert
+     * @param Berthe_AbstractVO $object the object to insert
      * @return boolean 
      */
-    abstract public function update(Evaneos_Berthe_AbstractVO $object);
+    abstract public function update(Berthe_AbstractVO $object);
     /**
      * Delete the object from database
-     * @param Evaneos_Berthe_AbstractVO $object the object to insert
+     * @param Berthe_AbstractVO $object the object to insert
      * @return boolean 
      */
-    abstract public function delete(Evaneos_Berthe_AbstractVO $object);
+    abstract public function delete(Berthe_AbstractVO $object);
     /**
      * Delete an object by id from database
      * @param int $int object identifier

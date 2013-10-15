@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_Generator_AnalyzerLength extends Evaneos_Berthe_Generator_Analyzer {
+class Berthe_Generator_AnalyzerLength extends Berthe_Generator_Analyzer {
     protected $sizeCheck = 30;
     
     public function __construct($size = 30) {
@@ -16,7 +16,7 @@ class Evaneos_Berthe_Generator_AnalyzerLength extends Evaneos_Berthe_Generator_A
         foreach($methods as /* @var $method Zend_CodeGenerator_Php_Method */ $method) {
             $nbLines = count(explode("\n", $method->getBody()));
             if ($nbLines > $this->sizeCheck) {
-                $this->logKO($zendClass->getName() . '::' . $method->getName() . '()' . " too large (" . $nbLines . " lines, expected < $sizeCheck)");
+                $this->logKO($zendClass->getName() . '::' . $method->getName() . '()' . " too large (" . $nbLines . " lines, expected < $this->sizeCheck)");
             }
             else {
                 $this->logOK($zendClass->getName() . '::' . $method->getName() . '()' . " OK");

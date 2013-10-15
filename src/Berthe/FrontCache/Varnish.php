@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_FrontCache_Varnish extends Evaneos_Berthe_FrontCache_Abstract {
+class Berthe_FrontCache_Varnish extends Berthe_FrontCache_Abstract {
     protected static $instance = null;
     
     protected function _purgeURL($url) {

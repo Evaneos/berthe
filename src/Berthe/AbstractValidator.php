@@ -1,19 +1,19 @@
 <?php
-abstract class Evaneos_Berthe_AbstractValidator {
+abstract class Berthe_AbstractValidator {
     /**
-     * @var Evaneos_Berthe_ErrorHandler 
+     * @var Berthe_ErrorHandler 
      */
     protected $_errorHandler = null;
     /**
-     * @var Evaneos_Berthe_AbstractManager 
+     * @var Berthe_AbstractManager 
      */
     protected $manager = null;
     
     protected $baseErrorConstant = 0;
     
-    public function __construct(Evaneos_Berthe_AbstractManager $manager = null) {
+    public function __construct(Berthe_AbstractManager $manager = null) {
         $this->manager = $manager;
-        $this->_errorHandler = new Evaneos_Berthe_ErrorHandler('Error handler', 0);
+        $this->_errorHandler = new Berthe_ErrorHandler('Error handler', 0);
 
         $this->initBaseErrorConstant();
     }
@@ -22,7 +22,7 @@ abstract class Evaneos_Berthe_AbstractValidator {
      * OVERRIDE THIS TO HANDLE PROPERLY ERROR CODES
      */
     protected function initBaseErrorConstant() {
-        $this->baseErrorConstant = Evaneos_Berthe_ErrorHandler::CONST_START_GENERIC;
+        $this->baseErrorConstant = Berthe_ErrorHandler::CONST_START_GENERIC;
     }
     
     /**
@@ -34,7 +34,7 @@ abstract class Evaneos_Berthe_AbstractValidator {
     }
     
     /**
-     * @return Evaneos_Berthe_ErrorHandler 
+     * @return Berthe_ErrorHandler 
      */
     public function getErrors() {
         return $this->_errorHandler;

@@ -1,15 +1,14 @@
 <?php
 /**
- * Class definition for Berthe abstract Manager Evaneos_Berthe_AbstractService
+ * Class definition for Berthe abstract Manager Berthe_AbstractService
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/AbstractService.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/AbstractService.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractService {
+abstract class Berthe_AbstractService {
     /**
      * @var Berthe_FactoryManager
      */
@@ -23,12 +22,12 @@ abstract class Evaneos_Berthe_AbstractService {
      */
     public $context = null;
     /**
-     * @var Evaneos_Berthe_DbWriter
+     * @var Berthe_DbWriter
      */
     protected $_db = null;
    
     /**
-     * @return Evaneos_Berthe_DbWriter
+     * @return Berthe_DbWriter
      */
     public function getDb() {
         if (!$this->_db) {

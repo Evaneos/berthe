@@ -1,5 +1,5 @@
 <?php
-abstract class Evaneos_Berthe_Generator_Template_Abstract {
+abstract class Berthe_Generator_Template_Abstract {
     final protected function __construct() {}
     final protected function __clone() {}
     

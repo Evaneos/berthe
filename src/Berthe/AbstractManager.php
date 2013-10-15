@@ -1,22 +1,21 @@
 <?php
 /**
- * Class definition for Berthe abstract Manager Evaneos_Berthe_Manager
+ * Class definition for Berthe abstract Manager Berthe_Manager
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Manager.php
- * @package Evaneos/Berthe
- * @since git p
+ * @filesource Berthe/Manager.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractManager {
+abstract class Berthe_AbstractManager {
     /**
      * @var Berthe_Context
      */
     public $context = null;
     /**
      *
-     * @var Evaneos_Berthe_AbstractStorage
+     * @var Berthe_AbstractStorage
      */
     protected $_storage = null;
     protected $_validator = null;
@@ -27,17 +26,17 @@ abstract class Evaneos_Berthe_AbstractManager {
     protected $_managerFactory = null;
     
     /**
-     * @return Evaneos_Berthe_AbstractValidator 
+     * @return Berthe_AbstractValidator 
      */
     abstract protected function _getValidator();
     
     /**
-     * @return Evaneos_Berthe_AbstractStorage 
+     * @return Berthe_AbstractStorage 
      */
     abstract protected function _getStorage();
 
     /**
-     * @return Evaneos_Berthe_AbstractVO[]
+     * @return Berthe_AbstractVO[]
      */
     public function getAll() {
         $pagi = new Fetcher(-1, -1);
@@ -48,7 +47,7 @@ abstract class Evaneos_Berthe_AbstractManager {
     /**
      * Default method to get an object by its id
      * @param int $id
-     * @return Evaneos_Berthe_AbstractVO
+     * @return Berthe_AbstractVO
      */
     public function getById($id) {
         $_ret = $this->_getStorage()->getById($id);
@@ -58,7 +57,7 @@ abstract class Evaneos_Berthe_AbstractManager {
     /**
      * Default method to get a list of objects with a list of ids
      * @param array $ids
-     * @return Evaneos_Berthe_AbstractVO 
+     * @return Berthe_AbstractVO 
      */
     public function getByIds(array $ids = array()) {
         return $this->_getStorage()->getByIds($ids);
@@ -106,19 +105,19 @@ abstract class Evaneos_Berthe_AbstractManager {
     
     /**
      * 
-     * @param Evaneos_Berthe_AbstractVO $vo
+     * @param Berthe_AbstractVO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER 
      */
-    public function getNextAndPreviousByPaginator(Evaneos_Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
+    public function getNextAndPreviousByPaginator(Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
         return $this->_getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
     }
 
     /**
      * Default method to save (insert or update depending on context) an object
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      * @return boolean
      */
     public function save($object) { 
@@ -133,7 +132,7 @@ abstract class Evaneos_Berthe_AbstractManager {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     final protected function beforeValidate($object) {
         // algo framework
@@ -144,14 +143,14 @@ abstract class Evaneos_Berthe_AbstractManager {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     protected function _beforeValidate($object) {
         
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     final protected function beforeSave($object) {
         // algo framework
@@ -162,7 +161,7 @@ abstract class Evaneos_Berthe_AbstractManager {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     private function beforeSaveDateHandling($object) {
         if (property_exists($object, "created_at") && !$object->id) {
@@ -183,14 +182,14 @@ abstract class Evaneos_Berthe_AbstractManager {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     protected function _beforeSave($object) {
         
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     final protected function afterSave($object) {
         // algo framework
@@ -201,7 +200,7 @@ abstract class Evaneos_Berthe_AbstractManager {
     }
     
     /**
-     * @param Evaneos_Berthe_AbstractVO $object
+     * @param Berthe_AbstractVO $object
      */
     protected function _afterSave($object) {
         
@@ -225,11 +224,11 @@ abstract class Evaneos_Berthe_AbstractManager {
      * @param type $id
      * @return type
      */
-    protected function _onBeforeDelete(Evaneos_Berthe_AbstractVO $_object) {
+    protected function _onBeforeDelete(Berthe_AbstractVO $_object) {
         return;
     }
 
-    protected function _onAfterDelete(Evaneos_Berthe_AbstractVO $_object) {
+    protected function _onAfterDelete(Berthe_AbstractVO $_object) {
         return;
     }
 
@@ -245,10 +244,10 @@ abstract class Evaneos_Berthe_AbstractManager {
         $propertyChain = explode(".", $property);
 
         $ret = array();
-        foreach($vos as /* @var $vo Evaneos_Berthe_AbstractVO */ $vo) {
+        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
             $voChainable = $vo;
             $copyChain = $propertyChain;
-            if (!($voChainable instanceof Evaneos_Berthe_AbstractVO)) {
+            if (!($voChainable instanceof Berthe_AbstractVO)) {
                 trigger_error("Wrong object given for property extraction");
                 continue;
             }
@@ -271,8 +270,8 @@ abstract class Evaneos_Berthe_AbstractManager {
      */
     public function extractPropertyInArray($property, array $vos = array()) {
         $ret = array(); 
-        foreach($vos as /* @var $vo Evaneos_Berthe_AbstractVO */ $vo) {
-            if (!($vo instanceof Evaneos_Berthe_AbstractVO)) {
+        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
+            if (!($vo instanceof Berthe_AbstractVO)) {
                 trigger_error("Wrong object given for property extraction");
                 continue;
             }

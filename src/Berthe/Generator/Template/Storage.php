@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_Generator_Template_Storage extends Evaneos_Berthe_Generator_Template_Abstract {
+class Berthe_Generator_Template_Storage extends Berthe_Generator_Template_Abstract {
     const CLASSNAME = "DAOStorage";
     
     protected static $_instance = null;
     /**
      *
-     * @return Evaneos_Berthe_Generator_Template_Storage 
+     * @return Berthe_Generator_Template_Storage 
      */
     public static function getInstance() {
         self::$_instance === null && self::$_instance = new static();
@@ -17,7 +17,7 @@ class Evaneos_Berthe_Generator_Template_Storage extends Evaneos_Berthe_Generator
     }
     
     protected function _loadSignature(Zend_CodeGenerator_Php_Class $zcg) {
-        $zcg->setExtendedClass("Evaneos_Berthe_AbstractStorage");
+        $zcg->setExtendedClass("Berthe_AbstractStorage");
         
         parent::_loadSignature($zcg);
     }

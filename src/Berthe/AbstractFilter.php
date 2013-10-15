@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for Berthe abstract Manager Evaneos_Berthe_AbstractFilter
+ * Class definition for Berthe abstract Manager Berthe_AbstractFilter
  * 
- * @author anthony@evaneos.com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/Manager.php
- * @package Evaneos/Berthe
- * @since Berthe
+ * @filesource Berthe/Manager.php
+ * @package Berthe
  */
-abstract class Evaneos_Berthe_AbstractFilter implements ArrayAccess {
+abstract class Berthe_AbstractFilter implements ArrayAccess {
     /**
      * Filters set
      * @var array

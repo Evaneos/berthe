@@ -1,5 +1,5 @@
 <?php
-abstract class Evaneos_Berthe_Generator_Analyzer {
+abstract class Berthe_Generator_Analyzer {
     public $loggerOK = null;
     public $loggerKO = null;
     

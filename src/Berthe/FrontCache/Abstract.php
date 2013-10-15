@@ -1,5 +1,5 @@
 <?php
-abstract class Evaneos_Berthe_FrontCache_Abstract {
+abstract class Berthe_FrontCache_Abstract {
     /**
      * @return static
      */

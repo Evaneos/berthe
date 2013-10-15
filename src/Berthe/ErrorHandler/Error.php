@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class definition for VO Evaneos_Berthe_ErrorHandler_Error
+ * Class definition for VO Berthe_ErrorHandler_Error
  * 
- * @author anthony@evaneos.Com
+ * @author dev@evaneos.com
  * @copyright Evaneos
  * @version 1.0 
- * @filesource Evaneos/Berthe/ErrorHandler/Error.php
- * @package Evaneos/Berthe/ErrorHandler
- * @since Berthe
+ * @filesource Berthe/ErrorHandler/Error.php
+ * @package Berthe/ErrorHandler
  */
-class Evaneos_Berthe_ErrorHandler_Error extends LogicException {
+class Berthe_ErrorHandler_Error extends LogicException {
     // Properties
     /**
      * A bunch of data that may be used to display

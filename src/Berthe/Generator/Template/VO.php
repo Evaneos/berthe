@@ -1,11 +1,11 @@
 <?php
-class Evaneos_Berthe_Generator_Template_VO extends Evaneos_Berthe_Generator_Template_Abstract {
+class Berthe_Generator_Template_VO extends Berthe_Generator_Template_Abstract {
     const CLASSNAME = "VO";
     
     protected static $_instance = null;
     /**
      *
-     * @return Evaneos_Berthe_Generator_Template_Manager 
+     * @return Berthe_Generator_Template_Manager 
      */
     public static function getInstance() {
         self::$_instance === null && self::$_instance = new static();
@@ -17,7 +17,7 @@ class Evaneos_Berthe_Generator_Template_VO extends Evaneos_Berthe_Generator_Temp
     }
     
     protected function _loadSignature(Zend_CodeGenerator_Php_Class $zcg) {
-        $zcg->setExtendedClass("Evaneos_Berthe_AbstractVO");
+        $zcg->setExtendedClass("Berthe_AbstractVO");
         
         parent::_loadSignature($zcg);
     }

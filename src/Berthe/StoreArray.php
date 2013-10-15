@@ -1,5 +1,5 @@
 <?php
-class Evaneos_Berthe_StoreArray extends Evaneos_Berthe_AbstractStore {
+class Berthe_StoreArray extends Berthe_AbstractStore {
     protected $objects = array();
     
     protected function _load(array $ids = array()) {
@@ -17,21 +17,21 @@ class Evaneos_Berthe_StoreArray extends Evaneos_Berthe_AbstractStore {
         return true;
     }
 
-    protected function _insert(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _insert(Berthe_AbstractVO &$vo) {
         if ($vo->id) {
             $this->objects[(int)$vo->id] = $vo;
         }
         return true;
     }
 
-    protected function _update(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _update(Berthe_AbstractVO &$vo) {
         if ($vo->id) {
             $this->objects[(int)$vo->id] = $vo;
         }
         return true;
     }
 
-    protected function _delete(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _delete(Berthe_AbstractVO &$vo) {
         if ($vo->id) {
             $id = (int) $vo->id;
             if (array_key_exists($id, $this->objects)) {

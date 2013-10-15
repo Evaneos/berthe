@@ -1,8 +1,8 @@
 <?php
-class Evaneos_Berthe_StoreMemcached extends Evaneos_Berthe_AbstractStore {
+class Berthe_StoreMemcached extends Berthe_AbstractStore {
     /**
      * The memcached accessor shared across all stores
-     * @var Evaneos_Berthe_Memcached
+     * @var Berthe_Memcached
      */
     protected static $_memcached = null;
     /**
@@ -28,7 +28,7 @@ class Evaneos_Berthe_StoreMemcached extends Evaneos_Berthe_AbstractStore {
     protected $site = null;
     
     /**
-     * @return Evaneos_Berthe_Memcached
+     * @return Berthe_Memcached
      */
     public function getCacheEngine() {
         return self::$_memcached;
@@ -36,7 +36,7 @@ class Evaneos_Berthe_StoreMemcached extends Evaneos_Berthe_AbstractStore {
     
     public function __construct(Berthe_Modules_Site_VO $site = null, $cacheKey = null, $memcachedName = null) {
         if (self::$_memcached === null) {
-            self::$_memcached = new Evaneos_Berthe_Memcached();
+            self::$_memcached = new Berthe_Memcached();
         }
         
         $this->site = $site;
@@ -106,15 +106,15 @@ class Evaneos_Berthe_StoreMemcached extends Evaneos_Berthe_AbstractStore {
         return self::$_memcached->setMulti($toSave);
     }
 
-    protected function _insert(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _insert(Berthe_AbstractVO &$vo) {
         return self::$_memcached->set($this->getMemcachedKey($vo->id), $vo);
     }
 
-    protected function _update(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _update(Berthe_AbstractVO &$vo) {
         return $this->_insert($vo);
     }
 
-    protected function _delete(Evaneos_Berthe_AbstractVO &$vo) {
+    protected function _delete(Berthe_AbstractVO &$vo) {
         return self::$_memcached->delete($this->getMemcachedKey($vo->id));
     }
 }
