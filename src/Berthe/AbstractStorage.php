@@ -448,11 +448,6 @@ abstract class Berthe_AbstractStorage {
                             $this->getStoreVolatile()->saveMulti($objects);
                             break;
                     }
-                    
-                    // notify redis that a database object has been loaded using the current url
-                    if ($this->isFrontCacheAware()) {
-                        Berthe_FrontCache_Reloader::getInstance()->addRelation($this->getStorageGUID(), $objects, $url);
-                    }
                 }
                 
                 $loadedKeys = array_keys($objects);
@@ -514,10 +509,6 @@ abstract class Berthe_AbstractStorage {
         
         $ret = $storePersistent->save($vo);
         if ($ret) {
-            if ($this->isFrontCacheAware()) {
-                Berthe_FrontCache_Reloader::getInstance()->flushRelation($this->getStorageGUID(), $vo);
-            }
-            
             $storeVolatile->save($vo);
             $storeLevel1->save($vo);
         }
