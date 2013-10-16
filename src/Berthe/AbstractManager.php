@@ -13,17 +13,25 @@ abstract class Berthe_AbstractManager {
      * @var Berthe_Context
      */
     public $context = null;
+    
     /**
-     *
      * @var Berthe_AbstractStorage
      */
     protected $_storage = null;
-    protected $_validator = null;
+    
     /**
-     * 
+     * @var Berthe_AbstractValidator
+     */
+    protected $_validator = null;
+    
+    /**
      * @var Berthe_FactoryManager
      */
     protected $_managerFactory = null;
+    
+    protected $validateHooks = array();
+    protected $saveHooks = array();
+    protected $deleteHooks = array();
     
     /**
      * @return Berthe_AbstractValidator 
@@ -34,7 +42,17 @@ abstract class Berthe_AbstractManager {
      * @return Berthe_AbstractStorage 
      */
     abstract protected function _getStorage();
-
+    
+    /**
+     * Return a new VO with default values
+     * @return Berthe_AbstractVO the VO with its default values
+     */
+    abstract public function getVoForCreation();
+    
+    public function __construct() {
+        $this->saveHooks[] = new Berthe_Util_DateHandlingSaveHook();
+    }
+    
     /**
      * @return Berthe_AbstractVO[]
      */
@@ -69,7 +87,6 @@ abstract class Berthe_AbstractManager {
      */
     public function getByPaginator(Fetcher $paginator) {
         $paginator = $this->_getStorage()->getByPaginator($paginator);
-        
         return $paginator;
     }
     
@@ -80,7 +97,6 @@ abstract class Berthe_AbstractManager {
      */
     public function getColumnByPaginator(Fetcher $paginator, $columnName = "id") {
         $paginator = $this->_getStorage()->getColumnByPaginator($paginator, $columnName);
-        
         return $paginator;
     }
     
@@ -91,7 +107,6 @@ abstract class Berthe_AbstractManager {
      */
     public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = "id") {
         $paginator = $this->_getStorage()->getColumnByPaginatorPreserveIds($paginator, $columnName);
-        
         return $paginator;
     }
     
@@ -104,7 +119,6 @@ abstract class Berthe_AbstractManager {
     }
     
     /**
-     * 
      * @param Berthe_AbstractVO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
@@ -121,89 +135,58 @@ abstract class Berthe_AbstractManager {
      * @return boolean
      */
     public function save($object) { 
-        $this->beforeValidate($object);
-        $_ret = $this->_getValidator()->validate($object);
-        if ($_ret) {
-            $this->beforeSave($object);
-            $_ret = $this->_getStorage()->save($object);
-            $this->afterSave($object);
+        $ret = $this->validate($object);
+        if ($ret) {
+            $ret = $this->_save($object);
         }
-        return $_ret;
+        return $ret;
     }
     
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    final protected function beforeValidate($object) {
-        // algo framework
-        // TODO
-        
-        // algo business
-        $this->_beforeValidate($object);
-    }
-    
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    protected function _beforeValidate($object) {
-        
-    }
-    
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    final protected function beforeSave($object) {
-        // algo framework
-        $this->beforeSaveDateHandling($object);
-        
-        // algo business
-        $this->_beforeSave($object);
-    }
-    
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    private function beforeSaveDateHandling($object) {
-        if (property_exists($object, "created_at") && !$object->id) {
-            $object->created_at = new DateTime();
+    final protected function validate($object) {
+        foreach($this->validateHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->before($object);
         }
-        
-        if (property_exists($object, "createdAt") && !$object->id) {
-            $object->created_at = new DateTime();
+
+        $ret = $this->_getValidator()->validate($object);
+
+        foreach($this->validateHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->after($object);
         }
-        
-        if (property_exists($object, "updated_at")) {
-            $object->updated_at = new DateTime();
+
+        return $ret;
+    }
+
+    final protected function _save($object) {
+        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->before($object);
         }
-        
-        if (property_exists($object, "updatedAt")) {
-            $object->updated_at = new DateTime();
+
+        $ret = $this->_getStorage()->save($object);
+
+        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->after($object);
         }
+
+        return $ret;
     }
     
     /**
-     * @param Berthe_AbstractVO $object
+     * Default method to delete an object
+     * @param int $id
+     * @return boolean
      */
-    protected function _beforeSave($object) {
-        
-    }
-    
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    final protected function afterSave($object) {
-        // algo framework
-        // TODO
-        
-        // algo business
-        $this->_afterSave($object);
-    }
-    
-    /**
-     * @param Berthe_AbstractVO $object
-     */
-    protected function _afterSave($object) {
-        
+    final public function delete($object) {
+        foreach($this->deleteHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->before($object);
+        }
+
+        $ret = $this->_getStorage()->delete($object);
+
+        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+            $hook->after($object);
+        }
+
+        return $ret;
     }
     
     /**
@@ -212,125 +195,14 @@ abstract class Berthe_AbstractManager {
      * @return boolean 
      */
     public function deleteById($id) {
-        $_object = $this->getById($id);
-        $this->_onBeforeDelete($_object);
-        $_ret = $this->_getStorage()->deleteById($id);
-        $this->_onAfterDelete($_object);
-        return $_ret;
+        $object = $this->getById($id);
+        return $this->delete($object);
     }
     
     /**
-     * 
-     * @param type $id
-     * @return type
+     * Getter and setter to ignore cache flag
+     * @param boolean|null $shallIgnore
      */
-    protected function _onBeforeDelete(Berthe_AbstractVO $_object) {
-        return;
-    }
-
-    protected function _onAfterDelete(Berthe_AbstractVO $_object) {
-        return;
-    }
-
-    abstract public function getVoForCreation();
-    
-    /**
-     * Return an array with the properties for the given set of Berthe VO
-     * @param string $property (can dig into object using dots (exemple :  propObject.subpropObject.prop))
-     * @param array $vos 
-     * @return array key=vo->id, value=vo->property
-     */
-    public function extractProperty($property, array $vos = array()) {
-        $propertyChain = explode(".", $property);
-
-        $ret = array();
-        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
-            $voChainable = $vo;
-            $copyChain = $propertyChain;
-            if (!($voChainable instanceof Berthe_AbstractVO)) {
-                trigger_error("Wrong object given for property extraction");
-                continue;
-            }
-            while(($prop = array_shift($copyChain)) !== null) {
-                if (property_exists($voChainable, $prop)) {
-                    $voChainable = $voChainable->{$prop};
-                }
-            }
-            
-            $ret[$vo->id] = $voChainable;
-        }
-        return $ret;
-    }
-    
-     /**
-     * Return an array with the properties for the given set of Berthe VO
-     * @param string $property 
-     * @param array $vos 
-     * @return array ($vo->id, $vo->property)
-     */
-    public function extractPropertyInArray($property, array $vos = array()) {
-        $ret = array(); 
-        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
-            if (!($vo instanceof Berthe_AbstractVO)) {
-                trigger_error("Wrong object given for property extraction");
-                continue;
-            }
-            if (property_exists($vo, $property)) {
-                $ret[] = array(
-                    'id' => $vo->id,
-                    $property => $vo->{$property}
-                );
-            }
-        }
-        return $ret;
-    }
-    
-    /**
-     *
-     * @param string $property
-     * @param array $vos
-     * @return array 
-     */
-    public function sortByProperty($property, array $vos = array()) {
-        $extract = $this->extractProperty($property, $vos);
-        asort($extract);
-        $ret = array();
-        foreach(array_keys($extract) as $idSibling) {
-            $ret[$idSibling] = $vos[$idSibling];
-        }
-        return $ret;
-    }
-    
-    /**
-     * Forces the cache reload of an object
-     * @param integer $id
-     * @deprecated
-     */
-    public function reloadById($id) {
-        trigger_error('Do not use reload method in Berthe model!', E_USER_DEPRECATED);
-        $_storage = $this->_getStorage();
-        $_oldValue = $_storage->ignoreCache;
-        $_storage->ignoreCache = true;
-        $_res = $_storage->getById($id);
-        $_storage->ignoreCache = $_oldValue;
-        return $_res;
-    }
-    
-    /**
-     * Forces the cache reload of a bunch of objects
-     * @param integer $id
-     * @deprecated
-     */
-    public function reloadByIds(array $ids) {
-        trigger_error('Do not use reload method in Berthe model!', E_USER_DEPRECATED);
-        $_storage = $this->_getStorage();
-        $_oldValue = $_storage->ignoreCache;
-        $_storage->ignoreCache = true;
-        $_res = $_storage->getByIds($ids);
-        $_storage->ignoreCache = $_oldValue;
-        return $_res;
-    }
-
     public function ignoreAllCache($shallIgnore = null){
         $this->_getStorage()->ignoreAllCache($shallIgnore);
     }
