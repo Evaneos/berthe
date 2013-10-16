@@ -14,6 +14,27 @@ abstract class Berthe_AbstractStore {
     protected $isTTLAble = false;
     
     /**
+     * @param array $ids
+     * @return array id=>object
+     */
+    abstract protected function _load(array $ids = array());
+    /**
+     * @param Berthe_AbstractVO $vo
+     * @return boolean success
+     */
+    abstract protected function _insert(Berthe_AbstractVO &$vo);
+    /**
+     * @param Berthe_AbstractVO $vo
+     * @return boolean success
+     */
+    abstract protected function _update(Berthe_AbstractVO &$vo);
+    /**
+     * @param Berthe_AbstractVO $vo
+     * @return boolean success
+     */
+    abstract protected function _delete(Berthe_AbstractVO &$vo);
+    
+    /**
      * Getter and setter for isEnabled toggle
      * @param mixed $bool bool|null
      * @return boolean
@@ -53,6 +74,14 @@ abstract class Berthe_AbstractStore {
     
     /**
      * @param Berthe_AbstractVO $vo
+     * @return boolean
+     */
+    final public function delete(Berthe_AbstractVO &$vo) {
+        return $this->_delete($vo);
+    }
+    
+    /**
+     * @param Berthe_AbstractVO $vo
      * @return boolean success
      */
     final public function save(Berthe_AbstractVO &$vo) {
@@ -86,10 +115,6 @@ abstract class Berthe_AbstractStore {
         return $this->_saveMulti($vos);
     }
     
-    final public function delete(Berthe_AbstractVO &$vo) {
-        return $this->_delete($vo);
-    }
-    
     /**
      * 
      * @param array $vos
@@ -105,17 +130,4 @@ abstract class Berthe_AbstractStore {
         }
         return $isOk;
     }
-    
-    /**
-     * @param array $ids
-     * @return array id=>object
-     */
-    abstract protected function _load(array $ids = array());
-    /**
-     * @param Berthe_AbstractVO $vo
-     * @return boolean success
-     */
-    abstract protected function _insert(Berthe_AbstractVO &$vo);
-    abstract protected function _update(Berthe_AbstractVO &$vo);
-    abstract protected function _delete(Berthe_AbstractVO &$vo);
 }
