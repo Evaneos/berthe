@@ -1,143 +1,35 @@
 <?php
 define('ROOT_DIR', '/home/berthe_olivier/');
+define('TEST_DIR', '/home/berthe_olivier/test/');
 
+// COMPOSER <3
 require ROOT_DIR . '/vendor/autoload.php';
+
+// DEBUG
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 
+// requires only for testing purpose
+require TEST_DIR . '/DummyFramework/Initializer.php';
+require TEST_DIR . '/DummyFramework/AbstractController.php';
+require TEST_DIR . '/DummyFramework/PrettyExceptionInterceptor.php';
+require TEST_DIR . '/DummyFramework/CountryControllerTest.php';
+require TEST_DIR . '/DummyFramework/Berthe/Modules/Country/Manager.php';
+require TEST_DIR . '/DummyFramework/Berthe/Service/Country.php';
+require TEST_DIR . '/DummyFramework/Berthe/Store/Array.php';
+require TEST_DIR . '/DummyFramework/Berthe/Store/Echo.php';
 
-class Initializer {
-    public static $container = null;
-
-    public function __construct($config) {
-        self::$container = new Berthe_DI_Container($config);
-
-        $class = new CountryControllerTest();
-        $class->setContainer(self::$container);
-        $class->getAction();
-    }
-}
-
-
-class AbstractController {
-    protected $container = null;
-
-    public function setContainer($container) {
-        $this->container = $container;
-        return $this;
-    }
-}
-
-
-class CountryControllerTest extends AbstractController {
-    public function getAction() {
-        $serviceCountry = $this->container->get('CountryService');
-        $serviceCountry->save();
-    }
-}
-
-class Berthe_Service_Country {
-    protected $manager = null;
-    protected $arg1 = null;
-    protected $arg2 = null;
-
-    public function __construct($arg1, $arg2) {
-        $this->arg1 = $arg1;
-        $this->arg2 = $arg2;
-    }
-
-    public function setManager($manager) {
-        $this->manager = $manager;
-        return $this;
-    }
-
-    public function save() {
-        $rand = rand(0, 1000000);
-        return $this->manager->save($rand);
-    }
-}
-
-class Berthe_Modules_Country_Manager {
-    public $storage = null;
-    public function __construct() {
-
-    }
-
-    protected function validate() {
-        $errors = new Berthe_ErrorHandler_Errors();
-
-        // force false test
-        $parameter = true;
-        $validatingStuff = $parameter == false;
-        if (!$validatingStuff) {
-            $error = new Berthe_ErrorHandler_Error('not validating test boolean', 100101, array($parameter));
-            $errors->addError($error);
-            $error = new Berthe_ErrorHandler_Error('not validating test A', 100102, array('data1' => rand(1, 10), 'data2' => rand(10, 100)));
-            $errors->addError($error);
-        }
-
-        if ($errors->hasErrors()) {
-            $errors->throwMe();
-        }
-
-        return true;
-    }
-
-    public function save($data) {
-        $this->validate();
-        return $this->storage->save($data);
-    }
-}
-
-class Berthe_Store_Array {
-    protected $data = array();
-
-    public function save($data) {
-        $this->data[] = $data;
-        return true;
-    }
-}
-
-class Berthe_Store_Echo {
-    public $injectedVariable = null;
-
-    public function save($data) {
-        echo "Berthe_Store_Echo : " . $data . " " . $this->injectedVariable . "\n";
-        return true;
-    }
-}
-
-class PrettyExceptionInterceptor extends Berthe_AbstractInterceptor {
-    protected function intercept($method, $args) {
-        try {
-            return $this->invoke($method, $args);
-        }
-        catch (Berthe_ErrorHandler_Errors $e) {
-            echo "A Berthe Logic Error Stack occured : \n";
-            $errors = $e->getErrors();
-            foreach($errors as $error) {
-                echo " - " . $error->getMessage() . '(' . $error->getCode() . ') with data=[' . implode(',', $error->getData()) . "]\n";
-            }
-        }
-        catch(LogicException $e) {
-            echo "A logic Exception occured : " . $e->getMessage() . "\n";
-        }
-        catch(RuntimeException $e) {
-            echo "A Runtime Exception occured : " . $e->getMessage() . "\n";
-        }
-        catch(Exception $e) {
-            echo "An unknown Exception occured (which is strange because an interceptor is supposed to catch them all) : " . $e->getMessage() . "\n";
-        }
-    }
-}
-
-
-
+// Getting config using YML
 $cfgYML = new Berthe_DI_ConfigYML(ROOT_DIR . '/test/config/container_test.yml');
+
+// Compile it in PHP to load it faster next time
 $dump = $cfgYML->compile();
 $dump = '<?php $array = ' . $dump . ';';
 file_put_contents(ROOT_DIR . '/test/config/generated.php', $dump);
 
+// Start the application with the PHP config file
 $cfgPHP = new Berthe_DI_ConfigPHP(ROOT_DIR . '/test/config/generated.php');
+$init = new Initializer($cfgPHP);
 
-new Initializer($cfgPHP);
+// Go Dispatch !
+$init->dispatch();
