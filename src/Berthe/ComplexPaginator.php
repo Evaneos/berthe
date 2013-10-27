@@ -6,12 +6,12 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
     protected $isRandomSort = false;
     protected $hasEmptyIN = false;
     protected $mainOperator = self::OPERATOR_AND;
-    
+
     const FILTER_TYPE = 1;
     const FILTER_VALUE = 2;
     const FILTER_COLUMN = 3;
     const FILTER_GROUP_NAME = 4;
-    
+
     const TYPE_EQ = 1;
     const TYPE_LIKE = 2;
     const TYPE_ILIKE = 3;
@@ -25,43 +25,43 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
     const TYPE_IS_NOT_NULL = 11;
     const TYPE_LOWERED_EQ = 12;
     const TYPE_IN = 13;
-    
+
     const OPERATOR_AND = ' AND ';
     const OPERATOR_OR  = ' OR ';
-    
+
     const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
-    
+
     /**
      *
      * @param string $columnName
      * @param int $typeFilter
      * @param string $value
      * @param mixed $groupName false if not in group, string if in group
-     * @return Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator
      */
     public function addFilter($columnName, $typeFilter, $value, $groupName = false) {
         if ($typeFilter === self::TYPE_IN) {
             $typeFilter = self::TYPE_EQ;
         }
-        
+
         $this->filters[] = array(
-            self::FILTER_TYPE => $typeFilter, 
-            self::FILTER_VALUE => $value, 
+            self::FILTER_TYPE => $typeFilter,
+            self::FILTER_VALUE => $value,
             self::FILTER_COLUMN => $columnName,
             self::FILTER_GROUP_NAME => $groupName ? $groupName : count($this->filters)
         );
-        
+
         return $this;
     }
-    
+
     /**
      *
      * @param string $columnName
      * @param int $typeFilter
      * @param string $values
      * @param mixed $groupName false if not in group, string if in group
-     * @return Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator
      */
     public function addFilters($columnName, $typeFilter, array $values, $groupName = false) {
         if ($typeFilter === self::TYPE_IN && count($values) === 0) {
@@ -70,30 +70,30 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
         else {
             foreach($values as $value) {
                 $this->addFilter($columnName, $typeFilter, $value, $groupName);
-            }            
+            }
         }
 
         return $this;
     }
-    
+
     /**
      *
-     * @return array 
+     * @return array
      */
     public function getFilters() {
         return $this->filters;
     }
-    
+
     /**
      * @param array $filters
-     * @throws Exception 
+     * @throws Exception
      */
     public function setFilters(array $filters = array()) {
         foreach($filters as $filter) {
             $bCol = array_key_exists(self::FILTER_COLUMN, $filter);
             $bType = array_key_exists(self::FILTER_TYPE, $filter);
             $bVal = array_key_exists(self::FILTER_VALUE, $filter);
-            
+
             if ($bCol && $bTYpe && $bVal) {
                 $this->addFilter($filter[self::FILTER_COLUMN], $filter[self::FILTER_TYPE], $filter[self::FILTER_VALUE]);
             }
@@ -102,18 +102,18 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
             }
         }
     }
-    
+
     /**
      * @param string $columnName
-     * @param string $operator 
+     * @param string $operator
      */
     public function setFilterOperator($columnName, $operator) {
         $this->filtersOperator[$columnName] = $operator;
     }
-    
+
     /**
      * @param string $columnName
-     * @return string 
+     * @return string
      */
     public function getFilterOperator($columnName) {
         if (array_key_exists($columnName, $this->filtersOperator)) {
@@ -123,11 +123,11 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
             return self::OPERATOR_OR;
         }
     }
-    
+
     /**
      *
      * @param int $type
-     * @return array 
+     * @return array
      */
     public function getFiltersByType($type) {
         $output = array();
@@ -138,51 +138,51 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
         }
         return $output;
     }
-    
+
     /**
      *
      * @param string $columnName
      * @param string $sortType
-     * @return Berthe_ComplexPaginator 
+     * @return Berthe_ComplexPaginator
      */
     public function addSort($columnName, $sortType) {
         if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC) {
             return;
         }
-        
+
         $this->sorts[$columnName] = $sortType;
-        
+
         return $this;
     }
-    
+
     /**
      * @param boolean $boolean
      * @return Berthe_ComplexPaginator
      */
     public function setRandomSort($boolean) {
         $this->isRandomSort = $boolean;
-        
+
         return $this;
     }
-    
+
     /**
      * @return boolean
      */
     public function isRandomSort() {
         return $this->isRandomSort;
     }
-    
+
     /**
      *
-     * @return array 
+     * @return array
      */
     public function getSorts() {
         return $this->sorts;
     }
-    
+
     /**
      * @param array $sorts
-     * @throws Exception 
+     * @throws Exception
      */
     public function setSorts(array $sorts = array()) {
         foreach($sorts as $sort) {
@@ -192,7 +192,7 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
             $this->addSort($sort[0], $sort[1]);
         }
     }
-    
+
     public function strFilterToDbNotation($type) {
         switch($type) {
             case self::TYPE_DIFF : return ' != ? ';
@@ -210,47 +210,47 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
         }
         return null;
     }
-    
+
     public function strColumnFilterToDbNotation($colName, $type) {
         switch($type) {
             case self::TYPE_LOWERED_EQ : return 'LOWER(' . $colName . ')';
         }
-        
+
         return $colName;
     }
-    
+
     public function getSortForQuery() {
         $sorts = array();
         $_sorts = $this->getSorts();
-        
+
         foreach($_sorts as $column => $sort) {
             $sorts[] = $column . ' ' . $sort;
         }
-        
+
         if (count($sorts) < 1) {
             $sorts[] = "id ASC";
         }
-        
+
         return implode(", ", $sorts);
     }
-    
+
     public function getFiltersForQuery() {
         $_filters = $this->getFilters();
-        
+
         $_filterByCol = array();
-        
+
         foreach($_filters as $filter) {
             if (!array_key_exists($filter[self::FILTER_COLUMN], $_filterByCol)) {
                 $_filterByCol[$filter[self::FILTER_COLUMN]] = array();
             }
-            
+
             if (!array_key_exists($filter[self::FILTER_GROUP_NAME], $_filterByCol[$filter[self::FILTER_COLUMN]])) {
                 $_filterByCol[$filter[self::FILTER_COLUMN]][$filter[self::FILTER_GROUP_NAME]] = array();
             }
-            
+
             $_filterByCol[$filter[self::FILTER_COLUMN]][$filter[self::FILTER_GROUP_NAME]][] = $filter;
         }
-        
+
         $aToParameter = array();
         if($this->mainOperator != self::OPERATOR_OR) {
             $aImplodedColumns = array("1=1");
@@ -293,12 +293,12 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
             $implodeColumn = "(" . implode($this->getFilterOperator($columnName), $aToColumn) . ")";
             $aImplodedColumns[] = $implodeColumn;
         }
-        
+
         $strQuery = implode($this->mainOperator, $aImplodedColumns);
-        
+
         return array($strQuery, $aToParameter);
     }
-    
+
     /**
      * Sets the main operator (AND or OR)
      * @param string $operator self::OPERATOR_AND or self::OPERATOR_OR
@@ -317,7 +317,7 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
                 break;
         }
     }
-    
+
     /**
      * @param int $page
      * @param int $nbByPage
@@ -326,12 +326,12 @@ class Berthe_ComplexPaginator extends Berthe_Paginator {
     public function copy($page = null, $nbByPage = null) {
         if (!$page)     {       $page       = $this->getPage();         }
         if (!$nbByPage) {       $nbByPage   = $this->getNbByPage();     }
-        
+
         $copy = new Berthe_ComplexPaginator($page, $nbByPage);
         $copy->filters = $this->filters;
         $copy->sorts = $this->sorts;
         $copy->filtersOperator = $this->filtersOperator;
-        
+
         return $copy;
     }
 }

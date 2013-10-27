@@ -2,13 +2,19 @@
 class Berthe_DI_Container {
     protected $config = null;
     protected $provide = array();
+    protected $registry = array();
 
-    public function __construct($config) {
-        $this->config = $config;
-        $this->loadYml($config);
+    public function __construct($configFilePath) {
+        $this->config = $configFilePath;
+        $this->loadYml($this->config);
     }
 
-    protected function loadYml($config) {
+    /**
+     * Configure the container with the provided YML
+     * @param  [type] $config [description]
+     * @return [type]         [description]
+     */
+    public function loadYml($config) {
         $yml = array();
         $dirname = dirname($config);
         $yaml = new Symfony\Component\Yaml\Yaml();
@@ -22,6 +28,11 @@ class Berthe_DI_Container {
         $this->provide = $yml;
     }
 
+    /**
+     * Retrieve the parameter value configured in the container
+     * @param  string $parameterName
+     * @return mixed
+     */
     public function getParameter($parameterName) {
         $toReturn = null;
         if (array_key_exists('parameters', $this->provide)) {
@@ -33,13 +44,18 @@ class Berthe_DI_Container {
         return $toReturn;
     }
 
+    /**
+     * Retrieve a class configured in the container
+     * @param  string $serviceName
+     * @return object
+     */
     public function get($serviceName) {
         if (count($this->provide) > 0) {
             if (array_key_exists('classes', $this->provide) && array_key_exists($serviceName, $this->provide['classes'])) {
-                return $this->loadService($this->provide['classes'][$serviceName]);
+                return $this->loadService($serviceName, $this->provide['classes'][$serviceName]);
             }
             else {
-                throw new RuntimeException('Class not configured');
+                throw new RuntimeException('Class not configured ' . $serviceName);
             }
         }
         else {
@@ -47,30 +63,55 @@ class Berthe_DI_Container {
         }
     }
 
-    protected function loadService($serviceConfig) {
-        // if (array_key_exists('interceptor', $serviceName)) {
-        //     if (is_array($serviceName)) {
-        //         foreach($serviceName['interceptor'] as $interceptorName) {
-        //             $interceptor = $this->get($interceptorName);
-        //         }
-        //     }
-        // }
-        $class = $this->classInstanciation($serviceConfig);
-        $this->classProps($class, $serviceConfig);
-        $this->classCalls($class, $serviceConfig);
-        $classEncapsulated = $this->classInterceptor($class, $serviceConfig);
-        return $classEncapsulated;
+    /**
+     * Flush the registry
+     * @return Berthe_DI_Container
+     */
+    public function flushRegistry() {
+        $this->registry = array();
+        return $this;
     }
 
+    /**
+     * Chain of command of the class loader
+     * @param  array $serviceConfig
+     * @return object
+     */
+    protected function loadService($serviceName, $serviceConfig) {
+        $isSingleton = false;
+
+        if (array_key_exists('singleton', $serviceConfig)) {
+            $isSingleton = (bool) $serviceConfig['singleton'];
+        }
+
+        if ($isSingleton && array_key_exists($serviceName, $this->registry)) {
+            return $this->registry[$serviceName];
+        }
+        else {
+            $class = $this->classInstanciation($serviceConfig);
+            $this->classProps($class, $serviceConfig);
+            $this->classCalls($class, $serviceConfig);
+            $classEncapsulated = $this->classInterceptor($class, $serviceConfig);
+            $this->registry[$serviceName] = $classEncapsulated;
+            return $classEncapsulated;
+        }
+    }
+
+    /**
+     * Handles class instanciation
+     * @param  array $serviceConfig
+     * @return object
+     */
     protected function classInstanciation($serviceConfig) {
         $className = null;
         $constructorArgs = array();
+        $isSingleton = false;
 
         if (array_key_exists('class', $serviceConfig)) {
             $className = $serviceConfig['class'];
         }
         else {
-            throw new RuntimeException('no class name defined for service' . serialize($serviceName));
+            throw new RuntimeException('no class name defined for service' . serialize($serviceConfig));
         }
 
         if (array_key_exists('arguments', $serviceConfig)) {
@@ -79,6 +120,7 @@ class Berthe_DI_Container {
 
         try {
             $instanciated = null;
+
             $class = new ReflectionClass($className);
             if (count($constructorArgs) > 0) {
                 $instanciated = $class->newInstanceArgs($constructorArgs);
@@ -86,6 +128,7 @@ class Berthe_DI_Container {
             else {
                 $instanciated = $class->newInstance();
             }
+
             return $instanciated;
         }
         catch(Exception $e) {
@@ -93,6 +136,12 @@ class Berthe_DI_Container {
         }
     }
 
+    /**
+     * Handle method invocations in the class
+     * @param  object $class
+     * @param  array $serviceConfig
+     * @return boolean
+     */
     protected function classCalls($class, $serviceConfig) {
         $callConfig = array();
         if (array_key_exists('call', $serviceConfig)) {
@@ -106,6 +155,12 @@ class Berthe_DI_Container {
         return true;
     }
 
+    /**
+     * Handle properties in the class
+     * @param  object $class
+     * @param  array $serviceConfig
+     * @return boolean
+     */
     protected function classProps($class, $serviceConfig) {
         $propConfig = array();
         if (array_key_exists('props', $serviceConfig)) {
@@ -119,6 +174,11 @@ class Berthe_DI_Container {
         return true;
     }
 
+    /**
+     * Convert value written in YML to the corresponding variable (object, parameter or scalar)
+     * @param  $value
+     * @return mixed
+     */
     protected function convertValue($value) {
         $toReturn = null;
         $prefix = substr($value, 0, 1);
@@ -136,6 +196,11 @@ class Berthe_DI_Container {
         return $toReturn;
     }
 
+    /**
+     * Parameters handler
+     * @param  array $parameters
+     * @return array
+     */
     protected function convertParameters($parameters) {
         $convertedParameters = array();
         foreach($parameters as $value) {
@@ -146,9 +211,25 @@ class Berthe_DI_Container {
     }
 
     /**
-     * @todo  inject interceptor around the class
+     * Interceptor handler
+     * @param  object $class
+     * @param  array $serviceConfig
+     * @return object
      */
     protected function classInterceptor($class, $serviceConfig) {
-        return $class;
+        $lastInterceptedClass = $class;
+        if (array_key_exists('interceptor', $serviceConfig)) {
+            if (is_array($serviceConfig)) {
+                foreach($serviceConfig['interceptor'] as $interceptorName) {
+                    $interceptor = $this->convertValue($interceptorName);
+                    if (!is_object($interceptor)) {
+                        throw new RuntimeException('The interceptor ' . $interceptorName . ' does not reference a known service');
+                    }
+                    $interceptor->setDecorated($lastInterceptedClass);
+                    $lastInterceptedClass = $interceptor;
+                }
+            }
+        }
+        return $lastInterceptedClass;
     }
 }

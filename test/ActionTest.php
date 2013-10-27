@@ -26,10 +26,6 @@ class AbstractController {
         $this->container = $container;
         return $this;
     }
-
-    public function __construct() {
-
-    }
 }
 
 
@@ -85,6 +81,23 @@ class Berthe_Store_Echo {
     public function save($data) {
         echo "Berthe_Store_Echo : " . $data . "\n";
         return true;
+    }
+}
+
+class PrettyExceptionInterceptor extends Berthe_AbstractInterceptor {
+    protected function intercept($method, $args) {
+        try {
+            return $this->invoke($method, $args);
+        }
+        catch(LogicException $e) {
+            echo "A logic Exception occured : " . $e->getMessage() . "\n";
+        }
+        catch(RuntimeException $e) {
+            echo "A Runtime Exception occured : " . $e->getMessage() . "\n";
+        }
+        catch(Exception $e) {
+            echo "An unknown Exception occured (which is strange because an interceptor is supposed to catch them all) : " . $e->getMessage() . "\n";
+        }
     }
 }
 

@@ -43,7 +43,7 @@ class Berthe_Memcached extends Memcached {
             if (Zend_Registry::get('config')->debug->memcached->flush) {
                 $this->_memcached->flush();
             }
-            
+
             self::$_memcachedInstance = $this->_memcached;
         }
         else {
@@ -58,7 +58,7 @@ class Berthe_Memcached extends Memcached {
 
     /**
      *
-     * @return type 
+     * @return type
      */
     private function prepareMemcachedNamespaceKey() {
         if (strstr($_SERVER['HTTP_HOST'], '.dev.evaneos.com')) {
@@ -74,7 +74,7 @@ class Berthe_Memcached extends Memcached {
     /**
      *
      * @param type $key
-     * @return type 
+     * @return type
      */
     public function get($key, $cache_cb = null, &$cas_token = null) {
         if($this->_noCache) {
@@ -85,7 +85,7 @@ class Berthe_Memcached extends Memcached {
     }
 
     /**
-     * 
+     *
      */
     public function set($key, $value, $expiration = 0) {
         $_ret = $this->_memcached->set($key, $value, $expiration);
@@ -93,7 +93,7 @@ class Berthe_Memcached extends Memcached {
     }
 
     /**
-     * 
+     *
      */
     public function getMulti(array $keys, &$cas_tokens = null, $flags = null) {
         if($this->_noCache) {
@@ -134,7 +134,7 @@ class Berthe_Memcached extends Memcached {
 
     /**
      * Flush the cache
-     * 
+     *
      * @link http://php.net/manual/en/memcached.flush.php
      * @see Memcached::flush()
      * @param integer $delay
@@ -148,7 +148,7 @@ class Berthe_Memcached extends Memcached {
     /**
      *
      * @param array $keys
-     * @return array 
+     * @return array
      */
     private function _translateKeys($keys) {
         // resetting data
@@ -190,7 +190,7 @@ class Berthe_Memcached extends Memcached {
     }
 
     /**
-     * @return bool 
+     * @return bool
      */
     public function delete($key, $time = 0) {
         return $this->_memcached->delete($key, $time);

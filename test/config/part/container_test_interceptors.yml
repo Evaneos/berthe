@@ -1,3 +1,5 @@
 classes :
-    TransactionInterceptor :
-        class : Berthe_Interceptor_Transaction
+    ExceptionInterceptor :
+        class : Berthe_Interceptor_Exception
+    PrettyExceptionInterceptor :
+        class : PrettyExceptionInterceptor

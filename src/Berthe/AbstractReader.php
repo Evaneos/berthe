@@ -1,10 +1,10 @@
 <?php
 /**
  * Class definition for Berthe abstract Reader Berthe_Reader
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/Reader.php
  * @package Berthe
  */
@@ -12,7 +12,7 @@ abstract class Berthe_AbstractReader {
     /**
      * Class name of the VO for current package
      */
-    const VO_CLASS = 'Berthe_AbstractVO'; 
+    const VO_CLASS = 'Berthe_AbstractVO';
     /**
      * @var Berthe_Context
      */
@@ -22,12 +22,12 @@ abstract class Berthe_AbstractReader {
      * @var Berthe_DbReader
      */
     protected $_db = null;
-    
+
     public function __construct(Berthe_Context $context = null) {
         $this->_db = Zend_Registry::get('dbReader');
         $this->context = $context;
     }
-    
+
     /**
      * @param \Berthe_DbReader $db
      * @return \Berthe_AbstractReader
@@ -36,7 +36,7 @@ abstract class Berthe_AbstractReader {
         $this->_db = $db;
         return $this;
     }
-    
+
     /**
      * Returns the Class name of the VO for current package
      * @return string
@@ -52,25 +52,25 @@ abstract class Berthe_AbstractReader {
      */
     protected function implementVOs(array $datas = array()) {
         $_ret = array();
-        
+
         $_class = $this->getVOClass();
-        
+
         if($_class == self::VO_CLASS) {
             throw new RuntimeException(__CLASS__ . '::VO_CLASS constant is not defined');
         }
-        
+
         foreach($datas as &$row) {
             $_ret[$row['id']] = new $_class($row);
         }
-        
+
         return $_ret;
     }
-    
+
     /**
      * Returns the Query String to get data for the VOs
      */
     abstract protected function getSelectQuery();
-    
+
     /**
      * Returns a query from getSelectQuery method by appending a where statement on ids
      * @param array $ids
@@ -78,35 +78,35 @@ abstract class Berthe_AbstractReader {
      */
     protected function getSelectQueryByIds(array $ids = array()) {
         $implode = implode(', ', $ids);
-        
+
         return <<<EOQ
 {$this->getSelectQuery()}
 WHERE
     {$this->getTableName()}.id in ($implode)
 
 EOQ;
-        
+
     }
 
     /**
      * Gets a bunch of Berthe_AbstractVO from database from their ids
      * @param array $ids
-     * @return Berthe_AbstractVO 
+     * @return Berthe_AbstractVO
      */
     public function selectByIds(array $ids = array ()) {
         if (count($ids) === 0) {
             return array();
         }
-        
+
         $ids = array_map('intval', $ids);
-        
+
         $sql = $this->getSelectQueryByIds($ids);
-	
+
         $resultSet = $this->_db->fetchAll($sql);
-	
+
         return $this->implementVOs($resultSet);
     }
-    
+
     /**
      * Extract the list of columns from Select Query
      * @return string[] The list of columns
@@ -114,19 +114,19 @@ EOQ;
     protected function _extractColumnsFromSelectQuery() {
         $_query = $this->getSelectQuery();
         $_matches = array();
-        
+
         $_pattern = '#.*(SELECT)(.*)(FROM|LEFT|JOIN)#ims';
         preg_match($_pattern, $_query, $_matches);
-        
+
         $_columnsList = explode(',', $_matches[2]);
-        
+
         array_walk($_columnsList, function(&$value, $index) {
             $value = trim($value);
         });
-        
+
         return $_columnsList;
     }
-    
+
     /**
      * Returns the index of selected column in the select query
      * @param string $col
@@ -134,7 +134,7 @@ EOQ;
      */
     protected function _getColumnIndexInSelectQuery($col) {
         $_columns = $this->_extractColumnsFromSelectQuery();
-        
+
         $_columnIndex = false;
         foreach ($_columns as $index => $column) {
             if($col == $column) {
@@ -144,7 +144,7 @@ EOQ;
         }
         return $_columnIndex;
     }
-    
+
     /**
      * Returns the values for $col column in the select query for $ids ids
      * @param array $ids
@@ -156,15 +156,15 @@ EOQ;
         if (count($ids) === 0) {
             return array();
         }
-        
+
         $_query = $this->getSelectQueryByIds($ids);
         $_columnIndexId = $this->_getColumnIndexInSelectQuery('id');
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
-        
+
         if($_columnIndex === false || $_columnIndexId === false) {
             throw new InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
-        
+
         $_stmt1 = $this->_db->getAdapter()->query($_query);
         $columnIndexId = $_stmt1->fetchAll(Zend_Db::FETCH_COLUMN, $_columnIndexId);
 
@@ -178,7 +178,7 @@ EOQ;
             throw new RuntimeException("Not same count between ID and selected COLUMN");
         }
     }
-    
+
     /**
      * Returns the values for $col column in the select query for $ids ids
      * @param array $ids
@@ -190,75 +190,75 @@ EOQ;
         if (count($ids) === 0) {
             return array();
         }
-        
+
         $_query = $this->getSelectQueryByIds($ids);
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
-        
+
         if($_columnIndex === false) {
             throw new InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
-        
+
         $_stmt2 = $this->_db->getAdapter()->query($_query);
         return $_stmt2->fetchAll(Zend_Db::FETCH_COLUMN, $_columnIndex);
     }
-    
+
     /**
      * Return the table name of the table.
-     * @return string 
+     * @return string
      */
     abstract protected function getTableName();
-    
+
     /**
      * @param Fetcher $paginator
-     * @return Fetcher 
+     * @return Fetcher
      */
     public function selectCountByPaginator(Fetcher $paginator) {
         list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
-        
+
         $sql = <<<EOL
-SELECT 
+SELECT
     count(id)
-FROM 
+FROM
     {$this->getTableName()}
 WHERE
     {$filterInReq}
 EOL;
         return $this->_db->fetchOne($sql, $filterToParameter);
-    }   
-    
+    }
+
     /**
      * @param Fetcher $paginator
-     * @return Fetcher 
+     * @return Fetcher
      */
     public function selectByPaginator(Fetcher $paginator) {
-        
+
         list($sql, $filterToParameter) = $this->getSqlByPaginator($paginator);
-        
+
         $resultSet = $this->_db->fetchCol($sql, $filterToParameter);
-        
+
         return $resultSet;
-    }   
-    
+    }
+
     /**
      * @param Fetcher $paginator
-     * @return array(string, array) the sql and the array of the parameters 
+     * @return array(string, array) the sql and the array of the parameters
      */
     public function getSqlByPaginator(Fetcher $paginator) {
         list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
         $sortInReq = $paginator->getSortForQuery();
         $isRandom = $paginator->isRandomSort();
-        
-        $limit = $paginator->getLimit();       
+
+        $limit = $paginator->getLimit();
         if ($isRandom) {
             $sql = <<<EOL
-SELECT 
+SELECT
     id
-FROM 
-    (SELECT 
-        id, 
-        RANDOM() 
-    FROM 
-        {$this->getTableName()} 
+FROM
+    (SELECT
+        id,
+        RANDOM()
+    FROM
+        {$this->getTableName()}
     WHERE
         {$filterInReq}
     ORDER BY 2
@@ -267,9 +267,9 @@ EOL;
         }
         else {
             $sql = <<<EOL
-SELECT 
+SELECT
     id
-FROM 
+FROM
     {$this->getTableName()}
 WHERE
     {$filterInReq}
@@ -279,9 +279,9 @@ ORDER BY
 EOL;
         }
         return array($sql, $filterToParameter);
-        
+
     }
-    
-    
-    
+
+
+
 }

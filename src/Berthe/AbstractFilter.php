@@ -2,10 +2,10 @@
 
 /**
  * Class definition for Berthe abstract Manager Berthe_AbstractFilter
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/Manager.php
  * @package Berthe
  */
@@ -17,38 +17,38 @@ abstract class Berthe_AbstractFilter implements ArrayAccess {
     protected $_filters = array();
     protected $_sort = array();
     protected $_like = '';
-    
+
     /**
      * Checks if an offset exists
      * @param string $offset
-     * @return boolean 
+     * @return boolean
      */
     public function offsetExists($offset) {
         return isset($this->_filters[$offset]);
     }
-    
+
     /**
      * Gets an offset
      * @param type $offset
-     * @return type 
+     * @return type
      */
     public function offsetGet($offset) {
         return is_string($offset) ? $this->_filters[$offset] : null;
     }
-    
+
     /**
      * sets an offset
      * @param type $offset
-     * @param type $value 
+     * @param type $value
      */
     public function offsetSet($offset, $value) {
         !is_string($offset) and trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Only accepts string offsets', E_USER_WARNING);
         is_string($offset) and $this->_filters[$offset] = $value;
     }
-    
+
     /**
      * Unsets an offset
-     * @param type $offset 
+     * @param type $offset
      */
     public function offsetUnset($offset) {
         !is_string($offset) and trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Only accepts string offsets', E_USER_WARNING);
@@ -56,10 +56,10 @@ abstract class Berthe_AbstractFilter implements ArrayAccess {
             unset($this->_filters[$offset]);
         }
     }
-    
+
     /**
      * Constructor
-     * @param array $filters 
+     * @param array $filters
      * @param array $sort must be an arrays of arrays with deux values : field and order
      *          ie : array(
      *                  array('field1', 'ASC'),
@@ -74,10 +74,10 @@ abstract class Berthe_AbstractFilter implements ArrayAccess {
             $this->_like = $like;
         }
     }
-    
+
     /**
      * Sets filters directly from an array
-     * @param array $filters 
+     * @param array $filters
      */
     public function set(array $filters = array()) {
         $this->_initFilters();
@@ -85,7 +85,7 @@ abstract class Berthe_AbstractFilter implements ArrayAccess {
             $this->offsetSet($key, $filters[$key]);
         }
     }
-    
+
     public function setSort(array $sort = array()) {
         $this->_sort = array();
         foreach ($sort as $value) {
@@ -108,28 +108,28 @@ abstract class Berthe_AbstractFilter implements ArrayAccess {
             }
         }
     }
-    
+
     /**
      * Inits the filters
      */
     private function _initFilters() {
         $this->_filters = array();
     }
-    
+
     /**
      * String convertion function
-     * @return string 
+     * @return string
      */
     public function __toString() {
         return $this->getConditions();
     }
-    
+
     /**
      * Returns the conditions as string to be inserted in a query
      * @return string
      */
     abstract public function getConditions();
-    
+
     /**
      * Returns the sorting as string to be inserted in a query
      * @return string

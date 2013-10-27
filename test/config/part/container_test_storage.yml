@@ -1,3 +1,4 @@
 classes :
     CountryStorage:
         class : Berthe_Store_Echo
+        interceptor : [ @ExceptionInterceptor ]

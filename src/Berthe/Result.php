@@ -7,7 +7,7 @@
 class Berthe_Result {
     /**
      * A stack of data
-     * 
+     *
      * @var array
      */
     protected $_data    = array();
@@ -21,13 +21,13 @@ class Berthe_Result {
      * @var Exception
      */
     protected $_errors  = array();
-    
+
     /**
      * Constructor... empty for the moment
      */
     public function __construct() {
     }
-    
+
     /**
      * Checks the validity of setted datas
      * @param mixed $data
@@ -36,7 +36,7 @@ class Berthe_Result {
     protected function _checkData($data) {
         return true;
     }
-    
+
     /**
      * Adds data to the result object datas stack
      * @param mixed $value The data to add
@@ -56,7 +56,7 @@ class Berthe_Result {
             throw new InvalidArgumentException('$value did not pass _checkData method.');
         }
     }
-    
+
     /**
      * Returns the stack of datas
      * @return array
@@ -64,7 +64,7 @@ class Berthe_Result {
     public function getDatas() {
         return $this->_data;
     }
-    
+
     /**
      * Gets or sets the success
      * @param boolean|null $success [OPTIONAL] If a boolean will set the success of the result object, null by default
@@ -79,7 +79,7 @@ class Berthe_Result {
         }
         return $this->_success;
     }
-    
+
     /**
      * Checks the validity of an exception
      * @param Exception $exception
@@ -88,7 +88,7 @@ class Berthe_Result {
     protected function _checkException($exception) {
         return ($exception instanceof Exception);
     }
-    
+
     /**
      * Adds an excption to the stack
      * @param Exception $exception
@@ -101,7 +101,7 @@ class Berthe_Result {
             throw new InvalidArgumentException('$exception did not pass _checkException method.');
         }
     }
-    
+
     /**
      * Returns the stack of exceptions
      * @return array

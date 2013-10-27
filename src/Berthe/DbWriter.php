@@ -1,10 +1,10 @@
 <?php
 /**
  * Class definition for Berthe abstract Manager Berthe_DbWriter
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/DbWriter.php
  * @package Berthe
  */
@@ -13,14 +13,14 @@ class Berthe_DbWriter extends Berthe_DbReader {
      * Execute statement
      * @param string $sql
      * @param array $bind
-     * @return boolean 
+     * @return boolean
      */
     public function query($sql, array $bind = array()) {
         $sanitizedBinds = $this->sanitizeBinds($bind);
         $this->log($sql, $sanitizedBinds);
         return $this->db->query($sql, $sanitizedBinds);
     }
-    
+
     /**
      * Sanitize binds
      * @param array $bind
@@ -43,36 +43,36 @@ class Berthe_DbWriter extends Berthe_DbReader {
         }
         return $sanitizedBinds;
     }
-    
+
     /**
      * Retrieve the last insert id for table & given pk
      * @param string $tableName
      * @param string $primaryKey
-     * @return int 
+     * @return int
      */
     public function lastInsertId($tableName = null, $primaryKey = null) {
         return $this->db->lastInsertId($tableName, $primaryKey);
     }
-    
+
     /**
      * Open transaction
-     * @return boolean 
+     * @return boolean
      */
     public function beginTransaction() {
         return $this->db->beginTransaction();
     }
-    
+
     /**
      * Commit transaction
-     * @return boolean 
+     * @return boolean
      */
     public function commit() {
         return $this->db->commit();
     }
-    
+
     /**
      * Rollback transaction
-     * @return boolean 
+     * @return boolean
      */
     public function rollback() {
         return $this->db->rollback();

@@ -2,10 +2,10 @@
 
 /**
  * Class definition for error handler Berthe_ErrorHandler
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/ErrorHandler.php
  * @package Berthe
  */
@@ -22,7 +22,7 @@ class Berthe_ErrorHandler extends LogicException {
     const CONST_START_USER          = 1010000;
     const CONST_START_AGENT         = 1011000;
     const CONST_START_CRONCTRL      = 1012000;
-    
+
     /**
      * @var Berthe_ErrorHandler_Error[]
      */
@@ -40,7 +40,7 @@ class Berthe_ErrorHandler extends LogicException {
      * @param string $message
      * @param integer $code
      * @param mixed $data
-     * @param Exception $previous 
+     * @param Exception $previous
      */
     public function add($message, $code, $data = null, Exception $previous = null) {
         if($previous) {
@@ -62,7 +62,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Appends an error to the stack (same as Berthe_ErrorHandler::add, but parametter is an already instanciated error
-     * @param Berthe_ErrorHandler_Error $error 
+     * @param Berthe_ErrorHandler_Error $error
      */
     public function append(Berthe_ErrorHandler_Error $error) {
         $this->_stack[] = $error;
@@ -70,7 +70,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Returns the error having the pointer on it
-     * @return null 
+     * @return null
      */
     public function current() {
         if(isset($this->_stack[$this->_index])) {
@@ -80,7 +80,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Gets current pointed error and Forward the pointer
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function fetch() {
         $_current = $this->current();
@@ -89,7 +89,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Gets current pointed error and rewind the pointer
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function fetchBack() {
         $_current = $this->current();
@@ -98,7 +98,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Forward the pointer and get the next error
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function next() {
         $this->forward();
@@ -106,14 +106,14 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Forward the pointer and get the previous error
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function previous() {
         $this->rewind();
         return $this->current();
     }
     /**
-     * Increments the pointer 
+     * Increments the pointer
      */
     public function forward() {
         if($this->_index <= $this->_count) {
@@ -121,7 +121,7 @@ class Berthe_ErrorHandler extends LogicException {
         }
     }
     /**
-     * Increments the pointer 
+     * Increments the pointer
      */
     public function fastForward() {
         if($this->_index <= $this->_count) {
@@ -129,7 +129,7 @@ class Berthe_ErrorHandler extends LogicException {
         }
     }
     /**
-     * Decrement the pointer 
+     * Decrement the pointer
      */
     public function rewind() {
         if($this->_index >= 0) {
@@ -138,7 +138,7 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Place pointer at the end of the stack and return last error
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function last() {
         $this->fastForward();
@@ -146,14 +146,14 @@ class Berthe_ErrorHandler extends LogicException {
     }
     /**
      * Place pointer at the start of the stack and return first error
-     * @return Berthe_ErrorHandler_Error 
+     * @return Berthe_ErrorHandler_Error
      */
     public function first() {
         $this->reset();
         return $this->current();
     }
     /**
-     * Resets the pointer and stack 
+     * Resets the pointer and stack
      */
     public function reset() {
         $this->_index = 0;
@@ -166,7 +166,7 @@ class Berthe_ErrorHandler extends LogicException {
         throw $this;
     }
     /**
-     * Computes the object 
+     * Computes the object
      */
     protected function _compute() {
         $this->_count = count($this->_stack);
