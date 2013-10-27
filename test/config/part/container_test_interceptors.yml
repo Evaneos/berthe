@@ -1,0 +1,3 @@
+classes :
+    TransactionInterceptor :
+        class : Berthe_Interceptor_Transaction
