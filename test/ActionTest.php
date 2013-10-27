@@ -78,8 +78,10 @@ class Berthe_Store_Array {
 }
 
 class Berthe_Store_Echo {
+    public $injectedVariable = null;
+
     public function save($data) {
-        echo "Berthe_Store_Echo : " . $data . "\n";
+        echo "Berthe_Store_Echo : " . $data . " " . $this->injectedVariable . "\n";
         return true;
     }
 }
@@ -102,4 +104,12 @@ class PrettyExceptionInterceptor extends Berthe_AbstractInterceptor {
 }
 
 
-new Initializer(ROOT_DIR . '/test/config/container_test.yml');
+
+$cfgYML = new Berthe_DI_ConfigYML(ROOT_DIR . '/test/config/container_test.yml');
+$dump = $cfgYML->compile();
+$dump = '<?php $array = ' . $dump . ';';
+file_put_contents(ROOT_DIR . '/test/config/generated.php', $dump);
+
+$cfgPHP = new Berthe_DI_ConfigPHP(ROOT_DIR . '/test/config/generated.php');
+
+new Initializer($cfgPHP);

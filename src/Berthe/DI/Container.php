@@ -1,31 +1,11 @@
 <?php
 class Berthe_DI_Container {
-    protected $config = null;
-    protected $provide = array();
-    protected $registry = array();
+    protected $config = array();
+    protected $registry = null;
 
-    public function __construct($configFilePath) {
-        $this->config = $configFilePath;
-        $this->loadYml($this->config);
-    }
-
-    /**
-     * Configure the container with the provided YML
-     * @param  [type] $config [description]
-     * @return [type]         [description]
-     */
-    public function loadYml($config) {
-        $yml = array();
-        $dirname = dirname($config);
-        $yaml = new Symfony\Component\Yaml\Yaml();
-        $res = $yaml->parse($config);
-        if (array_key_exists('include', $res)) {
-            foreach($res['include'] as $key => $value) {
-                $yml = array_merge_recursive($yml, $yaml->parse($dirname . '/'. $value));
-            }
-        }
-
-        $this->provide = $yml;
+    public function __construct(Berthe_DI_ConfigAbstract $cfg) {
+        $this->registry = new Berthe_DI_Registry();
+        $this->config = $cfg->load();
     }
 
     /**
@@ -35,9 +15,9 @@ class Berthe_DI_Container {
      */
     public function getParameter($parameterName) {
         $toReturn = null;
-        if (array_key_exists('parameters', $this->provide)) {
-            if (array_key_exists($parameterName, $this->provide['parameters'])) {
-                $toReturn = $this->provide['parameters'][$parameterName];
+        if (array_key_exists('parameters', $this->config)) {
+            if (array_key_exists($parameterName, $this->config['parameters'])) {
+                $toReturn = $this->config['parameters'][$parameterName];
             }
         }
 
@@ -50,9 +30,9 @@ class Berthe_DI_Container {
      * @return object
      */
     public function get($serviceName) {
-        if (count($this->provide) > 0) {
-            if (array_key_exists('classes', $this->provide) && array_key_exists($serviceName, $this->provide['classes'])) {
-                return $this->loadService($serviceName, $this->provide['classes'][$serviceName]);
+        if (count($this->config) > 0) {
+            if (array_key_exists('classes', $this->config) && array_key_exists($serviceName, $this->config['classes'])) {
+                return $this->loadService($serviceName, $this->config['classes'][$serviceName]);
             }
             else {
                 throw new RuntimeException('Class not configured ' . $serviceName);
@@ -68,7 +48,7 @@ class Berthe_DI_Container {
      * @return Berthe_DI_Container
      */
     public function flushRegistry() {
-        $this->registry = array();
+        $this->registry->flush();
         return $this;
     }
 
@@ -84,15 +64,15 @@ class Berthe_DI_Container {
             $isSingleton = (bool) $serviceConfig['singleton'];
         }
 
-        if ($isSingleton && array_key_exists($serviceName, $this->registry)) {
-            return $this->registry[$serviceName];
+        if ($isSingleton && $this->registry->get($serviceName)) {
+            return $this->registry->get($serviceName);
         }
         else {
             $class = $this->classInstanciation($serviceConfig);
             $this->classProps($class, $serviceConfig);
             $this->classCalls($class, $serviceConfig);
             $classEncapsulated = $this->classInterceptor($class, $serviceConfig);
-            $this->registry[$serviceName] = $classEncapsulated;
+            $this->registry->set($serviceName, $classEncapsulated);
             return $classEncapsulated;
         }
     }
