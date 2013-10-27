@@ -10,9 +10,9 @@
  * @package Berthe/ErrorHandler
  */
 class Berthe_ErrorHandler_Error extends LogicException {
-    protected $data = null;
+    protected $data = array();
 
-    public function __construct($message, $code, $data) {
+    public function __construct($message, $code, array $data = array()) {
         $this->message = $message;
         $this->code = $code;
         $this->data = $data;

@@ -63,7 +63,28 @@ class Berthe_Modules_Country_Manager {
 
     }
 
+    protected function validate() {
+        $errors = new Berthe_ErrorHandler_Errors();
+
+        // force false test
+        $parameter = true;
+        $validatingStuff = $parameter == false;
+        if (!$validatingStuff) {
+            $error = new Berthe_ErrorHandler_Error('not validating test boolean', 100101, array($parameter));
+            $errors->addError($error);
+            $error = new Berthe_ErrorHandler_Error('not validating test A', 100102, array('data1' => rand(1, 10), 'data2' => rand(10, 100)));
+            $errors->addError($error);
+        }
+
+        if ($errors->hasErrors()) {
+            $errors->throwMe();
+        }
+
+        return true;
+    }
+
     public function save($data) {
+        $this->validate();
         return $this->storage->save($data);
     }
 }
@@ -86,28 +107,17 @@ class Berthe_Store_Echo {
     }
 }
 
-class Berthe_Store_Error {
-    public function save($data) {
-        $errors = new Berthe_ErrorHandler_Errors();
-
-        // force false test
-        $parameter = true;
-        $validatingStuff = $parameter == false;
-        if (!$validatingStuff) {
-            $error = new Berthe_ErrorHandler_Error('not validating test A', 100101, $parameter);
-            $errors->addError($error);
-        }
-
-        if ($errors->hasErrors()) {
-            $errors->throw();
-        }
-    }
-}
-
 class PrettyExceptionInterceptor extends Berthe_AbstractInterceptor {
     protected function intercept($method, $args) {
         try {
             return $this->invoke($method, $args);
+        }
+        catch (Berthe_ErrorHandler_Errors $e) {
+            echo "A Berthe Logic Error Stack occured : \n";
+            $errors = $e->getErrors();
+            foreach($errors as $error) {
+                echo " - " . $error->getMessage() . '(' . $error->getCode() . ') with data=[' . implode(',', $error->getData()) . "]\n";
+            }
         }
         catch(LogicException $e) {
             echo "A logic Exception occured : " . $e->getMessage() . "\n";
