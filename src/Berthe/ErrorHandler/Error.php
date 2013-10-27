@@ -10,24 +10,15 @@
  * @package Berthe/ErrorHandler
  */
 class Berthe_ErrorHandler_Error extends LogicException {
-    // Properties
-    /**
-     * A bunch of data that may be used to display
-     * @var type
-     */
-    protected $_data = null;
-    /**
-     * Getter for datas
-     * @return mixed
-     */
-    public function getData() {
-        return $this->_data;
+    protected $data = null;
+
+    public function __construct($message, $code, $data) {
+        $this->message = $message;
+        $this->code = $code;
+        $this->data = $data;
     }
-    /**
-     * Getter for datas
-     * @return mixed
-     */
-    public function setData($data) {
-        return $this->_data = $data;
+
+    public function getData() {
+        return $this->data;
     }
 }

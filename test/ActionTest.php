@@ -86,6 +86,24 @@ class Berthe_Store_Echo {
     }
 }
 
+class Berthe_Store_Error {
+    public function save($data) {
+        $errors = new Berthe_ErrorHandler_Errors();
+
+        // force false test
+        $parameter = true;
+        $validatingStuff = $parameter == false;
+        if (!$validatingStuff) {
+            $error = new Berthe_ErrorHandler_Error('not validating test A', 100101, $parameter);
+            $errors->addError($error);
+        }
+
+        if ($errors->hasErrors()) {
+            $errors->throw();
+        }
+    }
+}
+
 class PrettyExceptionInterceptor extends Berthe_AbstractInterceptor {
     protected function intercept($method, $args) {
         try {
