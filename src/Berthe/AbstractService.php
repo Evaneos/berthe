@@ -1,10 +1,10 @@
 <?php
 /**
  * Class definition for Berthe abstract Manager Berthe_AbstractService
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/AbstractService.php
  * @package Berthe
  */
@@ -25,7 +25,7 @@ abstract class Berthe_AbstractService {
      * @var Berthe_DbWriter
      */
     protected $_db = null;
-   
+
     /**
      * @return Berthe_DbWriter
      */
@@ -33,14 +33,14 @@ abstract class Berthe_AbstractService {
         if (!$this->_db) {
             $this->_db = Zend_Registry::get("dbWriter");
         }
-        
+
         return $this->_db;
     }
-    
+
     /**
      * Determines if $methodName method is actually accessible by user
      * @param string $methodName The of the method to test
-     * @return boolean 
+     * @return boolean
      */
     public function isMethodAccessible($methodName){
         return true;

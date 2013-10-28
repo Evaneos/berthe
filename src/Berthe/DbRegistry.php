@@ -2,10 +2,10 @@
 
 /**
  * Class definition for DbRegistry
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/DbRegistry.php
  * @package Berthe
  */
@@ -16,7 +16,7 @@ class Berthe_DbRegistry {
      */
     private static $_reader = null;
     /**
-     * 
+     *
      * @var Berthe_DbWriter
      */
     private static $_writer = null;
@@ -42,7 +42,7 @@ class Berthe_DbRegistry {
     }
     /**
      * Sets the reader adapter
-     * @param Berthe_DbReader $reader 
+     * @param Berthe_DbReader $reader
      */
     public static function setReader(Berthe_DbReader $reader) {
         self::$_reader = $reader;

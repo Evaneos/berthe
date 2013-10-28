@@ -1,7 +1,7 @@
 <?php
 abstract class Berthe_AbstractStore {
     /**
-     * @var boolean 
+     * @var boolean
      */
     protected $isEnabled = true;
     /**
@@ -12,7 +12,7 @@ abstract class Berthe_AbstractStore {
      * @var boolean
      */
     protected $isTTLAble = false;
-    
+
     /**
      * @param array $ids
      * @return array id=>object
@@ -33,7 +33,7 @@ abstract class Berthe_AbstractStore {
      * @return boolean success
      */
     abstract protected function _delete(Berthe_AbstractVO &$vo);
-    
+
     /**
      * Getter and setter for isEnabled toggle
      * @param mixed $bool bool|null
@@ -43,7 +43,7 @@ abstract class Berthe_AbstractStore {
         if ($bool === true || $bool === false) {
             $this->isEnabled = $bool;
         }
-        
+
         return $this->isEnabled;
     }
     /**
@@ -58,7 +58,7 @@ abstract class Berthe_AbstractStore {
     public function isTTLAble() {
         return $this->isTTLAble;
     }
-    
+
     /**
      * @param array $ids
      * @return array id=>object
@@ -71,7 +71,7 @@ abstract class Berthe_AbstractStore {
             return array();
         }
     }
-    
+
     /**
      * @param Berthe_AbstractVO $vo
      * @return boolean
@@ -79,7 +79,7 @@ abstract class Berthe_AbstractStore {
     final public function delete(Berthe_AbstractVO &$vo) {
         return $this->_delete($vo);
     }
-    
+
     /**
      * @param Berthe_AbstractVO $vo
      * @return boolean success
@@ -92,20 +92,20 @@ abstract class Berthe_AbstractStore {
         else {
             $ret = $this->_insert($vo);
         }
-        
+
         // @TOREFACTOR O.M. This check will help us find where someone forgot to add a return value in update/insert
         if (!is_bool($ret)) {
             trigger_error("SAVE method doesn't return a boolean value for class " . get_class($vo), E_USER_NOTICE);
         }
-        
+
         // @TOREFACTOR O.M. I put that because some morons don't return a value in INSERT and UPDATE of their DAOWriter
         if ($ret !== false) {
             $ret = true;
         }
-        
+
         return $ret;
     }
-    
+
     /**
      * Save multiple objects, returns true if all are saved, false if at least one failed
      * @param Berthe_AbstractVO[] $vos
@@ -114,9 +114,9 @@ abstract class Berthe_AbstractStore {
     final public function saveMulti(array $vos = array()) {
         return $this->_saveMulti($vos);
     }
-    
+
     /**
-     * 
+     *
      * @param array $vos
      * @return boolean
      */

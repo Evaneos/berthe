@@ -1,7 +1,7 @@
 <?php
 class Berthe_StoreArray extends Berthe_AbstractStore {
     protected $objects = array();
-    
+
     protected function _load(array $ids = array()) {
         $output = array();
         foreach($ids as $id) {
@@ -11,7 +11,7 @@ class Berthe_StoreArray extends Berthe_AbstractStore {
         }
         return $output;
     }
-    
+
     protected function _saveMulti(array $vos = array()) {
         $this->objects = $vos + $this->objects;
         return true;

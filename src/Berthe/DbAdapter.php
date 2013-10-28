@@ -1,25 +1,25 @@
 <?php
 /**
  * Class definition for Berthe abstract Manager Berthe_DbAdapter
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/DbAdapter.php
  * @package Berthe
  */
 class Berthe_DbAdapter {
     /**
-     * @var Log_Logger 
+     * @var Log_Logger
      */
     protected $logger = null;
-    
+
     /**
      *
-     * @var Zend_Db_Adapter_Abstract 
+     * @var Zend_Db_Adapter_Abstract
      */
     protected $db = null;
-    
+
     public function __construct(Zend_Db_Adapter_Abstract $db) {
         $this->db = $db;
         $this->logger = new Log_Logger();
@@ -27,15 +27,15 @@ class Berthe_DbAdapter {
         $isLoggable = Zend_Registry::get(Initializer::CONFIG)->database->logger;
         $this->logger->isEnabled($isLoggable);
     }
-    
+
     /**
      *
-     * @return Zend_Db_Adapter_Abstract 
+     * @return Zend_Db_Adapter_Abstract
      */
     public function getAdapter() {
         return $this->db;
     }
-    
+
     /**
      * @param string $sql
      * @param array $binds

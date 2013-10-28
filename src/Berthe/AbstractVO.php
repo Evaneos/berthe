@@ -2,10 +2,10 @@
 
 /**
  * Class definition for VO abstract Berthe_VO
- * 
+ *
  * @author dev@evaneos.com
  * @copyright Evaneos
- * @version 1.0 
+ * @version 1.0
  * @filesource Berthe/VO.php
  * @package Berthe
  */
@@ -35,11 +35,11 @@ abstract class Berthe_AbstractVO {
     protected function _calcProperties() {
         return true;
     }
-    
+
     /**
      * populates the VO's attributes with values from $infos array and computed
      * the needed ones
-     * @param array $infos 
+     * @param array $infos
      * @return boolean
      */
     public function populate(array $infos = array()) {
@@ -50,16 +50,16 @@ abstract class Berthe_AbstractVO {
         $_ret and $_ret = $this->_calcProperties();
         return $_ret;
     }
-    
+
     /**
      * Populates the attributes with values from $infos
-     * @param array $infos 
+     * @param array $infos
      * @return boolean
      */
     protected function _setAttributes(array $infos = array()) {
         // for each attribute
         foreach (array_keys($infos) as $key) {
-            
+
             // if !exists
             if(!property_exists($this, $key)) {
                 // if not in prop mapper
@@ -83,13 +83,13 @@ abstract class Berthe_AbstractVO {
         }
         return true;
     }
-    
+
     /**
      * Sets a props, casting the value
      * IF THE DEFAULT VALUE IS NULL THERE IS NO CASTING
      * @param string $prop
      * @param mixed $value
-     * @return boolean 
+     * @return boolean
      */
     protected function _setProp($prop, $value) {
             // cast the type and set it
@@ -154,7 +154,7 @@ abstract class Berthe_AbstractVO {
             $this->{$prop} = $newValue;
             return true;
     }
-    
+
     /**
      * @return array
      */

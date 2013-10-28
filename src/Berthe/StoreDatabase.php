@@ -16,12 +16,12 @@ class Berthe_StoreDatabase extends Berthe_AbstractStore {
      * @var boolean
      */
     protected $isTTLAble = false;
-    
+
     public function __construct(Berthe_AbstractReader $reader, Berthe_AbstractWriter $writer) {
         $this->_reader = $reader;
         $this->_writer = $writer;
     }
-    
+
     /**
      * @param array $ids
      * @return array id=>object
