@@ -1,9 +1,9 @@
 {
-    "name": "evaneos/berthe",
+    "name": "oliviermadre/berthe",
     "description": "The model Framework made by Evaneos",
     "version": "1.0.0",
     "type": "library",
-    "homepage" : "http://github.com/Evaneos/berthe",
+    "homepage" : "http://github.com/oliviermadre/berthe",
     "keywords": [],
     "time": "2013-10-11",
     "license": "MIT",

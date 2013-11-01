@@ -1,5 +1,0 @@
-classes :
-    ExceptionInterceptor :
-        class : Berthe_Interceptor_Exception
-    PrettyExceptionInterceptor :
-        class : PrettyExceptionInterceptor

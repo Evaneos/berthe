@@ -1,5 +1,0 @@
-classes :
-    CountryManager :
-        class : Berthe_Modules_Country_Manager
-        props :
-            storage : @CountryStorage

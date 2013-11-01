@@ -1,8 +1,0 @@
-classes :
-    CountryService :
-        class : Berthe_Service_Country
-        singleton : true
-        arguments : [ 1, 2 ]
-        call :
-            setManager : [ @CountryManager ]
-        interceptor : [ @ExceptionInterceptor, @PrettyExceptionInterceptor ]
