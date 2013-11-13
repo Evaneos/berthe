@@ -1,25 +1,43 @@
 <?php
 class MethodAnnotationTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
-        require_once dirname(dirname(__DIR__)) . '/fixtures/ClassWithAnnotation.php';
+        $this->configPath = dirname(dirname(__DIR__)) . '/config/';
+
+        // Autoloader for fixtures
+        spl_autoload_register(function($class) {
+            $file = str_replace("_", DIRECTORY_SEPARATOR, $class) . ".php";
+            $filepath = dirname(dirname(__DIR__)) . '/fixtures/' . $file;
+            if (file_exists($filepath)) {
+                require $filepath;
+            }
+            return false;
+        });
+
+        Doctrine\Common\Annotations\AnnotationRegistry::registerFile(ROOT_DIR . '/src/Berthe/Annotation/ACL.php');
     }
 
-    public function tearDown() {
-
+    public function testDummyMethodAccessibleWithRoleAdmin() {
+        $_SESSION['role'] = Role::ADMIN;
+        $service = $this->getServiceTest();
+        $service->dummyMethod(1, 2);
     }
 
-
-    public function testGetListOfClassAnnotations() {
-        $class = new ClassWithAnnotation();
-        $annotationReader = new AnnotationReader();
-        $direct = true;
-        $annotations = $annotationReader->getClassAnnotation($class, $direct);
+    /**
+     * @expectedException LogicException
+     */
+    public function testDummyMethodNotAccessibleWithRoleGuest() {
+        $_SESSION['role'] = Role::GUEST;
+        $service = $this->getServiceTest();
+        $service->dummyMethod(1, 2);
     }
 
-    public function testGetListOfMethodAnnotations() {
-        $class = new ClassWithAnnotation();
-        $annotationReader = new AnnotationReader();
-        $direct = true;
-        $annotations = $annotationReader->getMethodAnnotation($method, $direct);
+    /**
+     * @return ServiceTest
+     */
+    private function getServiceTest() {
+        $exceptionInterceptor = new Berthe_Interceptor_Exception(new ServiceTest());
+        $aclInterceptor = new Berthe_Interceptor_ACLChecker($exceptionInterceptor);
+
+        return $aclInterceptor;
     }
 }
