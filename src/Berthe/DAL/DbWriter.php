@@ -1,13 +1,7 @@
 <?php
-/**
- * Class definition for Berthe abstract Manager Berthe_DbWriter
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/DbWriter.php
- * @package Berthe
- */
+
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_DbWriter extends Berthe_DbReader {
     /**
      * Execute statement

@@ -1,15 +1,7 @@
 <?php
+namespace Evaneos\Berthe\ErrorHandler;
 
-/**
- * Class definition for VO Berthe_ErrorHandler_Error
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/ErrorHandler/Error.php
- * @package Berthe/ErrorHandler
- */
-class Berthe_ErrorHandler_Error extends LogicException {
+class Error extends \LogicException {
     protected $data = array();
 
     public function __construct($message, $code, array $data = array()) {

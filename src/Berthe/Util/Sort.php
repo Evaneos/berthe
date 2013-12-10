@@ -1,12 +1,17 @@
 <?php
-class Berthe_Util_Sort {
+
+namespace Evaneos\Berthe\Util;
+
+use Evaneos\Berthe\ as Berthe;
+
+class Sort {
     /**
      * @param string $property
      * @param array $vos
      * @return array
      */
     public static function byProperty($property, array $vos = array()) {
-        $extract = Berthe_Util_MapReduce::extractProperty($property, $vos);
+        $extract = MapReduce::extractProperty($property, $vos);
         asort($extract);
         $ret = array();
         foreach(array_keys($extract) as $idSibling) {

@@ -1,24 +1,32 @@
 <?php
-class Berthe_Util_DateHandlingSaveHook extends Berthe_AbstractHook {
-    public function before(Berthe_AbstractVO $object) {
-        if (property_exists($object, "created_at") && !$object->id) {
-            $object->created_at = new DateTime();
+namespace Evaneos\Berthe\Util;
+
+use Evaneos\Berthe\ as Berthe;
+
+class DateHandlingSaveHook extends Berthe\AbstractHook {
+    public function before($data) {
+        if (!is_object($data)) {
+            throw new \RuntimeException('Not an object');
         }
 
-        if (property_exists($object, "createdAt") && !$object->id) {
-            $object->created_at = new DateTime();
+        if (property_exists($data, "created_at") && !$data->id) {
+            $object->created_at = new \DateTime();
         }
 
-        if (property_exists($object, "updated_at")) {
-            $object->updated_at = new DateTime();
+        if (property_exists($data, "createdAt") && !$data->id) {
+            $data->created_at = new \DateTime();
         }
 
-        if (property_exists($object, "updatedAt")) {
-            $object->updated_at = new DateTime();
+        if (property_exists($data, "updated_at")) {
+            $data->updated_at = new \DateTime();
+        }
+
+        if (property_exists($data, "updatedAt")) {
+            $data->updated_at = new \DateTime();
         }
     }
 
-    public function after(Berthe_AbstractVO $object) {
+    public function after($data) {
 
     }
 }

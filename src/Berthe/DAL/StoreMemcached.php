@@ -1,4 +1,7 @@
 <?php
+
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_StoreMemcached extends Berthe_AbstractStore {
     /**
      * The memcached accessor shared across all stores

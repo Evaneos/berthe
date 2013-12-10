@@ -1,36 +1,21 @@
 <?php
-/**
- * Class definition for Berthe abstract Reader Berthe_Reader
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/Reader.php
- * @package Berthe
- */
-abstract class Berthe_AbstractReader {
+
+namespace Evaneos\Berthe\DAL;
+
+
+abstract class AbstractReader {
     /**
      * Class name of the VO for current package
      */
-    const VO_CLASS = 'Berthe_AbstractVO';
+    const VO_CLASS = '\Evaneos\Berthe\AbstractVO';
     /**
-     * @var Berthe_Context
+     * @var DbReader
      */
-    public $context = null;
-    /**
-     *
-     * @var Berthe_DbReader
-     */
-    protected $_db = null;
-
-    public function __construct(Berthe_Context $context = null) {
-        $this->_db = Zend_Registry::get('dbReader');
-        $this->context = $context;
-    }
+    protected $db = null;
 
     /**
-     * @param \Berthe_DbReader $db
-     * @return \Berthe_AbstractReader
+     * @param DbReader $db
+     * @return AbstractReader
      */
     public function setDb(Berthe_DbReader $db) {
         $this->_db = $db;
@@ -56,7 +41,7 @@ abstract class Berthe_AbstractReader {
         $_class = $this->getVOClass();
 
         if($_class == self::VO_CLASS) {
-            throw new RuntimeException(__CLASS__ . '::VO_CLASS constant is not defined');
+            throw new \RuntimeException(__CLASS__ . '::VO_CLASS constant is not defined');
         }
 
         foreach($datas as &$row) {

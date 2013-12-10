@@ -1,60 +1,58 @@
 <?php
-/**
- * Class definition for Berthe abstract Manager Berthe_Manager
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/Manager.php
- * @package Berthe
- */
-abstract class Berthe_AbstractManager {
+
+namespace Evaneos\Berthe;
+
+abstract class AbstractManager {
     /**
-     * @var Berthe_Context
+     * @var Storage
      */
-    public $context = null;
+    protected $storage = null;
 
     /**
-     * @var Berthe_AbstractStorage
+     * @var Validator
      */
-    protected $_storage = null;
+    protected $validator = null;
 
-    /**
-     * @var Berthe_AbstractValidator
-     */
-    protected $_validator = null;
-
-    /**
-     * @var Berthe_FactoryManager
-     */
-    protected $_managerFactory = null;
-
-    protected $validateHooks = array();
     protected $saveHooks = array();
     protected $deleteHooks = array();
 
     /**
-     * @return Berthe_AbstractValidator
+     * @return Validator
      */
-    abstract protected function _getValidator();
+    public function getValidator() {
+        return $this->validator;
+    }
 
     /**
-     * @return Berthe_AbstractStorage
+     * @param Validator $validator
+     * @return AbstractManager
      */
-    abstract protected function _getStorage();
+    public function setValidator(Validator $validator) {
+        $this->validator = $validator;
+        return $this;
+    }
+
+    public function getStorage() {
+        return $this->storage;
+    }
+
+    public function setStorage(Storage $storage) {
+        $this->storage = $storage;
+        return $this->storage;
+    }
 
     /**
      * Return a new VO with default values
-     * @return Berthe_AbstractVO the VO with its default values
+     * @return Berthe\AbstractVO the VO with its default values
      */
     abstract public function getVoForCreation();
 
     public function __construct() {
-        $this->saveHooks[] = new Berthe_Util_DateHandlingSaveHook();
+        $this->saveHooks[] = new Util\DateHandlingSaveHook();
     }
 
     /**
-     * @return Berthe_AbstractVO[]
+     * @return Berthe\AbstractVO[]
      */
     public function getAll() {
         $pagi = new Fetcher(-1, -1);
@@ -65,20 +63,20 @@ abstract class Berthe_AbstractManager {
     /**
      * Default method to get an object by its id
      * @param int $id
-     * @return Berthe_AbstractVO
+     * @return Berthe\AbstractVO
      */
     public function getById($id) {
-        $_ret = $this->_getStorage()->getById($id);
+        $_ret = $this->getStorage()->getById($id);
         return $_ret;
     }
 
     /**
      * Default method to get a list of objects with a list of ids
      * @param array $ids
-     * @return Berthe_AbstractVO
+     * @return Berthe\AbstractVO
      */
     public function getByIds(array $ids = array()) {
-        return $this->_getStorage()->getByIds($ids);
+        return $this->getStorage()->getByIds($ids);
     }
 
     /**
@@ -86,7 +84,7 @@ abstract class Berthe_AbstractManager {
      * @return Fetcher
      */
     public function getByPaginator(Fetcher $paginator) {
-        $paginator = $this->_getStorage()->getByPaginator($paginator);
+        $paginator = $this->getStorage()->getByPaginator($paginator);
         return $paginator;
     }
 
@@ -96,7 +94,7 @@ abstract class Berthe_AbstractManager {
      * @return Fetcher
      */
     public function getColumnByPaginator(Fetcher $paginator, $columnName = "id") {
-        $paginator = $this->_getStorage()->getColumnByPaginator($paginator, $columnName);
+        $paginator = $this->getStorage()->getColumnByPaginator($paginator, $columnName);
         return $paginator;
     }
 
@@ -106,7 +104,7 @@ abstract class Berthe_AbstractManager {
      * @return Fetcher
      */
     public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = "id") {
-        $paginator = $this->_getStorage()->getColumnByPaginatorPreserveIds($paginator, $columnName);
+        $paginator = $this->getStorage()->getColumnByPaginatorPreserveIds($paginator, $columnName);
         return $paginator;
     }
 
@@ -115,7 +113,7 @@ abstract class Berthe_AbstractManager {
      * @return string sql
      */
     public function getSqlByPaginator($paginator) {
-        return $this->_getStorage()->getSqlByPaginator($paginator);
+        return $this->getStorage()->getSqlByPaginator($paginator);
     }
 
     /**
@@ -126,44 +124,30 @@ abstract class Berthe_AbstractManager {
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
      */
     public function getNextAndPreviousByPaginator(Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
-        return $this->_getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
+        return $this->getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
     }
 
     /**
      * Default method to save (insert or update depending on context) an object
-     * @param Berthe_AbstractVO $object
+     * @param Berthe\AbstractVO $object
      * @return boolean
      */
     public function save($object) {
-        $ret = $this->validate($object);
+        $ret = $this->getValidator()->validateSave($object);
         if ($ret) {
             $ret = $this->_save($object);
         }
         return $ret;
     }
 
-    final protected function validate($object) {
-        foreach($this->validateHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+    protected function _save($object) {
+        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
             $hook->before($object);
         }
 
-        $ret = $this->_getValidator()->validate($object);
+        $ret = $this->getStorage()->save($object);
 
-        foreach($this->validateHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
-            $hook->after($object);
-        }
-
-        return $ret;
-    }
-
-    final protected function _save($object) {
-        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
-            $hook->before($object);
-        }
-
-        $ret = $this->_getStorage()->save($object);
-
-        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
             $hook->after($object);
         }
 
@@ -175,14 +159,22 @@ abstract class Berthe_AbstractManager {
      * @param int $id
      * @return boolean
      */
-    final public function delete($object) {
-        foreach($this->deleteHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+    public function delete($object) {
+        $ret = $this->getValidator()->validateDelete($object);
+        if ($ret) {
+            $ret = $this->_delete($object);
+        }
+        return $ret;
+    }
+
+    protected function _delete($object) {
+        foreach($this->deleteHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
             $hook->before($object);
         }
 
-        $ret = $this->_getStorage()->delete($object);
+        $ret = $this->getStorage()->delete($object);
 
-        foreach($this->saveHooks as /* @var $hook Berthe_AbstractHook */ $hook) {
+        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
             $hook->after($object);
         }
 

@@ -1,5 +1,10 @@
 <?php
-class Berthe_Util_MapReduce {
+
+namespace Evaneos\Berthe\Util;
+
+use Evaneos\Berthe\ as Berthe;
+
+class MapReduce {
     /**
      * Return an array with the properties for the given set of Berthe VO
      * @param string $property (can dig into object using dots (exemple :  propObject.subpropObject.prop))
@@ -10,10 +15,10 @@ class Berthe_Util_MapReduce {
         $propertyChain = explode(".", $property);
 
         $ret = array();
-        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
+        foreach($vos as /* @var $vo Berthe\AbstractVO */ $vo) {
             $voChainable = $vo;
             $copyChain = $propertyChain;
-            if (!($voChainable instanceof Berthe_AbstractVO)) {
+            if (!($voChainable instanceof Berthe\AbstractVO)) {
                 trigger_error("Wrong object given for property extraction");
                 continue;
             }
@@ -36,8 +41,8 @@ class Berthe_Util_MapReduce {
      */
     public static function extractPropertyInArray($property, array $vos = array()) {
         $ret = array();
-        foreach($vos as /* @var $vo Berthe_AbstractVO */ $vo) {
-            if (!($vo instanceof Berthe_AbstractVO)) {
+        foreach($vos as /* @var $vo Berthe\AbstractVO */ $vo) {
+            if (!($vo instanceof Berthe\AbstractVO)) {
                 trigger_error("Wrong object given for property extraction");
                 continue;
             }

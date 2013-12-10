@@ -1,14 +1,7 @@
 <?php
 
-/**
- * Class definition for Writer abstract Berthe_Writer
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/Writer.php
- * @package Berthe
- */
+namespace Evaneos\Berthe\DAL;
+
 abstract class Berthe_AbstractWriter {
     /**
      * @var Berthe_Context

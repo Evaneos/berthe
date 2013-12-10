@@ -1,5 +1,7 @@
 <?php
-abstract class Berthe_AbstractInterceptor {
+namespace Evaneos\Berthe\Interceptor;
+
+abstract class AbstractInterceptor implements Interceptor {
     protected $decorated = null;
     protected $mainDecorated = null;
 

@@ -1,39 +1,19 @@
 <?php
 
-/**
- * Class definition for Berthe abstract Storage Berthe_Storage
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/Storage.php
- * @package Berthe
- */
-abstract class Berthe_AbstractStorage {
-    const STORAGE_GUID = 'Berthe_AbstractStorage_Package_GUID';
+namespace Evaneos\Berthe\DAL;
+
+abstract class AbstractStorage {
+    const STORAGE_GUID = '\Evaneos\Berthe\AbstractStorage\Package_GUID';
 
     const STORE_LEVEL_1 = 'array_php';
     const STORE_VOLATILE_WITH_TTL = 'ramcache';
     const STORE_PERSISTENT = 'database';
 
     /**
-     * @var Berthe_Context
-     */
-    public $context = null;
-
-    /**
      * Set to true to force cache regeneration
      * @var boolean
      */
     public $ignoreCache = false;
-
-    /**
-     * Set to true if the frontcache has to know and register the object for further flush with its reloader
-     * @see Berthe_FrontCache_Reloader::addRelation
-     * @see Berthe_FrontCache_Reloader::flushRelation
-     * @var boolean
-     */
-    protected $isFrontCacheAware = true;
 
     /**
      * @var Berthe_AbstractStore[]

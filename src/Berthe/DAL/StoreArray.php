@@ -1,4 +1,7 @@
 <?php
+
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_StoreArray extends Berthe_AbstractStore {
     protected $objects = array();
 

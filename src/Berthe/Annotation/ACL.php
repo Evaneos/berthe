@@ -1,9 +1,13 @@
 <?php
+namespace Evaneos\Berthe\Annotation;
+
+use Doctrine\Common\Annotations as Doctrine;
+
 /**
  * @Annotation
  * @Target({"CLASS","METHOD", "PROPERTY"})
  */
-class Berthe_Annotation_ACL {
+class ACL extends Doctrine\Annotation {
     public $role = null;
 
     public function __construct(array $values = array()) {

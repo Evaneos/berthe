@@ -1,4 +1,7 @@
 <?php
+
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_StoreDatabase extends Berthe_AbstractStore {
     /**
      * @var Berthe_AbstractReader

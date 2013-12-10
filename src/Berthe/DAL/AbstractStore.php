@@ -1,4 +1,7 @@
 <?php
+
+namespace Evaneos\Berthe\DAL;
+
 abstract class Berthe_AbstractStore {
     /**
      * @var boolean

@@ -1,14 +1,7 @@
 <?php
 
-/**
- * Class definition for DbRegistry
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/DbRegistry.php
- * @package Berthe
- */
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_DbRegistry {
     /**
      *

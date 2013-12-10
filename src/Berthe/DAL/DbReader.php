@@ -1,13 +1,7 @@
 <?php
-/**
- * Class definition for Berthe abstract Manager Berthe_DbReader
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/DbReader.php
- * @package Berthe
- */
+
+namespace Evaneos\Berthe\DAL;
+
 class Berthe_DbReader extends Berthe_DbAdapter {
     /**
      * @param string $sql

@@ -1,5 +1,8 @@
 <?php
-abstract class Berthe_AbstractHook {
+
+namespace Evaneos\Berthe;
+
+abstract class AbstractHook {
     /**
      * Will be run before the hooked method
      * Should be abstract, but PHP won't fix the type hinting issue on abstract due to laziness (php bug #36601)
