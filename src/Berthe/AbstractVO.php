@@ -33,7 +33,6 @@ abstract class AbstractVO {
     }
 
     protected function setProperties($properties) {
-        var_dump($properties);
         foreach($properties as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
