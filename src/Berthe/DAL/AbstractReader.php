@@ -31,24 +31,24 @@ abstract class AbstractReader {
     }
 
     /**
-     * Implements an bunch of \Berthe\AbstractVO from datas
+     * Implements a bunch of \Berthe\AbstractVO from datas
      * @param array $datas
      * @return \Berthe\AbstractVO
      */
     protected function implementVOs(array $datas = array()) {
-        $_ret = array();
+        $ret = array();
 
-        $_class = $this->getVOClass();
+        $class = $this->getVOClass();
 
-        if($_class == self::VO_CLASS) {
+        if($class == self::VO_CLASS) {
             throw new \RuntimeException(__CLASS__ . '::VO_CLASS constant is not defined');
         }
 
         foreach($datas as &$row) {
-            $_ret[$row['id']] = new $_class($row);
+            $ret[$row['id']] = new $class($row);
         }
 
-        return $_ret;
+        return $ret;
     }
 
     /**

@@ -89,7 +89,7 @@ abstract class AbstractStore {
      */
     final public function save(\Berthe\AbstractVO &$vo) {
         $ret = null;
-        if ($vo->id) {
+        if ($vo->getId()) {
             $ret = $this->_update($vo);
         }
         else {

@@ -241,7 +241,7 @@ abstract class AbstractStorage {
         $paginator->setPage($page);
         $paginator->setNbByPage($nbByPage);
 
-        $_keys = array_keys($ids, $vo->id);
+        $_keys = array_keys($ids, $vo->getId());
 
         $position = reset($_keys);
 
@@ -313,11 +313,11 @@ abstract class AbstractStorage {
         $vos = $this->getByIds(array_merge($beforeIds, $afterIds));
 
         foreach($vos as $vo) {
-            if (in_array($vo->id, $beforeIds)) {
-                $before[$vo->id] = $vo;
+            if (in_array($vo->getId(), $beforeIds)) {
+                $before[$vo->getId()] = $vo;
             }
             else {
-                $after[$vo->id] = $vo;
+                $after[$vo->getId()] = $vo;
             }
         }
 

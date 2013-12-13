@@ -64,7 +64,7 @@ class StoreMemcached extends AbstractStore {
         $_objectsFromCache = $this->memcached->getMulti(array_keys($_memcachedFormattedIds));
         $_objects = array();
         foreach($_objectsFromCache as $_memcachedKey => &$_objectFromCache) {
-            if($_objectFromCache->version == $_objectFromCache::VERSION) {
+            if($_objectFromCache->getVersion() == $_objectFromCache::VERSION) {
                 $_objects[$_memcachedFormattedIds[$_memcachedKey]] = $_objectFromCache;
             }
         }
@@ -82,7 +82,7 @@ class StoreMemcached extends AbstractStore {
 
         $toSave = array();
         foreach($vos as $vo) {
-            $toSave[$this->getMemcachedKey($vo->id)] = $vo;
+            $toSave[$this->getMemcachedKey($vo->getId())] = $vo;
         }
         return $this->memcached->setMulti($toSave);
     }
@@ -92,7 +92,7 @@ class StoreMemcached extends AbstractStore {
             return true;
         }
 
-        return $this->memcached->set($this->getMemcachedKey($vo->id), $vo);
+        return $this->memcached->set($this->getMemcachedKey($vo->getId()), $vo);
     }
 
     protected function _update(\Berthe\AbstractVO &$vo) {
@@ -108,6 +108,6 @@ class StoreMemcached extends AbstractStore {
             return true;
         }
 
-        return $this->memcached->delete($this->getMemcachedKey($vo->id));
+        return $this->memcached->delete($this->getMemcachedKey($vo->getId()));
     }
 }

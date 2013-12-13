@@ -21,22 +21,22 @@ class StoreArray extends AbstractStore {
     }
 
     protected function _insert(\Berthe\AbstractVO &$vo) {
-        if ($vo->id) {
-            $this->objects[(int)$vo->id] = $vo;
+        if ($vo->getId()) {
+            $this->objects[(int)$vo->getId()] = $vo;
         }
         return true;
     }
 
     protected function _update(\Berthe\AbstractVO &$vo) {
-        if ($vo->id) {
-            $this->objects[(int)$vo->id] = $vo;
+        if ($vo->getId()) {
+            $this->objects[(int)$vo->getId()] = $vo;
         }
         return true;
     }
 
     protected function _delete(\Berthe\AbstractVO &$vo) {
-        if ($vo->id) {
-            $id = (int) $vo->id;
+        if ($vo->getId()) {
+            $id = (int) $vo->getId();
             if (array_key_exists($id, $this->objects)) {
                 unset($this->objects[$id]);
             }

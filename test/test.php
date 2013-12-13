@@ -8,10 +8,6 @@ class MyVO extends \Berthe\AbstractVO {
     protected $id = 0;
     protected $name = '';
 
-    public function __construct() {
-
-    }
-
     public function getId() {
         return $this->id;
     }
@@ -60,24 +56,23 @@ class MyReader extends \Berthe\DAL\AbstractReader {
 
     public function fetchObject($id) {
         $dbDriver = $this->db->getAdapter();
-        $sql = "SELECT * FROM users WHERE id = ?";
-        $stmt = $dbDriver->query($sql, array($id));
+        $sql = "SELECT * FROM users WHERE id IN (?, ?)";
+        $stmt = $dbDriver->fetchAll($sql, array(1, 2));
         $obj = $stmt->fetchObject("\MyVO");
         var_dump($obj);
-        die("azeeaz");
     }
 }
 
 class MyWriter extends \Berthe\DAL\AbstractWriter {
     public function update(\Berthe\AbstractVO $object) {
-        return (bool)$this->db->query("UPDATE users SET name=? where id=?", array($object->name, $object->id));
+        return (bool)$this->db->query("UPDATE users SET name=? where id=?", array($object->getName(), $object->getId()));
     }
 
     public function insert(\Berthe\AbstractVO $object) {
-        $ret = (bool)$this->db->query("INSERT INTO users (name) VALUES (?)", array($object->name));
+        $ret = (bool)$this->db->query("INSERT INTO users (name) VALUES (?)", array($object->getName()));
         $id = (int)$this->db->lastInsertId("users","id");
         if ($id > 0) {
-            $object->id = $id;
+            $object->setId($id);
             return true;
         }
         else {
@@ -128,11 +123,9 @@ $manager->setStorage($storage);
 $manager->setValidator($validator);
 
 $object = $manager->run();
-$object->name = $object->name . rand(1, 100);
-$manager->save($object);
+var_dump($object);
 
-
-$vo = new MyVO();
-$vo->name = 'JOSEF';
-$manager->save($vo);
-var_dump($vo);
+// $vo = new MyVO();
+// $vo->setName('JOSEF');
+// $manager->save($vo);
+// var_dump($vo);

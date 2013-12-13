@@ -7,6 +7,6 @@ class Manager extends \Berthe\AbstractManager {
     }
 
     public function run() {
-        return $this->getStorage()->fetchObject();
+        return $this->getById(rand(1, 4));
     }
 }

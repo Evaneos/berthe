@@ -48,7 +48,7 @@ abstract class AbstractManager {
     abstract public function getVoForCreation();
 
     public function __construct() {
-        $this->saveHooks[] = new Util\DateHandlingSaveHook();
+
     }
 
     /**

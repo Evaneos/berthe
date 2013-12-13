@@ -49,7 +49,7 @@ class StoreDatabase extends AbstractStore {
     protected function _insert(\Berthe\AbstractVO &$vo) {
         $ret = $this->getWriter()->insert($vo);
         if ($ret) {
-            $results = $this->load(array($vo->id));
+            $results = $this->load(array($vo->getId()));
             if (count($results) === 1) {
                 $vo = reset($results);
             }
@@ -60,7 +60,7 @@ class StoreDatabase extends AbstractStore {
     protected function _update(\Berthe\AbstractVO &$vo) {
         $ret = $this->getWriter()->update($vo);
         if ($ret) {
-            $results = $this->load(array($vo->id));
+            $results = $this->load(array($vo->getId()));
             if (count($results) === 1) {
                 $vo = reset($results);
             }
