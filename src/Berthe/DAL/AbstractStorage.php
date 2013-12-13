@@ -162,10 +162,10 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param Fetcher $paginator
-     * @return Fetcher
+     * @param \Berthe\Fetcher $paginator
+     * @return \Berthe\Fetcher
      */
-    public function getByPaginator(Fetcher $paginator) {
+    public function getByPaginator(\Berthe\Fetcher $paginator) {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getByIds($ids);
@@ -175,11 +175,11 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param Fetcher $paginator
+     * @param \Berthe\Fetcher $paginator
      * @param string $columnName
-     * @return Fetcher
+     * @return \Berthe\Fetcher
      */
-    public function getColumnByPaginator(Fetcher $paginator, $columnName = 'id') {
+    public function getColumnByPaginator(\Berthe\Fetcher $paginator, $columnName = 'id') {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIds($ids, $columnName);
@@ -189,11 +189,11 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param Fetcher $paginator
+     * @param \Berthe\Fetcher $paginator
      * @param string $columnName
-     * @return Fetcher
+     * @return \Berthe\Fetcher
      */
-    public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = 'id') {
+    public function getColumnByPaginatorPreserveIds(\Berthe\Fetcher $paginator, $columnName = 'id') {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIdsPreserveIds($ids, $columnName);
@@ -214,23 +214,23 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param Fetcher $paginator
+     * @param \Berthe\Fetcher $paginator
      * @return string sql
      */
-    public function getSqlByPaginator(Fetcher $paginator) {
+    public function getSqlByPaginator(\Berthe\Fetcher $paginator) {
         return $this->getStorePersistent()->getReader()->getSqlByPaginator($paginator);
     }
 
     /**
      * TODO optimize that one !
      * @param \Berthe\AbstractVO $vo
-     * @param Fetcher $paginator
+     * @param \Berthe\Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @param bool $loop
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
+    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, \Berthe\Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
         $page = $paginator->getPage();
         $nbByPage = $paginator->getNbByPage();
 
@@ -445,7 +445,7 @@ abstract class AbstractStorage {
         $storesReversed = array_reverse($this->stores);
 
         $ret = true;
-        foreach($storesReversed as /* @var $store Berthe_AbstractStore */ $store) {
+        foreach($storesReversed as /* @var $store \Berthe\DAL\AbstractStore */ $store) {
             if ($ret) {
                 $ret = $store->delete($vo);
             }
