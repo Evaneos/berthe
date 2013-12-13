@@ -5,14 +5,14 @@ abstract class AbstractInterceptor implements Interceptor {
     protected $decorated = null;
     protected $mainDecorated = null;
 
-    public function __construct($classToIntercept) {
+    public function __construct($classToIntercept = null) {
         $this->setDecorated($classToIntercept);
     }
 
     final public function setDecorated($class) {
         $this->decorated = $class;
 
-        if ($class instanceof Berthe_AbstractInterceptor) {
+        if ($class instanceof AbstractInterceptor) {
             $this->mainDecorated = $class->mainDecorated;
         }
         else {
