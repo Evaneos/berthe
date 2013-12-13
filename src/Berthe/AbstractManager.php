@@ -4,12 +4,12 @@ namespace Berthe;
 
 abstract class AbstractManager {
     /**
-     * @var Storage
+     * @var DAL\AbstractStorage
      */
     protected $storage = null;
 
     /**
-     * @var Validator
+     * @var Validation\Validator
      */
     protected $validator = null;
 
@@ -17,17 +17,17 @@ abstract class AbstractManager {
     protected $deleteHooks = array();
 
     /**
-     * @return Validator
+     * @return Validation\Validator
      */
     public function getValidator() {
         return $this->validator;
     }
 
     /**
-     * @param Validator $validator
+     * @param Validation\Validator $validator
      * @return AbstractManager
      */
-    public function setValidator(Validator $validator) {
+    public function setValidator(Validation\Validator $validator) {
         $this->validator = $validator;
         return $this;
     }
@@ -36,7 +36,7 @@ abstract class AbstractManager {
         return $this->storage;
     }
 
-    public function setStorage(Storage $storage) {
+    public function setStorage(DAL\AbstractStorage $storage) {
         $this->storage = $storage;
         return $this->storage;
     }
@@ -117,13 +117,13 @@ abstract class AbstractManager {
     }
 
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
+    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
         return $this->getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
     }
 

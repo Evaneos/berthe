@@ -2,41 +2,35 @@
 
 namespace Berthe\DAL;
 
-abstract class Berthe_AbstractWriter {
+abstract class AbstractWriter {
     /**
-     * @var Berthe_Context
+     * @var DbWriter
      */
-    public $context = null;
+    protected $db = null;
 
-    /**
-     *
-     * @var Berthe_DbWriter
-     */
-    protected $_db = null;
-
-    public function __construct(Berthe_Context $context = null) {
-        $this->_db = Zend_Registry::get('dbWriter');
-        $this->context = $context;
+    public function setDb(DbWriter $db) {
+        $this->db = $db;
+        return $this;
     }
 
     /**
      * Insert the object in database
-     * @param Berthe_AbstractVO $object the object to insert
+     * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    abstract public function insert(Berthe_AbstractVO $object);
+    abstract public function insert(\Berthe\AbstractVO $object);
     /**
      * Update the object in database
-     * @param Berthe_AbstractVO $object the object to insert
+     * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    abstract public function update(Berthe_AbstractVO $object);
+    abstract public function update(\Berthe\AbstractVO $object);
     /**
      * Delete the object from database
-     * @param Berthe_AbstractVO $object the object to insert
+     * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    abstract public function delete(Berthe_AbstractVO $object);
+    abstract public function delete(\Berthe\AbstractVO $object);
     /**
      * Delete an object by id from database
      * @param int $int object identifier

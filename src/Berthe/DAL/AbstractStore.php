@@ -2,7 +2,7 @@
 
 namespace Berthe\DAL;
 
-abstract class Berthe_AbstractStore {
+abstract class AbstractStore {
     /**
      * @var boolean
      */
@@ -22,20 +22,20 @@ abstract class Berthe_AbstractStore {
      */
     abstract protected function _load(array $ids = array());
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean success
      */
-    abstract protected function _insert(Berthe_AbstractVO &$vo);
+    abstract protected function _insert(\Berthe\AbstractVO &$vo);
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean success
      */
-    abstract protected function _update(Berthe_AbstractVO &$vo);
+    abstract protected function _update(\Berthe\AbstractVO &$vo);
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean success
      */
-    abstract protected function _delete(Berthe_AbstractVO &$vo);
+    abstract protected function _delete(\Berthe\AbstractVO &$vo);
 
     /**
      * Getter and setter for isEnabled toggle
@@ -76,18 +76,18 @@ abstract class Berthe_AbstractStore {
     }
 
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean
      */
-    final public function delete(Berthe_AbstractVO &$vo) {
+    final public function delete(\Berthe\AbstractVO &$vo) {
         return $this->_delete($vo);
     }
 
     /**
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean success
      */
-    final public function save(Berthe_AbstractVO &$vo) {
+    final public function save(\Berthe\AbstractVO &$vo) {
         $ret = null;
         if ($vo->id) {
             $ret = $this->_update($vo);
@@ -111,7 +111,7 @@ abstract class Berthe_AbstractStore {
 
     /**
      * Save multiple objects, returns true if all are saved, false if at least one failed
-     * @param Berthe_AbstractVO[] $vos
+     * @param \Berthe\AbstractVO[] $vos
      * @return boolean false if at least one save has failed
      */
     final public function saveMulti(array $vos = array()) {

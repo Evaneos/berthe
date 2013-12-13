@@ -16,127 +16,51 @@ abstract class AbstractStorage {
     public $ignoreCache = false;
 
     /**
-     * @var Berthe_AbstractStore[]
-     */
-    protected $stores = array();
-    /**
-     * @var Berthe_AbstractReader
-     */
-    protected $_reader = null;
-    /**
-     * @var Berthe_AbstractWriter
-     */
-    protected $_writer = null;
-    /**
-     * @var Berthe_Memcached
-     */
-    protected $_memcached = null;
-    /**
      * Set to true to ignore object existence in $_objects when fetching
      * @var boolean
      */
-    protected $ignoreCacheLevel1 = false;
-    /**
-     * Cache key for each storage implementation
-     * @var string
-     */
-    protected $_cacheKey = null;
+    public $ignoreCacheLevel1 = false;
 
     /**
-     * @return Berthe_StoreDatabase
+     * @var AbstractStore[]
      */
-    protected function getStorePersistent() {
+    protected $stores = array();
+
+    /**
+     * @return StoreDatabase
+     */
+    public function getStorePersistent() {
         return $this->stores[self::STORE_PERSISTENT];
     }
-    /**
-     * @return Berthe_AbstractReader
-     */
-    protected function getReader() {
-        return $this->_reader;
+
+    public function setStorePersistent(StoreDatabase $store) {
+        $this->stores[self::STORE_PERSISTENT] = $store;
+        return $this;
     }
 
     /**
-     * @param bool|null $isAware
-     * @return bool
+     * @return AbstractStore
      */
-    protected function isFrontCacheAware($isAware = null) {
-        if ($isAware !== null) {
-            $this->isFrontCacheAware = (bool) $isAware;
-        }
-        return $this->isFrontCacheAware;
-    }
-
-    /**
-     * @return Berthe_AbstractWriter
-     */
-    protected function getWriter() {
-        return $this->_writer;
-    }
-
-    /**
-     * @return Berthe_StoreMemcached
-     */
-    protected function getStoreVolatile() {
+    public function getStoreVolatile() {
         return $this->stores[self::STORE_VOLATILE_WITH_TTL];
     }
 
+    public function setStoreVolatile(AbstractStore $store) {
+        $this->stores[self::STORE_VOLATILE_WITH_TTL] = $store;
+        return $this;
+    }
+
     /**
-     * @return Berthe_StoreArray
+     * @return AbstractStore
      */
-    protected function getStoreLevel1() {
+    public function getStoreLevel1() {
         return $this->stores[self::STORE_LEVEL_1];
     }
 
-    /**
-     * Constructor
-     */
-    public function __construct(Berthe_Context $context = null) {
-        $this->context = $context;
-        $this->_initConnectors();
-        $this->_initCustoms();
+    public function setStoreLevel1(AbstractStore $store) {
+        $this->stores[self::STORE_LEVEL_1] = $store;
+        return $this;
     }
-
-    /**
-     *
-     */
-    protected function _initStores() {
-        $site = $this->context ? $this->context->getSite() : null;
-        $cacheKey = $this->_cacheKey;
-        $packageGUID = $this->getStorageGUID();
-
-        $this->stores[self::STORE_LEVEL_1] = new Berthe_StoreArray();
-        $this->stores[self::STORE_VOLATILE_WITH_TTL] = new Berthe_StoreMemcached($site, $cacheKey, $packageGUID);
-
-        if ($this->ignoreCache) {
-            $this->stores[self::STORE_LEVEL_1]->isEnabled(false);
-            $this->stores[self::STORE_VOLATILE_WITH_TTL]->isEnabled(false);
-        }
-
-        $this->_memcached = $this->stores[self::STORE_VOLATILE_WITH_TTL]->getCacheEngine();
-    }
-
-    /**
-     * Starts the connectors
-     */
-    protected function _initConnectors() {
-        $this->_initStores();
-        $this->_initDatabaseConnections();
-        if ($this->_reader && $this->_writer) {
-            $this->stores[self::STORE_PERSISTENT] = new Berthe_StoreDatabase($this->_reader, $this->_writer);
-        }
-    }
-
-    /**
-     * Initialize custom specific stuff
-     */
-    protected function _initCustoms() {
-
-    }
-
-    /**
-     * Inits the database connections
-     */
-    abstract protected function _initDatabaseConnections();
 
     /**
      * returns the package name guid
@@ -145,12 +69,12 @@ abstract class AbstractStorage {
         if (static::STORAGE_GUID != self::STORAGE_GUID) {
             return static::STORAGE_GUID;
         }
-        throw new RuntimeException('The package used has no GUID');
+        throw new \RuntimeException('The package used has no GUID');
     }
 
     /**
      * @param int $id
-     * @return Berthe_AbstractVO
+     * @return \Berthe\AbstractVO
      */
     public function getOriginalObject($id) {
         $this->ignoreAllCache(true);
@@ -162,12 +86,12 @@ abstract class AbstractStorage {
 
     /**
      * @param int $id
-     * @return Berthe_AbstractVO
+     * @return \Berthe\AbstractVO
      */
     public function getById($id) {
         $id = (int)$id;
         if (!is_numeric($id)) {
-            throw new Exception(get_called_class() . '::' . __FUNCTION__ . " : Id should be an integer, given '" . $id . "'");
+            throw new \Exception(get_called_class() . '::' . __FUNCTION__ . " : Id should be an integer, given '" . $id . "'");
         }
 
         $object = $this->load(array($id));
@@ -183,7 +107,7 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return Berthe_AbstractVO[]
+     * @return \Berthe\AbstractVO[]
      */
     public function getByIds(array $ids = array()) {
         $ids = array_filter(array_unique($ids));
@@ -205,12 +129,12 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return Berthe_AbstractVO[]
+     * @return \Berthe\AbstractVO[]
      */
     public function getColumnByIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
 
-        $_res = $this->_reader->selectColByIds($ids, $columnName);
+        $_res = $this->getStorePersistent()->getReader()->selectColByIds($ids, $columnName);
         // In order to keep the same order than given in method parameter
 
         if(count($ids) != count($_res)) {
@@ -222,12 +146,12 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return Berthe_AbstractVO[]
+     * @return \Berthe\AbstractVO[]
      */
     public function getColumnByIdsPreserveIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
 
-        $_res = $this->_reader->selectColByIdsPreserveIds($ids, $columnName);
+        $_res = $this->getStorePersistent()->getReader()->selectColByIdsPreserveIds($ids, $columnName);
         // In order to keep the same order than given in method parameter
 
         if(count($ids) != count($_res)) {
@@ -242,8 +166,8 @@ abstract class AbstractStorage {
      * @return Fetcher
      */
     public function getByPaginator(Fetcher $paginator) {
-        $count = $this->_reader->selectCountByPaginator($paginator);
-        $ids = $this->_reader->selectByPaginator($paginator);
+        $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
+        $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getByIds($ids);
         $paginator->setTtlCount($count);
         $paginator->set($results);
@@ -256,8 +180,8 @@ abstract class AbstractStorage {
      * @return Fetcher
      */
     public function getColumnByPaginator(Fetcher $paginator, $columnName = 'id') {
-        $count = $this->_reader->selectCountByPaginator($paginator);
-        $ids = $this->_reader->selectByPaginator($paginator);
+        $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
+        $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIds($ids, $columnName);
         $paginator->setTtlCount($count);
         $paginator->set($results, false);
@@ -270,8 +194,8 @@ abstract class AbstractStorage {
      * @return Fetcher
      */
     public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = 'id') {
-        $count = $this->_reader->selectCountByPaginator($paginator);
-        $ids = $this->_reader->selectByPaginator($paginator);
+        $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
+        $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIdsPreserveIds($ids, $columnName);
 
         $resultsSorted = array();
@@ -294,25 +218,25 @@ abstract class AbstractStorage {
      * @return string sql
      */
     public function getSqlByPaginator(Fetcher $paginator) {
-        return $this->_reader->getSqlByPaginator($paginator);
+        return $this->getStorePersistent()->getReader()->getSqlByPaginator($paginator);
     }
 
     /**
      * TODO optimize that one !
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @param bool $loop
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(Berthe_AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
+    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
         $page = $paginator->getPage();
         $nbByPage = $paginator->getNbByPage();
 
         $paginator->setPage(-1);
         $paginator->setNbByPage(-1);
-        $ids = $this->_reader->selectByPaginator($paginator);
+        $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
 
         $paginator->setPage($page);
         $paginator->setNbByPage($nbByPage);
@@ -412,7 +336,6 @@ abstract class AbstractStorage {
         }
 
         $output = array();
-        $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         foreach($this->stores as $storeType => $store) {
             if(count($_idsNotFound) > 0) {
@@ -421,11 +344,17 @@ abstract class AbstractStorage {
                 if (count($objects) > 0) {
                     switch($storeType) {
                         case self::STORE_VOLATILE_WITH_TTL :
-                            $this->getStoreLevel1()->saveMulti($objects);
+                            if ($this->getStoreLevel1()) {
+                                $this->getStoreLevel1()->saveMulti($objects);
+                            }
                             break;
                         case self::STORE_PERSISTENT :
-                            $this->getStoreLevel1()->saveMulti($objects);
-                            $this->getStoreVolatile()->saveMulti($objects);
+                            if ($this->getStoreLevel1()) {
+                                $this->getStoreLevel1()->saveMulti($objects);
+                            }
+                            if ($this->getStoreVolatile()) {
+                                $this->getStoreVolatile()->saveMulti($objects);
+                            }
                             break;
                     }
                 }
@@ -447,7 +376,9 @@ abstract class AbstractStorage {
     public function ignoreCache($shallIgnore = null) {
         if ($shallIgnore !== null) {
             $this->ignoreCache = (bool) $shallIgnore;
-            $this->getStoreVolatile()->isEnabled(!((bool)$shallIgnore));
+            if ($this->getStoreVolatile()) {
+                $this->getStoreVolatile()->isEnabled(!((bool)$shallIgnore));
+            }
         }
 
         return ($this->ignoreCache or (defined('FORCE_CACHE') and FORCE_CACHE));
@@ -460,7 +391,9 @@ abstract class AbstractStorage {
     public function ignoreCacheLevel1($shallIgnore = null) {
         if ($shallIgnore !== null) {
             $this->ignoreCacheLevel1 = (bool) $shallIgnore;
-            $this->getStoreLevel1()->isEnabled(!((bool)$shallIgnore));
+            if ($this->getStoreLevel1()) {
+                $this->getStoreLevel1()->isEnabled(!((bool)$shallIgnore));
+            }
         }
 
         return $this->ignoreCacheLevel1;
@@ -479,21 +412,25 @@ abstract class AbstractStorage {
 
     /**
      * Saves a VO
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      * @return boolean
      */
-    public function save(Berthe_AbstractVO $vo) {
+    public function save(\Berthe\AbstractVO $vo) {
         $storePersistent = $this->getStorePersistent();
         $storeVolatile = $this->getStoreVolatile();
         $storeLevel1 = $this->getStoreLevel1();
 
         $ret = $storePersistent->save($vo);
         if ($ret) {
-            $storeVolatile->save($vo);
-            $storeLevel1->save($vo);
+            if ($storeVolatile) {
+                $storeVolatile->save($vo);
+            }
+            if ($storeLevel1) {
+                $storeLevel1->save($vo);
+            }
         }
         else {
-            throw new RuntimeException("Couldn't save object into database");
+            throw new \RuntimeException("Couldn't save object into database");
         }
 
         return $ret;
@@ -501,9 +438,9 @@ abstract class AbstractStorage {
 
     /**
      * Deletes a VO
-     * @param Berthe_AbstractVO $vo
+     * @param \Berthe\AbstractVO $vo
      */
-    public function delete(Berthe_AbstractVO $vo) {
+    public function delete(\Berthe\AbstractVO $vo) {
         // We reverse because the last storage is supposed to be the persistent one, and others are faster/caching
         $storesReversed = array_reverse($this->stores);
 
@@ -531,34 +468,5 @@ abstract class AbstractStorage {
             trigger_error('Couldn\'t load object which has for id ' . $id . ' in ' . get_called_class(), E_USER_NOTICE);
         }
         return $ret;
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $arguments
-     * @param string $callback
-     * @param int $ttl
-     * @return mixed
-     */
-    protected function cacheRetrieverSet($methodName, $arguments, $callback, $ttl = 0) {
-        $key = $this->getStorageGUID() . $methodName . ':' . md5(serialize($arguments));
-
-        $ignoreCache = $this->ignoreCache();
-        $foundData = false;
-
-        if (!$ignoreCache){
-            $data = $this->_memcached->get($key);
-            if ($this->_memcached->getResultCode() !== Memcached::RES_NOTFOUND) {
-                $result = unserialize($data);
-                $foundData = true;
-            }
-        }
-
-        if (!$foundData) {
-            $result = call_user_func_array(array($this->_reader, $callback), $arguments);
-            $this->_memcached->set($key, serialize($result), $ttl);
-        }
-
-        return $result;
     }
 }

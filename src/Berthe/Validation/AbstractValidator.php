@@ -1,7 +1,7 @@
 <?php
 namespace Berthe\Validation;
 
-use Berthe\ as Berthe;
+use Berthe as Berthe;
 
 
 abstract class AbstractValidator implements Validator {

@@ -1,7 +1,7 @@
 <?php
 namespace Berthe\Util;
 
-use Berthe\ as Berthe;
+use Berthe as Berthe;
 
 class DateHandlingSaveHook extends Berthe\AbstractHook {
     public function before($data) {

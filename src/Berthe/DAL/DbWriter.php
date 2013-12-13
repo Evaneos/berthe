@@ -2,7 +2,7 @@
 
 namespace Berthe\DAL;
 
-class Berthe_DbWriter extends Berthe_DbReader {
+class DbWriter extends DbReader {
     /**
      * Execute statement
      * @param string $sql
@@ -11,7 +11,6 @@ class Berthe_DbWriter extends Berthe_DbReader {
      */
     public function query($sql, array $bind = array()) {
         $sanitizedBinds = $this->sanitizeBinds($bind);
-        $this->log($sql, $sanitizedBinds);
         return $this->db->query($sql, $sanitizedBinds);
     }
 
@@ -24,7 +23,7 @@ class Berthe_DbWriter extends Berthe_DbReader {
         $sanitizedBinds = array();
         foreach($bind as $key => $value) {
             switch(1) {
-                case ($value instanceof DateTime) :
+                case ($value instanceof \DateTime) :
                     $sanitizedValue = $value->format('Y-m-d H:i:s');
                     break;
                 case is_string($value) :

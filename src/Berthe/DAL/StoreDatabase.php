@@ -2,15 +2,15 @@
 
 namespace Berthe\DAL;
 
-class Berthe_StoreDatabase extends Berthe_AbstractStore {
+class StoreDatabase extends AbstractStore {
     /**
-     * @var Berthe_AbstractReader
+     * @var AbstractReader
      */
-    protected $_reader = null;
+    protected $reader = null;
     /**
-     * @var Berthe_AbstractWriter
+     * @var AbstractWriter
      */
-    protected $_writer = null;
+    protected $writer = null;
     /**
      * @var boolean
      */
@@ -20,9 +20,22 @@ class Berthe_StoreDatabase extends Berthe_AbstractStore {
      */
     protected $isTTLAble = false;
 
-    public function __construct(Berthe_AbstractReader $reader, Berthe_AbstractWriter $writer) {
-        $this->_reader = $reader;
-        $this->_writer = $writer;
+    public function getReader() {
+        return $this->reader;
+    }
+
+    public function getWriter() {
+        return $this->writer;
+    }
+
+    public function setReader(AbstractReader $reader) {
+        $this->reader = $reader;
+        return $this;
+    }
+
+    public function setWriter(AbstractWriter $writer) {
+        $this->writer = $writer;
+        return $this;
     }
 
     /**
@@ -30,11 +43,11 @@ class Berthe_StoreDatabase extends Berthe_AbstractStore {
      * @return array id=>object
      */
     protected function _load(array $ids = array()) {
-        return $this->_reader->selectByIds($ids);
+        return $this->getReader()->selectByIds($ids);
     }
 
-    protected function _insert(Berthe_AbstractVO &$vo) {
-        $ret = $this->_writer->insert($vo);
+    protected function _insert(\Berthe\AbstractVO &$vo) {
+        $ret = $this->getWriter()->insert($vo);
         if ($ret) {
             $results = $this->load(array($vo->id));
             if (count($results) === 1) {
@@ -44,8 +57,8 @@ class Berthe_StoreDatabase extends Berthe_AbstractStore {
         return $ret;
     }
 
-    protected function _update(Berthe_AbstractVO &$vo) {
-        $ret = $this->_writer->update($vo);
+    protected function _update(\Berthe\AbstractVO &$vo) {
+        $ret = $this->getWriter()->update($vo);
         if ($ret) {
             $results = $this->load(array($vo->id));
             if (count($results) === 1) {
@@ -55,8 +68,8 @@ class Berthe_StoreDatabase extends Berthe_AbstractStore {
         return $ret;
     }
 
-    protected function _delete(Berthe_AbstractVO &$vo) {
-        $ret = $this->_writer->delete($vo);
+    protected function _delete(\Berthe\AbstractVO &$vo) {
+        $ret = $this->getWriter()->delete($vo);
         return $ret;
     }
 }

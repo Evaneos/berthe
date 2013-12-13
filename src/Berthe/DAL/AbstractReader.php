@@ -17,8 +17,8 @@ abstract class AbstractReader {
      * @param DbReader $db
      * @return AbstractReader
      */
-    public function setDb(Berthe_DbReader $db) {
-        $this->_db = $db;
+    public function setDb(DbReader $db) {
+        $this->db = $db;
         return $this;
     }
 
@@ -31,9 +31,9 @@ abstract class AbstractReader {
     }
 
     /**
-     * Implements an bunch of Berthe_AbstractVO from datas
+     * Implements an bunch of \Berthe\AbstractVO from datas
      * @param array $datas
-     * @return Berthe_AbstractVO
+     * @return \Berthe\AbstractVO
      */
     protected function implementVOs(array $datas = array()) {
         $_ret = array();
@@ -74,9 +74,9 @@ EOQ;
     }
 
     /**
-     * Gets a bunch of Berthe_AbstractVO from database from their ids
+     * Gets a bunch of \Berthe\AbstractVO from database from their ids
      * @param array $ids
-     * @return Berthe_AbstractVO
+     * @return \Berthe\AbstractVO
      */
     public function selectByIds(array $ids = array ()) {
         if (count($ids) === 0) {
@@ -87,7 +87,7 @@ EOQ;
 
         $sql = $this->getSelectQueryByIds($ids);
 
-        $resultSet = $this->_db->fetchAll($sql);
+        $resultSet = $this->db->fetchAll($sql);
 
         return $this->implementVOs($resultSet);
     }
@@ -147,20 +147,20 @@ EOQ;
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
         if($_columnIndex === false || $_columnIndexId === false) {
-            throw new InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
+            throw new \InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
-        $_stmt1 = $this->_db->getAdapter()->query($_query);
+        $_stmt1 = $this->db->getAdapter()->query($_query);
         $columnIndexId = $_stmt1->fetchAll(Zend_Db::FETCH_COLUMN, $_columnIndexId);
 
-        $_stmt2 = $this->_db->getAdapter()->query($_query);
+        $_stmt2 = $this->db->getAdapter()->query($_query);
         $columnIndex = $_stmt2->fetchAll(Zend_Db::FETCH_COLUMN, $_columnIndex);
         $res = array_combine($columnIndexId, $columnIndex);
         if ($res !== false) {
             return $res;
         }
         else {
-            throw new RuntimeException("Not same count between ID and selected COLUMN");
+            throw new \RuntimeException("Not same count between ID and selected COLUMN");
         }
     }
 
@@ -180,11 +180,11 @@ EOQ;
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
         if($_columnIndex === false) {
-            throw new InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
+            throw new \InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
-        $_stmt2 = $this->_db->getAdapter()->query($_query);
-        return $_stmt2->fetchAll(Zend_Db::FETCH_COLUMN, $_columnIndex);
+        $_stmt2 = $this->db->getAdapter()->query($_query);
+        return $_stmt2->fetchAll(\Zend_Db::FETCH_COLUMN, $_columnIndex);
     }
 
     /**
@@ -197,7 +197,7 @@ EOQ;
      * @param Fetcher $paginator
      * @return Fetcher
      */
-    public function selectCountByPaginator(Fetcher $paginator) {
+    public function selectCountByPaginator(\Berthe\Fetcher $paginator) {
         list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
 
         $sql = <<<EOL
@@ -208,18 +208,18 @@ FROM
 WHERE
     {$filterInReq}
 EOL;
-        return $this->_db->fetchOne($sql, $filterToParameter);
+        return $this->db->fetchOne($sql, $filterToParameter);
     }
 
     /**
      * @param Fetcher $paginator
      * @return Fetcher
      */
-    public function selectByPaginator(Fetcher $paginator) {
+    public function selectByPaginator(\Berthe\Fetcher $paginator) {
 
         list($sql, $filterToParameter) = $this->getSqlByPaginator($paginator);
 
-        $resultSet = $this->_db->fetchCol($sql, $filterToParameter);
+        $resultSet = $this->db->fetchCol($sql, $filterToParameter);
 
         return $resultSet;
     }
@@ -228,7 +228,7 @@ EOL;
      * @param Fetcher $paginator
      * @return array(string, array) the sql and the array of the parameters
      */
-    public function getSqlByPaginator(Fetcher $paginator) {
+    public function getSqlByPaginator(\Berthe\Fetcher $paginator) {
         list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
         $sortInReq = $paginator->getSortForQuery();
         $isRandom = $paginator->isRandomSort();
