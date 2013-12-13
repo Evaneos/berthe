@@ -1,13 +1,13 @@
 <?php
 
-namespace Evaneos\Berthe\DAL;
+namespace Berthe\DAL;
 
 
 abstract class AbstractReader {
     /**
      * Class name of the VO for current package
      */
-    const VO_CLASS = '\Evaneos\Berthe\AbstractVO';
+    const VO_CLASS = '\Berthe\AbstractVO';
     /**
      * @var DbReader
      */

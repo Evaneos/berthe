@@ -1,9 +1,9 @@
 <?php
 
-namespace Evaneos\Berthe\DAL;
+namespace Berthe\DAL;
 
 abstract class AbstractStorage {
-    const STORAGE_GUID = '\Evaneos\Berthe\AbstractStorage\Package_GUID';
+    const STORAGE_GUID = '\Berthe\AbstractStorage\Package_GUID';
 
     const STORE_LEVEL_1 = 'array_php';
     const STORE_VOLATILE_WITH_TTL = 'ramcache';

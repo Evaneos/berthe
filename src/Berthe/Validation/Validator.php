@@ -1,7 +1,7 @@
 <?php
 
-namespace Evaneos\Berthe\Validation;
-use Evaneos\Berthe\ as Berthe;
+namespace Berthe\Validation;
+use Berthe\ as Berthe;
 
 interface Validator {
     /**

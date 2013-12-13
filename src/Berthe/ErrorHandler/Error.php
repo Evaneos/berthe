@@ -1,5 +1,5 @@
 <?php
-namespace Evaneos\Berthe\ErrorHandler;
+namespace Berthe\ErrorHandler;
 
 class Error extends \LogicException {
     protected $data = array();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Evaneos\Berthe\DAL;
+namespace Berthe\DAL;
 
 class Berthe_DbWriter extends Berthe_DbReader {
     /**

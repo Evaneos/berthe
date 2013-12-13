@@ -1,5 +1,5 @@
 <?php
-namespace Evaneos\Berthe\Interceptor;
+namespace Berthe\Interceptor;
 
 interface Interceptor {
     function __construct($classToIntercept);

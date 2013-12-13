@@ -1,5 +1,5 @@
 <?php
-namespace Evaneos\Berthe\Interceptor;
+namespace Berthe\Interceptor;
 
 abstract class AbstractInterceptor implements Interceptor {
     protected $decorated = null;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Evaneos\Berthe\DAL;
+namespace Berthe\DAL;
 
 abstract class Berthe_AbstractStore {
     /**

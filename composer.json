@@ -23,7 +23,7 @@
     ],
     "autoload" : {
         "psr-0" : {
-            "Evaneos\\Berthe" : "src/"
+            "\\Berthe" : "src/"
         }
     },
     "require" : {

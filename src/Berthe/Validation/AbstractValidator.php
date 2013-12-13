@@ -1,7 +1,7 @@
 <?php
-namespace Evaneos\Berthe\Validation;
+namespace Berthe\Validation;
 
-use Evaneos\Berthe\ as Berthe;
+use Berthe\ as Berthe;
 
 
 abstract class AbstractValidator implements Validator {

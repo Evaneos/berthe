@@ -1,5 +1,5 @@
 <?php
-namespace Evaneos\Berthe\Interceptor;
+namespace Berthe\Interceptor;
 
 
 class ExceptionInterceptor extends AbstractInterceptor implements Interceptor {

@@ -1,5 +1,5 @@
 <?php
-namespace Evaneos\Berthe\Annotation;
+namespace Berthe\Annotation;
 
 use Doctrine\Common\Annotations as Doctrine;
 

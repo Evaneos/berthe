@@ -1,6 +1,6 @@
 <?php
 
-namespace Evaneos\Berthe;
+namespace Berthe;
 
 abstract class AbstractManager {
     /**

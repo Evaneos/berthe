@@ -1,8 +1,8 @@
 <?php
 
-namespace Evaneos\Berthe\Util;
+namespace Berthe\Util;
 
-use Evaneos\Berthe\ as Berthe;
+use Berthe\ as Berthe;
 
 class Sort {
     /**

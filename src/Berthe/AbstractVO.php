@@ -1,27 +1,9 @@
 <?php
+namespace Berthe;
 
-/**
- * Class definition for VO abstract Berthe_VO
- *
- * @author dev@evaneos.com
- * @copyright Evaneos
- * @version 1.0
- * @filesource Berthe/VO.php
- * @package Berthe
- */
-abstract class Berthe_AbstractVO {
+abstract class AbstractVO {
     public $version = 1;
-    /**
-     * Used to match the sql fields with the VO attributes
-     * @example
-     *  $_propMapper = array(
-     *      'sql_field'       => 'voField',       // sql field as key
-     *      'other_sql_field' => 'otherVoField',
-     *      'foo'             => 'bar'
-     *  );
-     * @var array
-     */
-    protected $_propMapper = array();
+
     /**
      * Constructor
      * @param array $infos An array of infos from database or form
@@ -29,10 +11,11 @@ abstract class Berthe_AbstractVO {
     public function __construct(array $infos = array()) {
         $this->populate($infos);
     }
+
     /**
      * Computes the properties of the VO if needed
      */
-    protected function _calcProperties() {
+    protected function calcProperties() {
         return true;
     }
 
@@ -44,10 +27,10 @@ abstract class Berthe_AbstractVO {
      */
     public function populate(array $infos = array()) {
         // set attributes
-        $_ret           = $this->_setAttributes($infos);
+        $this->setAttributes($infos);
         $_ret and $this->version = $this::VERSION;
         // compute attributes
-        $_ret and $_ret = $this->_calcProperties();
+        $_ret and $_ret = $this->calcProperties();
         return $_ret;
     }
 
@@ -56,31 +39,18 @@ abstract class Berthe_AbstractVO {
      * @param array $infos
      * @return boolean
      */
-    protected function _setAttributes(array $infos = array()) {
-        // for each attribute
+    protected function setAttributes(array $infos = array()) {
         foreach (array_keys($infos) as $key) {
-
-            // if !exists
-            if(!property_exists($this, $key)) {
-                // if not in prop mapper
-                if(!isset($this->_propMapper[$key])) {
-                    // trigger an exception
-                    //trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Property ' . $key . ' does not exists.', E_USER_NOTICE);
-                    // continue
-                    continue;
-                // if in propr mapper save the sql prop name
-                } else {
-                    $_prop = $this->_propMapper[$key];
-                }
-            // else
-            } else {
-                // save the prop name
-                $_prop = $key;
+            $prop = null;
+            if(property_exists($this, $key)) {
+                $prop = $key;
             }
-            if(!$this->_setProp($_prop, $infos[$key])) {
-                return false;
+
+            if ($prop) {
+                $this->setProp($prop, $infos[$key]);
             }
         }
+
         return true;
     }
 
@@ -112,34 +82,17 @@ abstract class Berthe_AbstractVO {
                     if($value instanceof DateTime) {
                         $newValue = $value;
                     // if not check if it is a string
-                    } elseif(is_string($value)) {
+                    }
+                    elseif(is_string($value)) {
                         // instanciate the object with the string
                         $newValue = new DateTime($value);
-                    } else {
+                    }
+                    else {
                         // if none, trigger an error
                         trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Wrong Class for propery ' . $_prop, E_USER_ERROR);
                         return false;
                     }
                     break;
-                // object DEPRECATED
-                /*
-                case is_object($_currentValue) :
-                    // get class of current value in VO
-                    $_class = get_class($_currentValue);
-                    // check new value is an object of same class
-                    if(is_object($value) and $_class == get_class($value)) {
-                        $newValue = $value;
-                    // if not check if it is a string
-                    } elseif(is_string($value)) {
-                        // instanciate the object with the string
-                        $newValue = new $_class($value);
-                    } else {
-                        // if none, trigger an error
-                        trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Wrong Class for propery ' . $_prop, E_USER_ERROR);
-                        return false;
-                    }
-                    break;
-                 */
                 // string, null and others
                 case is_string($_currentValue) :
                 case is_null($_currentValue) && is_string($value) :
@@ -150,7 +103,6 @@ abstract class Berthe_AbstractVO {
                     }
                     break;
             }
-            //set
             $this->{$prop} = $newValue;
             return true;
     }
