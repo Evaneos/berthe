@@ -42,7 +42,7 @@ abstract class AbstractWriter {
         $mappings = $this->getSaveMappings();
         
         if (empty($mappings)) {
-            throw new \RuntimeException('Cannot use auto-generated queries with empty mappings.');
+            $mappings = $this->getDefaultMappings(); 
         }
         
         $columnElements = array();
@@ -64,7 +64,7 @@ abstract class AbstractWriter {
         
         $query = <<<EOQ
             INSERT INTO {$this->tableName} ({$columnAssignment})
-            VALUES ({$valueClause});
+            VALUES ({$valueAssignment});
 EOQ;
         
         if ((bool) $this->db->query($query, $params)) {
@@ -135,6 +135,12 @@ EOQ;
         $params = array(':identity' => $id);
         
         return (bool) $this->db->query($query, $params);
+    }
+    
+    private function getDefaultMappings(\Berthe\AbstractVO $vo) {
+        $properties = array_keys($vo->__toArray());
+        
+        return array_combine($properties, $properties);
     }
     
     protected function getSaveMappings() {
