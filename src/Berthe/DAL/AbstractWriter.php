@@ -42,7 +42,7 @@ abstract class AbstractWriter {
         $mappings = $this->getSaveMappings();
         
         if (empty($mappings)) {
-            $mappings = $this->getDefaultMappings(); 
+            $mappings = $this->getDefaultMappings($object); 
         }
         
         $columnElements = array();
@@ -86,7 +86,7 @@ EOQ;
         $mappings = $this->getSaveMappings();
         
         if (empty($mappings)) {
-            throw new \RuntimeException('Cannot use auto-generated queries with empty mappings.');
+            $mappings = $this->getDefaultMappings($object); 
         }
         
         $clauseElements = array();
@@ -96,12 +96,13 @@ EOQ;
         
         foreach ($mappings as $column => $property) {
             $value = $values[$property];
-            $clauseElements[] = sprintf('%s = :%s', $column, $value);
+            $clauseElements[] = sprintf('%s = :%s', $column, $column);
             $params[':' . $column] = $value;
         }
         
+        $params[':identity'] = $object->getId();
+        
         $columnAssignment = implode(', ', $clauseElements);
-        $params[':' . $this->identityColumn] = $object->getId();
         
         $query = <<<EOQ
             UPDATE {$this->tableName} SET {$columnAssignment}
@@ -140,7 +141,11 @@ EOQ;
     private function getDefaultMappings(\Berthe\AbstractVO $vo) {
         $properties = array_keys($vo->__toArray());
         
-        return array_combine($properties, $properties);
+        $mappings = array_combine($properties, $properties);
+        
+        return array_filter($mappings, function($value) {
+            return ! ($value == 'id' || $value == 'version');
+        });
     }
     
     protected function getSaveMappings() {
