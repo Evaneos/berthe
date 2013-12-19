@@ -29,6 +29,14 @@ abstract class AbstractReader {
     public function getVOClass() {
         return static::VO_CLASS;
     }
+    
+    /**
+     * Returns the name of the primary key column.
+     * @return string
+     */
+    public function getIdentityColumn() {
+        return 'id';
+    }
 
     /**
      * Implements a bunch of \Berthe\AbstractVO from datas
@@ -45,7 +53,7 @@ abstract class AbstractReader {
         }
 
         foreach($datas as &$row) {
-            $ret[$row['id']] = new $class($row);
+            $ret[$row[$this->getIdentityColumn()]] = new $class($row);
         }
 
         return $ret;
@@ -54,7 +62,9 @@ abstract class AbstractReader {
     /**
      * Returns the Query String to get data for the VOs
      */
-    abstract protected function getSelectQuery();
+    protected function getSelectQuery() {
+        return sprintf('SELECT * FROM %s', $this->getTableName());
+    }
 
     /**
      * Returns a query from getSelectQuery method by appending a where statement on ids
@@ -67,10 +77,9 @@ abstract class AbstractReader {
         return <<<EOQ
 {$this->getSelectQuery()}
 WHERE
-    {$this->getTableName()}.id in ($implode)
+    {$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)
 
 EOQ;
-
     }
 
     /**
@@ -143,7 +152,7 @@ EOQ;
         }
 
         $_query = $this->getSelectQueryByIds($ids);
-        $_columnIndexId = $this->_getColumnIndexInSelectQuery('id');
+        $_columnIndexId = $this->_getColumnIndexInSelectQuery($this->getIdentityColumn());
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
         if($_columnIndex === false || $_columnIndexId === false) {
@@ -202,7 +211,7 @@ EOQ;
 
         $sql = <<<EOL
 SELECT
-    count(id)
+    count({$this->getIdentityColumn()})
 FROM
     {$this->getTableName()}
 WHERE
@@ -240,7 +249,7 @@ SELECT
     id
 FROM
     (SELECT
-        id,
+        {$this->getIdentityColumn()},
         RANDOM()
     FROM
         {$this->getTableName()}
@@ -253,7 +262,7 @@ EOL;
         else {
             $sql = <<<EOL
 SELECT
-    id
+    {$this->getIdentityColumn()}
 FROM
     {$this->getTableName()}
 WHERE
