@@ -22,7 +22,7 @@ abstract class AbstractWriter {
     
     private function validateTableAndIdentityColumn()
     {
-        if ($this->tableName == self::DEFAULT_TABLE_NAME) {
+        if ($this->tableName == self::DEFAULT_TABLE_NAME || trim($this->tableName) == '') {
             throw new \RuntimeException('Table name is not set !');
         }
         
