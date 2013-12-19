@@ -68,7 +68,7 @@ abstract class AbstractWriter {
 EOQ;
         
         if ((bool) $this->db->query($query, $params)) {
-            $id = (int) $this->db->lastInsertId($this->tableName,"id");
+            $id = (int) $this->db->lastInsertId($this->tableName, $this->identityColumn);
             $object->setId($id);
         }
         
