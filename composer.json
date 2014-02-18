@@ -28,6 +28,6 @@
     },
     "require" : {
         "doctrine/annotations": "1.0.*@dev",
-        "zendframework/zendframework1": "1.12.*@dev"
+        "zf1/zend-db": "1.12.3"
     }
 }
