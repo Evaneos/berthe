@@ -30,7 +30,7 @@ abstract class AbstractStorage {
      * @return StoreDatabase
      */
     public function getStorePersistent() {
-        return $this->stores[self::STORE_PERSISTENT];
+        return array_key_exists(self::STORE_PERSISTENT, $this->stores) ? $this->stores[self::STORE_PERSISTENT] : null;
     }
 
     public function setStorePersistent(StoreDatabase $store) {
@@ -42,7 +42,7 @@ abstract class AbstractStorage {
      * @return AbstractStore
      */
     public function getStoreVolatile() {
-        return $this->stores[self::STORE_VOLATILE_WITH_TTL];
+        return array_key_exists(self::STORE_VOLATILE_WITH_TTL, $this->stores) ? $this->stores[self::STORE_VOLATILE_WITH_TTL] : null;
     }
 
     public function setStoreVolatile(AbstractStore $store) {
@@ -54,7 +54,7 @@ abstract class AbstractStorage {
      * @return AbstractStore
      */
     public function getStoreLevel1() {
-        return $this->stores[self::STORE_LEVEL_1];
+        return array_key_exists(self::STORE_LEVEL_1, $this->stores) ? $this->stores[self::STORE_LEVEL_1] : null;
     }
 
     public function setStoreLevel1(AbstractStore $store) {
