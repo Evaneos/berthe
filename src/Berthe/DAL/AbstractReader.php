@@ -49,7 +49,7 @@ abstract class AbstractReader {
         $class = $this->getVOClass();
 
         if($class == self::VO_CLASS) {
-            throw new \RuntimeException(__CLASS__ . '::VO_CLASS constant is not defined');
+            throw new \RuntimeException(get_called_class() . '::VO_CLASS constant is not defined');
         }
 
         foreach($datas as &$row) {
