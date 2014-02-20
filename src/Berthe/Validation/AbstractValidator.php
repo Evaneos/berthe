@@ -6,21 +6,21 @@ use Berthe as Berthe;
 
 abstract class AbstractValidator implements Validator {
     /**
-     * @var Berthe\ErrorHandler\Errors
+     * @var Berthe\ErrorHandler\FunctionalErrorListException
      */
-    protected $errors = null;
+    protected $exception = null;
     /**
      * @var AbstractHook[]
      */
     protected $validateHooks = array();
 
-    public function setErrors(Berthe\ErrorHandler\Errors $errors) {
-        $this->errors = $errors;
+    public function setErrors(Berthe\ErrorHandler\FunctionalErrorListException $exception) {
+        $this->exception = $exception;
         return $this;
     }
 
     /**
-     * @return Berthe\ErrorHandler\Errors
+     * @return Berthe\ErrorHandler\FunctionalErrorListException
      */
     public function getErrors() {
         return $this->errors;

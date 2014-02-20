@@ -91,7 +91,7 @@ abstract class AbstractStorage {
     public function getById($id) {
         $id = (int)$id;
         if (!is_numeric($id)) {
-            throw new \Exception(get_called_class() . '::' . __FUNCTION__ . " : Id should be an integer, given '" . $id . "'");
+            throw new \InvalidArgumentException(sprintf("%s::%s only accepts integer, '%s' given", get_called_class(), __FUNCTION__, $id));
         }
 
         $object = $this->load(array($id));
@@ -99,10 +99,8 @@ abstract class AbstractStorage {
         if (array_key_exists($id, $object)) {
             return $object[$id];
         }
-        else {
-            trigger_error(get_called_class() . '::' . __FUNCTION__ . '() : Could not find object with id ' . $id, E_USER_NOTICE);
-            return null;
-        }
+
+        throw new \Berthe\Exception\NotFoundException(sprintf("%s::%s couldn't find object with id='%d'", get_called_class(), __FUNCTION__, $id));
     }
 
     /**
@@ -135,7 +133,6 @@ abstract class AbstractStorage {
         $ids = array_filter(array_unique($ids));
 
         $_res = $this->getStorePersistent()->getReader()->selectColByIds($ids, $columnName);
-        // In order to keep the same order than given in method parameter
 
         if(count($ids) != count($_res)) {
             trigger_error(get_called_class() . '::' . __FUNCTION__ . '() : Did not get all values', E_USER_NOTICE);
@@ -152,7 +149,6 @@ abstract class AbstractStorage {
         $ids = array_filter(array_unique($ids));
 
         $_res = $this->getStorePersistent()->getReader()->selectColByIdsPreserveIds($ids, $columnName);
-        // In order to keep the same order than given in method parameter
 
         if(count($ids) != count($_res)) {
             trigger_error(get_called_class() . '::' . __FUNCTION__ . '() : Did not get all values', E_USER_NOTICE);

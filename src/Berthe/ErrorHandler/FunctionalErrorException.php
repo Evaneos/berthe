@@ -1,7 +1,7 @@
 <?php
 namespace Berthe\ErrorHandler;
 
-class Error extends \LogicException {
+class FunctionalErrorException extends \LogicException {
     protected $data = array();
 
     public function __construct($message, $code, array $data = array()) {

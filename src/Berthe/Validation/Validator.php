@@ -5,10 +5,10 @@ use Berthe as Berthe;
 
 interface Validator {
     /**
-     * @return ErrorHandler\Errors
+     * @return ErrorHandler\FunctionalErrorListException
      */
     function getErrors();
-    function setErrors(Berthe\ErrorHandler\Errors $errors);
+    function setErrors(\Berthe\ErrorHandler\FunctionalErrorListException $errors);
 
     function validateSave($object);
     function validateDelete($object);

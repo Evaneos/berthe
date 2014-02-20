@@ -1,12 +1,12 @@
 <?php
 namespace Berthe\ErrorHandler;
 
-class Errors extends \LogicException {
+class FunctionalErrorListException extends \LogicException {
     protected $errors = array();
 
     public function __construct() {}
 
-    public function addError(Error $error) {
+    public function addError(FunctionalErrorException $error) {
         $this->errors[] = $error;
         return $this;
     }
