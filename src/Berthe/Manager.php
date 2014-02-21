@@ -12,31 +12,31 @@ interface Manager {
 
     /**
      * Get storage
-     * @return DAL\AbstractStorage
+     * @return DAL\Storage
      */
     public function getStorage();
 
     /**
      * Return a new VO with default values
-     * @return Berthe\VO the VO with its default values
+     * @return VO the VO with its default values
      */
     public function getVoForCreation();
 
     /**
-     * @return Berthe\VO[]
+     * @return VO[]
      */
     public function getAll();
 
     /**
      * Default method to get an object by its id
      * @param int $id
-     * @return Berthe\VO
+     * @return VO
      */
     public function getById($id);
     /**
      * Default method to get a list of objects with a list of ids
      * @param array $ids
-     * @return Berthe\VO
+     * @return VO[]
      */
     public function getByIds(array $ids = array());
 
@@ -65,17 +65,17 @@ interface Manager {
      */
     public function getSqlByPaginator($paginator);
     /**
-     * @param \Berthe\VO $vo
+     * @param VO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
-     * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
+     * @return [VO[], VO[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(\Berthe\VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1);
+    public function getNextAndPreviousByPaginator(VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1);
 
     /**
      * Default method to save (insert or update depending on context) an object
-     * @param Berthe\VO $object
+     * @param VO $object
      * @return boolean
      */
     public function save($object);
@@ -93,7 +93,7 @@ interface Manager {
      * @return boolean
      */
     public function deleteById($id);
-    
+
     /**
      * Getter and setter to ignore cache flag
      * @param boolean|null $shallIgnore

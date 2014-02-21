@@ -1,7 +1,6 @@
 <?php
 namespace Berthe\Interceptor;
 
-
 class ExceptionInterceptor extends AbstractInterceptor implements Interceptor {
     protected function intercept($method, $args) {
         try {

@@ -3,20 +3,18 @@
 namespace Berthe\DAL;
 
 interface Reader {
-   
+
     /**
      * Returns the Class name of the VO for current package
      * @return string
      */
     public function getVOClass();
-    
+
     /**
      * Returns the name of the primary key column.
      * @return string
      */
-    public function getIdentityColumn() {
-        return 'id';
-    }
+    public function getIdentityColumn();
 
     /**
      * Gets a bunch of \Berthe\AbstractVOVO from database from their ids
@@ -42,21 +40,21 @@ interface Reader {
      * @throws InvalidArgumentException
      */
     public function selectColByIds(array $ids = array(), $columnName = 'id');
-  
+
      /**
-     * @param Fetcher $paginator
-     * @return Fetcher
+     * @param \Berthe\Fetcher $paginator
+     * @return \Berthe\Fetcher
      */
     public function selectCountByPaginator(\Berthe\Fetcher $paginator);
 
     /**
-     * @param Fetcher $paginator
-     * @return Fetcher
+     * @param \Berthe\Fetcher $paginator
+     * @return \Berthe\Fetcher
      */
     public function selectByPaginator(\Berthe\Fetcher $paginator);
 
     /**
-     * @param Fetcher $paginator
+     * @param \Berthe\Fetcher $paginator
      * @return array(string, array) the sql and the array of the parameters
      */
     public function getSqlByPaginator(\Berthe\Fetcher $paginator);

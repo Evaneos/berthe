@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use Berthe\VO;
+
 interface Store {
 
     /**
@@ -28,20 +30,20 @@ interface Store {
     public function load(array $ids = array());
 
     /**
-     * @param \Berthe\VO $vo
+     * @param VO $vo
      * @return boolean
      */
-    public function delete(\Berthe\VO &$vo);
+    public function delete(VO $vo);
 
     /**
-     * @param \Berthe\VO $vo
+     * @param VO $vo
      * @return boolean success
      */
-    public function save(\Berthe\VO &$vo);
+    public function save(VO $vo);
 
     /**
      * Save multiple objects, returns true if all are saved, false if at least one failed
-     * @param \Berthe\VO[] $vos
+     * @param VO[] $vos
      * @return boolean false if at least one save has failed
      */
     public function saveMulti(array $vos = array());

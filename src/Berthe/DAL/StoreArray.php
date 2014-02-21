@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use Berthe\VO;
+
 class StoreArray extends AbstractStore {
     protected $objects = array();
 
@@ -20,21 +22,21 @@ class StoreArray extends AbstractStore {
         return true;
     }
 
-    protected function _insert(\Berthe\AbstractVO &$vo) {
+    protected function _insert(VO $vo) {
         if ($vo->getId()) {
             $this->objects[(int)$vo->getId()] = $vo;
         }
         return true;
     }
 
-    protected function _update(\Berthe\AbstractVO &$vo) {
+    protected function _update(VO $vo) {
         if ($vo->getId()) {
             $this->objects[(int)$vo->getId()] = $vo;
         }
         return true;
     }
 
-    protected function _delete(\Berthe\AbstractVO &$vo) {
+    protected function _delete(VO $vo) {
         if ($vo->getId()) {
             $id = (int) $vo->getId();
             if (array_key_exists($id, $this->objects)) {

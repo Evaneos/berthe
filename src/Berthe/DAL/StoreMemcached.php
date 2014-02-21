@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use Berthe\VO;
+
 class StoreMemcached extends AbstractStore {
     /**
      * The memcached accessor shared across all stores
@@ -87,7 +89,7 @@ class StoreMemcached extends AbstractStore {
         return $this->memcached->setMulti($toSave);
     }
 
-    protected function _insert(\Berthe\AbstractVO &$vo) {
+    protected function _insert(VO $vo) {
         if (!$this->memcached) {
             return true;
         }
@@ -95,7 +97,7 @@ class StoreMemcached extends AbstractStore {
         return $this->memcached->set($this->getMemcachedKey($vo->getId()), $vo);
     }
 
-    protected function _update(\Berthe\AbstractVO &$vo) {
+    protected function _update(VO $vo) {
         if (!$this->memcached) {
             return true;
         }
@@ -103,7 +105,7 @@ class StoreMemcached extends AbstractStore {
         return $this->_insert($vo);
     }
 
-    protected function _delete(\Berthe\AbstractVO &$vo) {
+    protected function _delete(VO $vo) {
         if (!$this->memcached) {
             return true;
         }

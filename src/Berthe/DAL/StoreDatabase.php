@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use Berthe\VO;
+
 class StoreDatabase extends AbstractStore {
     /**
      * @var Reader
@@ -46,7 +48,7 @@ class StoreDatabase extends AbstractStore {
         return $this->getReader()->selectByIds($ids);
     }
 
-    protected function _insert(\Berthe\AbstractVO &$vo) {
+    protected function _insert(VO $vo) {
         $ret = $this->getWriter()->insert($vo);
         if ($ret) {
             $results = $this->load(array($vo->getId()));
@@ -57,7 +59,7 @@ class StoreDatabase extends AbstractStore {
         return $ret;
     }
 
-    protected function _update(\Berthe\AbstractVO &$vo) {
+    protected function _update(VO $vo) {
         $ret = $this->getWriter()->update($vo);
         if ($ret) {
             $results = $this->load(array($vo->getId()));
@@ -68,7 +70,7 @@ class StoreDatabase extends AbstractStore {
         return $ret;
     }
 
-    protected function _delete(\Berthe\AbstractVO &$vo) {
+    protected function _delete(VO $vo) {
         $ret = $this->getWriter()->delete($vo);
         return $ret;
     }
