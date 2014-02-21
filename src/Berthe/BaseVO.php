@@ -1,7 +1,7 @@
 <?php
 namespace Berthe;
 
-abstract class AbstractVO {
+class BaseVO {
     protected $version = 1;
     protected $id = 0;
 

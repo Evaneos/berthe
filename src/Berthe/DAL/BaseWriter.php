@@ -2,7 +2,7 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractWriter {
+class BaseWriter implements Writer {
     
     const DEFAULT_TABLE_NAME = 'Berthe\DAL\AbstractWriter\UnsetTableName';
     
@@ -33,10 +33,10 @@ abstract class AbstractWriter {
     
     /**
      * Insert the object in database
-     * @param \Berthe\AbstractVO $object the object to insert
+     * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function insert(\Berthe\AbstractVO $object) {
+    public function insert(\Berthe\VO $object) {
         $this->validateTableAndIdentityColumn();
         
         $mappings = $this->getSaveMappings();
@@ -77,10 +77,10 @@ EOQ;
     
     /**
      * Update the object in database
-     * @param \Berthe\AbstractVO $object the object to insert
+     * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function update(\Berthe\AbstractVO $object) {
+    public function update(\Berthe\VO $object) {
         $this->validateTableAndIdentityColumn();
         
         $mappings = $this->getSaveMappings();
@@ -114,10 +114,10 @@ EOQ;
     
     /**
      * Delete the object from database
-     * @param \Berthe\AbstractVO $object the object to insert
+     * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function delete(\Berthe\AbstractVO $object) {
+    public function delete(\Berthe\VO $object) {
         return $this->deleteById($object->getId());
     }
     
@@ -138,7 +138,7 @@ EOQ;
         return (bool) $this->db->query($query, $params);
     }
     
-    private function getDefaultMappings(\Berthe\AbstractVO $vo) {
+    private function getDefaultMappings(\Berthe\VO $vo) {
         $properties = array_keys($vo->__toArray());
         
         $mappings = array_combine($properties, $properties);

@@ -4,11 +4,11 @@ namespace Berthe\DAL;
 
 class StoreDatabase extends AbstractStore {
     /**
-     * @var AbstractReader
+     * @var Reader
      */
     protected $reader = null;
     /**
-     * @var AbstractWriter
+     * @var Writer
      */
     protected $writer = null;
     /**
@@ -28,12 +28,12 @@ class StoreDatabase extends AbstractStore {
         return $this->writer;
     }
 
-    public function setReader(AbstractReader $reader) {
+    public function setReader(Reader $reader) {
         $this->reader = $reader;
         return $this;
     }
 
-    public function setWriter(AbstractWriter $writer) {
+    public function setWriter(Writer $writer) {
         $this->writer = $writer;
         return $this;
     }

@@ -33,7 +33,7 @@ class MyStorage extends \Berthe\DAL\AbstractStorage {
     }
 }
 
-class MyValidator extends \Berthe\Validation\AbstractValidator {
+class MyValidator extends \Berthe\Validation\BaseValidator {
 
     protected function doValidateSave(Berthe\AbstractVO $vo) {
         return true;

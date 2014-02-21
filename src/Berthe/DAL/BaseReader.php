@@ -2,12 +2,18 @@
 
 namespace Berthe\DAL;
 
-
-abstract class AbstractReader {
+class BaseReader implements Reader {
     /**
      * Class name of the VO for current package
      */
-    const VO_CLASS = '\Berthe\AbstractVO';
+    protected $VOClass = null;
+
+    /**
+     * Table name
+     * @var string
+     */
+    protected $tableName = null;
+
     /**
      * @var DbReader
      */
@@ -15,10 +21,20 @@ abstract class AbstractReader {
 
     /**
      * @param DbReader $db
-     * @return AbstractReader
+     * @return BaseReader
      */
     public function setDb(DbReader $db) {
         $this->db = $db;
+        return $this;
+    }
+
+    /**
+     * Sets the class name of the VO for the current package
+     * @param string $VOClass
+     * @return BaseReader
+     */
+    public function setVOClass($VOClass) {
+        $this->VOClass = $VOClass;
         return $this;
     }
 
@@ -27,7 +43,7 @@ abstract class AbstractReader {
      * @return string
      */
     public function getVOClass() {
-        return static::VO_CLASS;
+        return $this->VOClass;
     }
     
     /**
@@ -39,17 +55,15 @@ abstract class AbstractReader {
     }
 
     /**
-     * Implements a bunch of \Berthe\AbstractVO from datas
+     * Implements a bunch of \Berthe\VO from datas
      * @param array $datas
-     * @return \Berthe\AbstractVO
+     * @return \Berthe\VO
      */
     protected function implementVOs(array $datas = array()) {
         $ret = array();
 
-        $class = $this->getVOClass();
-
-        if($class == self::VO_CLASS) {
-            throw new \RuntimeException(get_called_class() . '::VO_CLASS constant is not defined');
+        if(!$this->getVOClass()) {
+            throw new \RuntimeException('VO class is not defined for ' . get_called_class());
         }
 
         foreach($datas as &$row) {
@@ -83,9 +97,9 @@ EOQ;
     }
 
     /**
-     * Gets a bunch of \Berthe\AbstractVO from database from their ids
+     * Gets a bunch of \Berthe\AbstractVOVO from database from their ids
      * @param array $ids
-     * @return \Berthe\AbstractVO
+     * @return \Berthe\VO
      */
     public function selectByIds(array $ids = array ()) {
         if (count($ids) === 0) {
@@ -197,10 +211,16 @@ EOQ;
     }
 
     /**
-     * Return the table name of the table.
+     * Returns the table name of the table.
      * @return string
      */
-    abstract protected function getTableName();
+    protected function getTableName() {
+        if($this->tableName) {
+            return $this->tableName;
+        }
+        
+        throw new \RuntimeException('Table name is not defined for ' . get_called_class());
+    }
 
     /**
      * @param Fetcher $paginator

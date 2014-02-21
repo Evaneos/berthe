@@ -2,29 +2,44 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractStorage {
-    const STORAGE_GUID = '\Berthe\AbstractStorage\Package_GUID';
+class BaseStorage {
 
     const STORE_LEVEL_1 = 'array_php';
     const STORE_VOLATILE_WITH_TTL = 'ramcache';
     const STORE_PERSISTENT = 'database';
 
     /**
+     * Storage id
+     * @var string
+     */
+    protected $storageGUID = null;
+
+    /**
      * Set to true to force cache regeneration
      * @var boolean
      */
-    public $ignoreCache = false;
+    protected $ignoreCache = false;
 
     /**
      * Set to true to ignore object existence in $_objects when fetching
      * @var boolean
      */
-    public $ignoreCacheLevel1 = false;
+    protected $ignoreCacheLevel1 = false;
 
     /**
      * @var AbstractStore[]
      */
     protected $stores = array();
+
+    /**
+     * Set storage GUID
+     * @param string $guid
+     * @return  BaseStorage
+     */
+    public function setStorageGUID($guid) {
+        $this->storageGUID = $guid;
+        return $this;   
+    }
 
     /**
      * @return StoreDatabase
@@ -66,9 +81,10 @@ abstract class AbstractStorage {
      * returns the package name guid
      */
     final protected function getStorageGUID() {
-        if (static::STORAGE_GUID != self::STORAGE_GUID) {
-            return static::STORAGE_GUID;
+        if (!$this->storageGUID) {
+            return $this->storageGUID;
         }
+
         throw new \RuntimeException('The package used has no GUID');
     }
 
