@@ -2,7 +2,14 @@
 
 namespace Berthe;
 
-abstract class AbstractManager {
+abstract class AbstractManager implements Manager {
+
+    /**
+     * VO class name
+     * @var string
+     */
+    protected $VOClass = null;
+
     /**
      * @var DAL\AbstractStorage
      */
@@ -43,16 +50,18 @@ abstract class AbstractManager {
 
     /**
      * Return a new VO with default values
-     * @return Berthe\AbstractVO the VO with its default values
+     * @return VO the VO with its default values
      */
-    abstract public function getVoForCreation();
+    public function getVoForCreation() {
+        if($this->VOClass) {
+            return new $this->VOClass;
+        }
 
-    public function __construct() {
-
+        throw new \RuntimeException('VOClass is not defined for ' . get_called_class());
     }
 
     /**
-     * @return Berthe\AbstractVO[]
+     * @return VO[]
      */
     public function getAll() {
         $pagi = new Fetcher(-1, -1);
@@ -63,17 +72,16 @@ abstract class AbstractManager {
     /**
      * Default method to get an object by its id
      * @param int $id
-     * @return Berthe\AbstractVO
+     * @return VO
      */
     public function getById($id) {
-        $_ret = $this->getStorage()->getById($id);
-        return $_ret;
+        return $this->getStorage()->getById($id);
     }
 
     /**
      * Default method to get a list of objects with a list of ids
      * @param array $ids
-     * @return Berthe\AbstractVO
+     * @return VO[]
      */
     public function getByIds(array $ids = array()) {
         return $this->getStorage()->getByIds($ids);
@@ -117,19 +125,19 @@ abstract class AbstractManager {
     }
 
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
-     * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
+     * @return [VO[], VO[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
+    public function getNextAndPreviousByPaginator(VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
         return $this->getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
     }
 
     /**
      * Default method to save (insert or update depending on context) an object
-     * @param Berthe\AbstractVO $object
+     * @param VO $object
      * @return boolean
      */
     public function save($object) {
@@ -141,13 +149,13 @@ abstract class AbstractManager {
     }
 
     protected function _save($object) {
-        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->save($object);
 
-        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->after($object);
         }
 
@@ -168,13 +176,13 @@ abstract class AbstractManager {
     }
 
     protected function _delete($object) {
-        foreach($this->deleteHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->deleteHooks as /* @var $hook Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->delete($object);
 
-        foreach($this->saveHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->after($object);
         }
 

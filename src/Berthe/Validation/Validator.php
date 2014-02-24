@@ -13,7 +13,7 @@ interface Validator {
     function validateSave($object);
     function validateDelete($object);
 
-    function addHook(Berthe\AbstractHook $hook, $name);
+    function addHook(Berthe\Hook $hook, $name);
     function delHook($name);
     function hasHook($name);
 }

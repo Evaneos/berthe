@@ -2,7 +2,9 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractStore {
+use Berthe\VO;
+
+abstract class AbstractStore implements Store {
     /**
      * @var boolean
      */
@@ -22,20 +24,20 @@ abstract class AbstractStore {
      */
     abstract protected function _load(array $ids = array());
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean success
      */
-    abstract protected function _insert(\Berthe\AbstractVO &$vo);
+    abstract protected function _insert(VO $vo);
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean success
      */
-    abstract protected function _update(\Berthe\AbstractVO &$vo);
+    abstract protected function _update(VO $vo);
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean success
      */
-    abstract protected function _delete(\Berthe\AbstractVO &$vo);
+    abstract protected function _delete(VO $vo);
 
     /**
      * Getter and setter for isEnabled toggle
@@ -76,18 +78,18 @@ abstract class AbstractStore {
     }
 
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean
      */
-    final public function delete(\Berthe\AbstractVO &$vo) {
+    final public function delete(VO $vo) {
         return $this->_delete($vo);
     }
 
     /**
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean success
      */
-    final public function save(\Berthe\AbstractVO &$vo) {
+    final public function save(VO $vo) {
         $ret = null;
         if ($vo->getId()) {
             $ret = $this->_update($vo);
@@ -96,12 +98,6 @@ abstract class AbstractStore {
             $ret = $this->_insert($vo);
         }
 
-        // @TOREFACTOR O.M. This check will help us find where someone forgot to add a return value in update/insert
-        if (!is_bool($ret)) {
-            trigger_error("SAVE method doesn't return a boolean value for class " . get_class($vo), E_USER_NOTICE);
-        }
-
-        // @TOREFACTOR O.M. I put that because some morons don't return a value in INSERT and UPDATE of their DAOWriter
         if ($ret !== false) {
             $ret = true;
         }
@@ -111,7 +107,7 @@ abstract class AbstractStore {
 
     /**
      * Save multiple objects, returns true if all are saved, false if at least one failed
-     * @param \Berthe\AbstractVO[] $vos
+     * @param VO[] $vos
      * @return boolean false if at least one save has failed
      */
     final public function saveMulti(array $vos = array()) {

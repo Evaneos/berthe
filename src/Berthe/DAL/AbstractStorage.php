@@ -2,63 +2,76 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractStorage {
-    const STORAGE_GUID = '\Berthe\AbstractStorage\Package_GUID';
+use Berthe\VO;
+use Berthe\Fetcher;
 
-    const STORE_LEVEL_1 = 'array_php';
-    const STORE_VOLATILE_WITH_TTL = 'ramcache';
-    const STORE_PERSISTENT = 'database';
+abstract class AbstractStorage implements Storage {
+    /**
+     * Storage id
+     * @var string
+     */
+    protected $storageGUID = null;
 
     /**
      * Set to true to force cache regeneration
      * @var boolean
      */
-    public $ignoreCache = false;
+    protected $ignoreCache = false;
 
     /**
      * Set to true to ignore object existence in $_objects when fetching
      * @var boolean
      */
-    public $ignoreCacheLevel1 = false;
+    protected $ignoreCacheLevel1 = false;
 
     /**
-     * @var AbstractStore[]
+     * @var Store[]
      */
     protected $stores = array();
+
+    /**
+     * Set storage GUID
+     * @param string $guid
+     * @return Storage
+     */
+    public function setStorageGUID($guid) {
+        $this->storageGUID = $guid;
+        return $this;
+    }
 
     /**
      * @return StoreDatabase
      */
     public function getStorePersistent() {
-        return array_key_exists(self::STORE_PERSISTENT, $this->stores) ? $this->stores[self::STORE_PERSISTENT] : null;
+        return array_key_exists(Storage::STORE_PERSISTENT, $this->stores) ? $this->stores[Storage::STORE_PERSISTENT] : null;
     }
 
     public function setStorePersistent(StoreDatabase $store) {
-        $this->stores[self::STORE_PERSISTENT] = $store;
+        $this->stores[Storage::STORE_PERSISTENT] = $store;
         return $this;
     }
 
     /**
-     * @return AbstractStore
+     * @return Store
      */
     public function getStoreVolatile() {
-        return array_key_exists(self::STORE_VOLATILE_WITH_TTL, $this->stores) ? $this->stores[self::STORE_VOLATILE_WITH_TTL] : null;
+        return array_key_exists(Storage::STORE_VOLATILE_WITH_TTL, $this->stores) ? $this->stores[Storage::STORE_VOLATILE_WITH_TTL] : null;
     }
 
-    public function setStoreVolatile(AbstractStore $store) {
-        $this->stores[self::STORE_VOLATILE_WITH_TTL] = $store;
+    public function setStoreVolatile(Store $store) {
+        $this->stores[Storage::STORE_VOLATILE_WITH_TTL] = $store;
         return $this;
     }
 
     /**
-     * @return AbstractStore
+     * @return Store
      */
     public function getStoreLevel1() {
-        return array_key_exists(self::STORE_LEVEL_1, $this->stores) ? $this->stores[self::STORE_LEVEL_1] : null;
+        return array_key_exists(Storage::STORE_LEVEL_1, $this->stores) ? $this->stores[Storage::STORE_LEVEL_1] : null;
     }
 
-    public function setStoreLevel1(AbstractStore $store) {
-        $this->stores[self::STORE_LEVEL_1] = $store;
+    public function setStoreLevel1(Store $store) {
+        $this->stores[Storage::STORE_LEVEL_1] = $store;
         return $this;
     }
 
@@ -66,15 +79,16 @@ abstract class AbstractStorage {
      * returns the package name guid
      */
     final protected function getStorageGUID() {
-        if (static::STORAGE_GUID != self::STORAGE_GUID) {
-            return static::STORAGE_GUID;
+        if (!$this->storageGUID) {
+            return $this->storageGUID;
         }
+
         throw new \RuntimeException('The package used has no GUID');
     }
 
     /**
      * @param int $id
-     * @return \Berthe\AbstractVO
+     * @return VO
      */
     public function getOriginalObject($id) {
         $this->ignoreAllCache(true);
@@ -86,7 +100,7 @@ abstract class AbstractStorage {
 
     /**
      * @param int $id
-     * @return \Berthe\AbstractVO
+     * @return VO
      */
     public function getById($id) {
         $id = (int)$id;
@@ -105,7 +119,7 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return \Berthe\AbstractVO[]
+     * @return VO[]
      */
     public function getByIds(array $ids = array()) {
         $ids = array_filter(array_unique($ids));
@@ -127,7 +141,7 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return \Berthe\AbstractVO[]
+     * @return VO[]
      */
     public function getColumnByIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
@@ -143,7 +157,7 @@ abstract class AbstractStorage {
 
     /**
      * @param array $ids
-     * @return \Berthe\AbstractVO[]
+     * @return VO[]
      */
     public function getColumnByIdsPreserveIds(array $ids = array(), $columnName = 'id') {
         $ids = array_filter(array_unique($ids));
@@ -158,10 +172,10 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
-     * @return \Berthe\Fetcher
+     * @param Fetcher $paginator
+     * @return Fetcher
      */
-    public function getByPaginator(\Berthe\Fetcher $paginator) {
+    public function getByPaginator(Fetcher $paginator) {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getByIds($ids);
@@ -171,11 +185,11 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param Fetcher $paginator
      * @param string $columnName
-     * @return \Berthe\Fetcher
+     * @return Fetcher
      */
-    public function getColumnByPaginator(\Berthe\Fetcher $paginator, $columnName = 'id') {
+    public function getColumnByPaginator(Fetcher $paginator, $columnName = 'id') {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIds($ids, $columnName);
@@ -185,11 +199,11 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param Fetcher $paginator
      * @param string $columnName
-     * @return \Berthe\Fetcher
+     * @return Fetcher
      */
-    public function getColumnByPaginatorPreserveIds(\Berthe\Fetcher $paginator, $columnName = 'id') {
+    public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = 'id') {
         $count = $this->getStorePersistent()->getReader()->selectCountByPaginator($paginator);
         $ids = $this->getStorePersistent()->getReader()->selectByPaginator($paginator);
         $results = $this->getColumnByIdsPreserveIds($ids, $columnName);
@@ -210,23 +224,23 @@ abstract class AbstractStorage {
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param Fetcher $paginator
      * @return string sql
      */
-    public function getSqlByPaginator(\Berthe\Fetcher $paginator) {
+    public function getSqlByPaginator(Fetcher $paginator) {
         return $this->getStorePersistent()->getReader()->getSqlByPaginator($paginator);
     }
 
     /**
      * TODO optimize that one !
-     * @param \Berthe\AbstractVO $vo
-     * @param \Berthe\Fetcher $paginator
+     * @param VO $vo
+     * @param Fetcher $paginator
      * @param int $nbBefore
      * @param int $nbAfter
      * @param bool $loop
      * @return array array[voBefore[], voAfter[]]  BEFORE / AFTER
      */
-    public function getNextAndPreviousByPaginator(\Berthe\AbstractVO $vo, \Berthe\Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
+    public function getNextAndPreviousByPaginator(VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1, $loop = false) {
         $page = $paginator->getPage();
         $nbByPage = $paginator->getNbByPage();
 
@@ -339,12 +353,12 @@ abstract class AbstractStorage {
 
                 if (count($objects) > 0) {
                     switch($storeType) {
-                        case self::STORE_VOLATILE_WITH_TTL :
+                        case Storage::STORE_VOLATILE_WITH_TTL :
                             if ($this->getStoreLevel1()) {
                                 $this->getStoreLevel1()->saveMulti($objects);
                             }
                             break;
-                        case self::STORE_PERSISTENT :
+                        case Storage::STORE_PERSISTENT :
                             if ($this->getStoreLevel1()) {
                                 $this->getStoreLevel1()->saveMulti($objects);
                             }
@@ -408,10 +422,10 @@ abstract class AbstractStorage {
 
     /**
      * Saves a VO
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      * @return boolean
      */
-    public function save(\Berthe\AbstractVO $vo) {
+    public function save(VO $vo) {
         $storePersistent = $this->getStorePersistent();
         $storeVolatile = $this->getStoreVolatile();
         $storeLevel1 = $this->getStoreLevel1();
@@ -434,14 +448,14 @@ abstract class AbstractStorage {
 
     /**
      * Deletes a VO
-     * @param \Berthe\AbstractVO $vo
+     * @param VO $vo
      */
-    public function delete(\Berthe\AbstractVO $vo) {
+    public function delete(VO $vo) {
         // We reverse because the last storage is supposed to be the persistent one, and others are faster/caching
         $storesReversed = array_reverse($this->stores);
 
         $ret = true;
-        foreach($storesReversed as /* @var $store \Berthe\DAL\AbstractStore */ $store) {
+        foreach($storesReversed as /* @var $store \Berthe\DAL\Store */ $store) {
             if ($ret) {
                 $ret = $store->delete($vo);
             }

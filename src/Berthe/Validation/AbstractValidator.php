@@ -1,8 +1,7 @@
 <?php
 namespace Berthe\Validation;
 
-use Berthe as Berthe;
-
+use Berthe;
 
 abstract class AbstractValidator implements Validator {
     /**
@@ -10,7 +9,7 @@ abstract class AbstractValidator implements Validator {
      */
     protected $exception = null;
     /**
-     * @var AbstractHook[]
+     * @var Berthe\Hook[]
      */
     protected $validateHooks = array();
 
@@ -27,11 +26,11 @@ abstract class AbstractValidator implements Validator {
     }
 
     /**
-     * @param Berthe\AbstractHook $hook
+     * @param Berthe\Hook $hook
      * @param string $name
      * @return Validator
      */
-    public function addHook(Berthe\AbstractHook $hook, $name) {
+    public function addHook(Berthe\Hook $hook, $name) {
         if(!is_scalar($name)) {
             throw new \RuntimeException('Cannot add hook, hookname not scalar');
         }
@@ -62,13 +61,13 @@ abstract class AbstractValidator implements Validator {
     }
 
     final public function validateSave($object) {
-        foreach($this->validateHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->validateHooks as /* @var $hook Berthe\Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->doValidateSave($object);
 
-        foreach($this->validateHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->validateHooks as /* @var $hook Berthe\Hook */ $hook) {
             $hook->after($object);
         }
 
@@ -76,19 +75,24 @@ abstract class AbstractValidator implements Validator {
     }
 
     final public function validateDelete($object) {
-        foreach($this->validateHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->validateHooks as /* @var $hook Berthe\Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->doValidateDelete($object);
 
-        foreach($this->validateHooks as /* @var $hook Berthe\AbstractHook */ $hook) {
+        foreach($this->validateHooks as /* @var $hook Berthe\Hook */ $hook) {
             $hook->after($object);
         }
 
         return $ret;
     }
 
-    abstract protected function doValidateSave(Berthe\AbstractVO $vo);
-    abstract protected function doValidateDelete(Berthe\AbstractVO $vo);
+    protected function doValidateSave(Berthe\AbstractVO $vo) {
+        return true;
+    }
+
+    protected function doValidateDelete(Berthe\AbstractVO $vo) {
+        return true;
+    }
 }
