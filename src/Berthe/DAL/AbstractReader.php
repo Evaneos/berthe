@@ -6,7 +6,7 @@ abstract class AbstractReader implements Reader {
     /**
      * Class name of the VO for current package
      */
-    protected $VOClass = null;
+    protected $VOFQCN = null;
 
     /**
      * Table name
@@ -39,11 +39,11 @@ abstract class AbstractReader implements Reader {
 
     /**
      * Sets the class name of the VO for the current package
-     * @param string $VOClass
+     * @param string $VOFQCN
      * @return AbstractReader
      */
-    public function setVOClass($VOClass) {
-        $this->VOClass = $VOClass;
+    public function setVOFQCN($VOFQCN) {
+        $this->VOFQCN = $VOFQCN;
         return $this;
     }
 
@@ -51,8 +51,8 @@ abstract class AbstractReader implements Reader {
      * Returns the Class name of the VO for current package
      * @return string
      */
-    public function getVOClass() {
-        return $this->VOClass;
+    public function getVOFQCN() {
+        return $this->VOFQCN;
     }
 
     /**
@@ -71,11 +71,9 @@ abstract class AbstractReader implements Reader {
     protected function implementVOs(array $datas = array()) {
         $ret = array();
 
-        if(!$this->getVOClass()) {
-            throw new \RuntimeException('VO class is not defined for ' . get_called_class());
+        if(!$class = $this->getVOFQCN()) {
+            throw new \RuntimeException('VOFQCN is not defined for ' . get_called_class());
         }
-
-        $class = $this->getVOClass();
 
         foreach($datas as &$row) {
             $ret[$row[$this->getIdentityColumn()]] = new $class($row);

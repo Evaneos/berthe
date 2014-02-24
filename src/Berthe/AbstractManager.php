@@ -8,7 +8,7 @@ abstract class AbstractManager implements Manager {
      * VO class name
      * @var string
      */
-    protected $VOClass = null;
+    protected $VOFQCN = null;
 
     /**
      * @var DAL\AbstractStorage
@@ -45,19 +45,24 @@ abstract class AbstractManager implements Manager {
 
     public function setStorage(DAL\AbstractStorage $storage) {
         $this->storage = $storage;
-        return $this->storage;
+        return $this;
+    }
+
+    public function setVOFQCN($VOFQCN) {
+        $this->VOFQCN = $VOFQCN;
+        return $this;
     }
 
     /**
      * Return a new VO with default values
      * @return VO the VO with its default values
      */
-    public function getVoForCreation() {
-        if($this->VOClass) {
-            return new $this->VOClass;
+    public function getVOForCreation() {
+        if($this->VOFQCN) {
+            return new $this->VOFQCN;
         }
 
-        throw new \RuntimeException('VOClass is not defined for ' . get_called_class());
+        throw new \RuntimeException('VOFQCN is not defined for ' . get_called_class());
     }
 
     /**

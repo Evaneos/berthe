@@ -8,7 +8,7 @@ interface Reader {
      * Returns the Class name of the VO for current package
      * @return string
      */
-    public function getVOClass();
+    public function getVOFQCN();
 
     /**
      * Returns the name of the primary key column.
