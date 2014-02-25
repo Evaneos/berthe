@@ -18,7 +18,14 @@ class VOComposite
     public function __call($name, $arguments)
     {
         if(method_exists($this->component, $name)) {
-           return call_user_func_array(array($this->component, $name), $arguments);
+            $ret = call_user_func_array(array($this->component, $name), $arguments);
+
+            // Don't break setter chaining
+            if($ret === $this->component) {
+                return $this;
+            }
+
+           return $ret;
         }
     }
 }
