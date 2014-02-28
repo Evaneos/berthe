@@ -129,7 +129,7 @@ abstract class AbstractStorage implements Storage {
             }
         }
 
-        return $ret;
+        return $success;
     }
 
 
