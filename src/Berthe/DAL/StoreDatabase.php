@@ -3,6 +3,7 @@
 namespace Berthe\DAL;
 
 use Berthe\VO;
+use Berthe\Fetcher;
 
 class StoreDatabase extends AbstractStore {
     /**
@@ -40,6 +41,13 @@ class StoreDatabase extends AbstractStore {
         return $this;
     }
 
+    public function getCountByFetcher (Fetcher $fetcher) {
+        return $this->getReader()->selectCountByPaginator($fetcher);
+    }
+
+    public function getIdsByFetcher (Fetcher $fetcher) {
+        return $this->getReader()->selectByPaginator($fetcher);
+    }
     /**
      * @param array $ids
      * @return array id=>object

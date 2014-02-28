@@ -3,6 +3,7 @@
 namespace Berthe\DAL;
 
 use Berthe\VO;
+use Berthe\Fetcher;
 
 abstract class AbstractStore implements Store {
     /**
@@ -38,6 +39,14 @@ abstract class AbstractStore implements Store {
      * @return boolean success
      */
     abstract protected function _delete(VO $vo);
+
+    public function getCountByFetcher(Fetcher $fetcher) {
+        throw new \RuntimeException(sprintf("No default implementation for %s::%s", get_called_class(), __FUNCTION__), 500);
+    }
+
+    public function getIdsByFetcher(Fetcher $fetcher) {
+        throw new \RuntimeException(sprintf("No default implementation for %s::%s", get_called_class(), __FUNCTION__), 500);
+    }
 
     /**
      * Getter and setter for isEnabled toggle

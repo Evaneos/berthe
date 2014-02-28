@@ -5,6 +5,9 @@ namespace Berthe\DAL;
 use Berthe\VO;
 
 class StoreMemcached extends AbstractStore {
+    const DEFAULT_PREFIX = 'berthe';
+    const DEFAULT_SEPARATOR = ':';
+
     /**
      * The memcached accessor shared across all stores
      * @var \Memcached
@@ -21,28 +24,52 @@ class StoreMemcached extends AbstractStore {
     /**
      * @var string
      */
-    protected $cacheKey = null;
+    protected $prefix = self::DEFAULT_PREFIX;
     /**
      * @var string
      */
-    protected $memcachedName = null;
-
+    protected $name = null;
     /**
-     * Returns the base key for memcached
+     * @var string
      */
-    protected function _getBaseMemcachedKey() {
-        if (is_null($this->cacheKey)) {
-            $this->cacheKey = 'berthe:' . $this->memcachedName . ':';
-        }
-        return $this->cacheKey;
+    protected $suffix = null;
+    /**
+     * @var string
+     */
+    protected $separator = self::DEFAULT_SEPARATOR;
+
+    public function __construct(\Memcached $memcached) {
+        $this->setMemcachedInstance($memcached);
+    }
+
+    public function setMemcachedInstance(\Memcached $memcached) {
+        $this->memcached = $memcached;
+        return $this;
+    }
+
+    public function setPrefix($value) {
+        $this->prefix = $value;
+        return $this;
+    }
+
+    public function setSuffix($value) {
+        $this->suffix = $value;
+        return $this;
+    }
+
+    public function setName($value) {
+        $this->name = $value;
+        return $this;
     }
 
     /**
-     * Appends the suffix to the base memcahced key
+     * Appends the suffix to the base memcached key
+     * @param int $id
      * @return string
      */
-    public function getMemcachedKey($suffix) {
-        return $this->_getBaseMemcachedKey() . $suffix;
+    public function getMemcachedCompleteKey($id) {
+        $memcachedKey = implode($this->separator, array($this->prefix, $this->name, $this->suffix, $id));
+        return $memcachedKey;
     }
 
     /**
@@ -58,7 +85,7 @@ class StoreMemcached extends AbstractStore {
 
         // Array transformation :  array[id] = id  INTO  array[memcachedId] = id
         array_walk($_idsCopy, function(&$value, $key, $context) {
-            $value = $context->getMemcachedKey($key); // "ev:mc:obj:" . $value;
+            $value = $context->getMemcachedCompleteKey($key); // "ev:mc:obj:" . $value;
         }, $this);
         $_memcachedFormattedIds = array_flip($_idsCopy);
 
@@ -84,7 +111,7 @@ class StoreMemcached extends AbstractStore {
 
         $toSave = array();
         foreach($vos as $vo) {
-            $toSave[$this->getMemcachedKey($vo->getId())] = $vo;
+            $toSave[$this->getMemcachedCompleteKey($vo->getId())] = $vo;
         }
         return $this->memcached->setMulti($toSave);
     }
@@ -94,7 +121,7 @@ class StoreMemcached extends AbstractStore {
             return true;
         }
 
-        return $this->memcached->set($this->getMemcachedKey($vo->getId()), $vo);
+        return $this->memcached->set($this->getMemcachedCompleteKey($vo->getId()), $vo);
     }
 
     protected function _update(VO $vo) {
@@ -110,6 +137,6 @@ class StoreMemcached extends AbstractStore {
             return true;
         }
 
-        return $this->memcached->delete($this->getMemcachedKey($vo->getId()));
+        return $this->memcached->delete($this->getMemcachedCompleteKey($vo->getId()));
     }
 }

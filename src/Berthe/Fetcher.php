@@ -316,7 +316,7 @@ class Fetcher extends Paginator {
                 $this->mainOperator = self::OPERATOR_OR;
                 break;
             default :
-                throw new \InvalidArgumentException(__CLASS__ . '::' . __METHOD__ . '() First argument should be ' . __CLASS__ . '::OPERATOR_AND or ' . __CLASS__ . '::OPERATOR_OR constant');
+                throw new \InvalidArgumentException(__CLASS__ . '::' . __FUNCTION__ . '() First argument should be ' . __CLASS__ . '::OPERATOR_AND or ' . __CLASS__ . '::OPERATOR_OR constant');
                 break;
         }
     }

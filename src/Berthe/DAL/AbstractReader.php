@@ -179,7 +179,7 @@ EOQ;
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
         if($_columnIndex === false || $_columnIndexId === false) {
-            throw new \InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
+            throw new \InvalidArgumentException(get_called_class() . '::' . __FUNCTION__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
         $_stmt1 = $this->db->getAdapter()->query($_query);
@@ -212,7 +212,7 @@ EOQ;
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
         if($_columnIndex === false) {
-            throw new \InvalidArgumentException(get_called_class() . '::' . __METHOD__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
+            throw new \InvalidArgumentException(get_called_class() . '::' . __FUNCTION__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
         $_stmt2 = $this->db->getAdapter()->query($_query);
