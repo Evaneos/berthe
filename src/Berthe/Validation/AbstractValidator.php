@@ -71,6 +71,10 @@ abstract class AbstractValidator implements Validator {
             $hook->after($object);
         }
 
+        if ($this->getErrors() && $this->getErrors()->hasErrors()) {
+            $this->getErrors()->throwMe();
+        }
+
         return $ret;
     }
 
@@ -85,10 +89,26 @@ abstract class AbstractValidator implements Validator {
             $hook->after($object);
         }
 
+        if ($this->getErrors() && $this->getErrors()->hasErrors()) {
+            $this->getErrors()->throwMe();
+        }
+
         return $ret;
     }
 
     protected function doValidateSave(Berthe\AbstractVO $vo) {
+        if ($vo->id) {
+            return $this->doValidateUpdate($vo);
+        }
+
+        return $this->doValidateCreate($vo);
+    }
+
+    protected function doValidateUpdate(Berthe\AbstractVO $vo) {
+        return true;
+    }
+
+    protected function doValidateCreate(Berthe\AbstractVO $vo) {
         return true;
     }
 
