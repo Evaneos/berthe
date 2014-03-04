@@ -22,7 +22,7 @@ abstract class AbstractValidator implements Validator {
      * @return Berthe\ErrorHandler\FunctionalErrorListException
      */
     public function getErrors() {
-        return $this->errors;
+        return $this->exception;
     }
 
     /**
