@@ -4,7 +4,7 @@ namespace Berthe;
 
 interface Composer {
 
-    public function composeSeveral($objects);
+    public function composeSeveral(array $objects = array());
 
-    public function composeOne($object);
+    public function composeOne(\Berthe\VO $object);
 }
