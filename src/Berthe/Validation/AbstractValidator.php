@@ -97,7 +97,7 @@ abstract class AbstractValidator implements Validator {
     }
 
     protected function doValidateSave(Berthe\AbstractVO $vo) {
-        if ($vo->id) {
+        if ($vo->getId()) {
             return $this->doValidateUpdate($vo);
         }
 
