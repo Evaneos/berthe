@@ -11,6 +11,12 @@ class FunctionalErrorListException extends \LogicException {
         return $this;
     }
 
+    public function addStringError($msg, array $data = array(), $code = 0) {
+        $error = new FunctionalErrorException($msg, $code, $data);
+        $this->addError($error);
+        return $this;
+    }
+
     public function getErrors() {
         return $this->errors;
     }
