@@ -36,12 +36,7 @@ class Fetcher extends Paginator {
     const SORT_DESC = 'DESC';
 
     public function sortById($direction) {
-        if (in_array($direction, array(self::SORT_ASC, self::SORT_DESC))) {
-            $this->addSort('id', $direction);
-        }
-        else {
-            throw new \InvalidArgumentException(sprintf("Trying to add a sort in unknown direction, requested '%s'", $direction), 500);
-        }
+        $this->addSort('id', $direction);
     }
 
     public function hasEmptyIN() {
@@ -158,12 +153,18 @@ class Fetcher extends Paginator {
     /**
      *
      * @param string $columnName
-     * @param string $sortType
+     * @param mixed $sortType
      * @return Fetcher
      */
     protected function addSort($columnName, $sortType) {
-        if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC) {
-            return;
+        if(is_bool($sortType))
+        {
+            $sortType = $sortType ? self::SORT_DESC : self::SORT_ASC;
+        }
+
+        if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC)
+        {
+            throw new \InvalidArgumentException(sprintf("Trying to add a sort in unknown direction, requested '%s'", $direction), 500);
         }
 
         $this->sorts[$columnName] = $sortType;
