@@ -36,7 +36,7 @@ class Fetcher extends Paginator {
     const SORT_DESC = 'DESC';
 
     public function sortById($direction) {
-        if (in_array(array(self::SORT_ASC, self::SORT_DESC), $direction)) {
+        if (in_array($direction, array(self::SORT_ASC, self::SORT_DESC))) {
             $this->addSort('id', $direction);
         }
         else {
