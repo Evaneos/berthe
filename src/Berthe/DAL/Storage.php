@@ -41,7 +41,7 @@ interface Storage
      * @param Fetcher $fetcher
      * @return Fetcher
      */
-    function getByPaginator(Fetcher $fetcher);
+    function getByFetcher(Fetcher $fetcher);
 
     /**
      * Saves a VO

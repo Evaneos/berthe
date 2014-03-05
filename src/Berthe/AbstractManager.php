@@ -69,9 +69,9 @@ abstract class AbstractManager implements Manager {
      * @return VO[]
      */
     public function getAll() {
-        $pagi = new Fetcher(-1, -1);
-        $pagi->addSort('id', Fetcher::SORT_ASC);
-        return $this->getByPaginator($pagi)->getResultSet();
+        $fetcher = new Fetcher(-1, -1);
+        $fetcher->sortById(Fetcher::SORT_ASC);
+        return $this->getByFetcher($fetcher)->getResultSet();
     }
 
     /**
@@ -93,51 +93,12 @@ abstract class AbstractManager implements Manager {
     }
 
     /**
-     * @param Fetcher $paginator
+     * @param Fetcher $fetcher
      * @return Fetcher
      */
-    public function getByPaginator(Fetcher $paginator) {
-        $paginator = $this->getStorage()->getByPaginator($paginator);
-        return $paginator;
-    }
-
-    /**
-     * @param Fetcher $paginator
-     * @param string $columnName
-     * @return Fetcher
-     */
-    public function getColumnByPaginator(Fetcher $paginator, $columnName = "id") {
-        $paginator = $this->getStorage()->getColumnByPaginator($paginator, $columnName);
-        return $paginator;
-    }
-
-    /**
-     * @param Fetcher $paginator
-     * @param string $columnName
-     * @return Fetcher
-     */
-    public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = "id") {
-        $paginator = $this->getStorage()->getColumnByPaginatorPreserveIds($paginator, $columnName);
-        return $paginator;
-    }
-
-    /**
-     * @param Fetcher $paginator
-     * @return string sql
-     */
-    public function getSqlByPaginator($paginator) {
-        return $this->getStorage()->getSqlByPaginator($paginator);
-    }
-
-    /**
-     * @param VO $vo
-     * @param Fetcher $paginator
-     * @param int $nbBefore
-     * @param int $nbAfter
-     * @return [VO[], VO[]]  BEFORE / AFTER
-     */
-    public function getNextAndPreviousByPaginator(VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1) {
-        return $this->getStorage()->getNextAndPreviousByPaginator($vo, $paginator, $nbBefore, $nbAfter);
+    public function getByFetcher(Fetcher $fetcher) {
+        $fetcher = $this->getStorage()->getByFetcher($fetcher);
+        return $fetcher;
     }
 
     /**
@@ -202,13 +163,5 @@ abstract class AbstractManager implements Manager {
     public function deleteById($id) {
         $object = $this->getById($id);
         return $this->delete($object);
-    }
-
-    /**
-     * Getter and setter to ignore cache flag
-     * @param boolean|null $shallIgnore
-     */
-    public function ignoreAllCache($shallIgnore = null){
-        $this->_getStorage()->ignoreAllCache($shallIgnore);
     }
 }

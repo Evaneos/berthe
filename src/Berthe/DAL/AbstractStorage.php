@@ -98,7 +98,7 @@ abstract class AbstractStorage implements Storage {
      * @param Fetcher $fetcher
      * @return Fetcher
      */
-    public function getByPaginator(Fetcher $fetcher) {
+    public function getByFetcher(Fetcher $fetcher) {
         if ($this->getPrimaryStore()) {
             $count = $this->getPrimaryStore()->getCountByFetcher($fetcher);
             $ids = $this->getPrimaryStore()->getIdsByFetcher($fetcher);

@@ -19,6 +19,13 @@ abstract class AbstractReader implements Reader {
      */
     protected $db = null;
 
+    protected $queryBuilder = null;
+
+    public function setQueryBuilder(FetcherQueryBuilder $qb) {
+        $this->queryBuilder = $qb;
+        return $this;
+    }
+
     /**
      * @param DbReader $db
      * @return AbstractReader
@@ -232,11 +239,11 @@ EOQ;
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param \Berthe\Fetcher $fetcher
      * @return \Berthe\Fetcher
      */
-    public function selectCountByPaginator(\Berthe\Fetcher $paginator) {
-        list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
+    public function selectCountByFetcher(\Berthe\Fetcher $fetcher) {
+        list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
 
         $sql = <<<EOL
 SELECT
@@ -250,28 +257,28 @@ EOL;
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param \Berthe\Fetcher $fetcher
      * @return \Berthe\Fetcher
      */
-    public function selectByPaginator(\Berthe\Fetcher $paginator) {
+    public function selectByFetcher(\Berthe\Fetcher $fetcher) {
 
-        list($sql, $filterToParameter) = $this->getSqlByPaginator($paginator);
-
+        list($sql, $filterToParameter) = $this->getSqlByFetcher($fetcher);
         $resultSet = $this->db->fetchCol($sql, $filterToParameter);
 
         return $resultSet;
     }
 
     /**
-     * @param \Berthe\Fetcher $paginator
+     * @param \Berthe\Fetcher $fetcher
      * @return array(string, array) the sql and the array of the parameters
      */
-    public function getSqlByPaginator(\Berthe\Fetcher $paginator) {
-        list($filterInReq, $filterToParameter) = $paginator->getFiltersForQuery();
-        $sortInReq = $paginator->getSortForQuery();
-        $isRandom = $paginator->isRandomSort();
+    public function getSqlByFetcher(\Berthe\Fetcher $fetcher) {
+        list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
+        $sortInReq = $this->queryBuilder->buildSort($fetcher);
+        $limit = $this->queryBuilder->buildLimit($fetcher);
 
-        $limit = $paginator->getLimit();
+        $isRandom = $fetcher->isRandomSort();
+
         if ($isRandom) {
             $sql = <<<EOL
 SELECT

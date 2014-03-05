@@ -41,12 +41,12 @@ class StoreDatabase extends AbstractStore {
         return $this;
     }
 
-    public function getCountByFetcher (Fetcher $fetcher) {
-        return $this->getReader()->selectCountByPaginator($fetcher);
+    public function getCountByFetcher(Fetcher $fetcher) {
+        return $this->getReader()->selectCountByFetcher($fetcher);
     }
 
-    public function getIdsByFetcher (Fetcher $fetcher) {
-        return $this->getReader()->selectByPaginator($fetcher);
+    public function getIdsByFetcher(Fetcher $fetcher) {
+        return $this->getReader()->selectByFetcher($fetcher);
     }
     /**
      * @param array $ids
