@@ -10,7 +10,7 @@ class Paginator implements \ArrayAccess {
     protected $_page = 1;
     protected $_nbByPage = 25;
     protected $_ttlCount = 0;
-    private $_count = 0;
+    protected $_count = 0;
 
     /**
      * Checks if an offset exists
@@ -92,10 +92,6 @@ class Paginator implements \ArrayAccess {
 
     public function hasLimit() {
         return ($this->_page >= 0 || $this->_nbByPage >= 0);
-    }
-
-    public function __toString() {
-        return $this->getLimit();
     }
 
     public function getPage() {

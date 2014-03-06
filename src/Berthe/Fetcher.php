@@ -2,13 +2,47 @@
 
 namespace Berthe;
 
-class Fetcher extends Paginator {
+class Fetcher extends Paginator implements \Serializable {
     protected $filters = array();
     protected $filtersOperator = array();
     protected $sorts = array();
     protected $isRandomSort = false;
     protected $hasEmptyIN = false;
     protected $mainOperator = self::OPERATOR_AND;
+
+    public function serialize() {
+        return serialize(array(
+            "filters" => serialize($this->filters),
+            "sorts" => serialize($this->sorts),
+            "filtersOperator" => serialize($this->filtersOperator),
+            "isRandomSort" => serialize($this->isRandomSort),
+            "hasEmptyIN" => serialize($this->hasEmptyIN),
+            "mainOperator" => serialize($this->mainOperator),
+
+            "_elements" => serialize($this->_elements),
+            "_page" => serialize($this->_page),
+            "_nbByPage" => serialize($this->_nbByPage),
+            "_ttlCount" => serialize($this->_ttlCount),
+            "_count" => serialize($this->_count)
+        ));
+    }
+
+    public function unserialize($data) {
+        $d = unserialize($data);
+        $this->filters = unserialize($d['filters']);
+        $this->sorts = unserialize($d['sorts']);
+        $this->filtersOperator = unserialize($d['filtersOperator']);
+        $this->isRandomSort = unserialize($d['isRandomSort']);
+        $this->hasEmptyIN = unserialize($d['hasEmptyIN']);
+        $this->mainOperator = unserialize($d['mainOperator']);
+
+        $this->_elements = unserialize($d['_elements']);
+        $this->_page = unserialize($d['_page']);
+        $this->_nbByPage = unserialize($d['_nbByPage']);
+        $this->_ttlCount = unserialize($d['_ttlCount']);
+        $this->_count = unserialize($d['_count']);
+    }
+
 
     const FILTER_TYPE = 1;
     const FILTER_VALUE = 2;
