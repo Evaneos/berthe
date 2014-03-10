@@ -44,35 +44,7 @@ interface Manager {
      * @param Fetcher $paginator
      * @return Fetcher
      */
-    public function getByPaginator(Fetcher $paginator);
-
-    /**
-     * @param Fetcher $paginator
-     * @param string $columnName
-     * @return Fetcher
-     */
-    public function getColumnByPaginator(Fetcher $paginator, $columnName = "id");
-    /**
-     * @param Fetcher $paginator
-     * @param string $columnName
-     * @return Fetcher
-     */
-    public function getColumnByPaginatorPreserveIds(Fetcher $paginator, $columnName = "id");
-
-    /**
-     * @param Fetcher $paginator
-     * @return string sql
-     */
-    public function getSqlByPaginator($paginator);
-    /**
-     * @param VO $vo
-     * @param Fetcher $paginator
-     * @param int $nbBefore
-     * @param int $nbAfter
-     * @return [VO[], VO[]]  BEFORE / AFTER
-     */
-    public function getNextAndPreviousByPaginator(VO $vo, Fetcher $paginator, $nbBefore = 1, $nbAfter = 1);
-
+    public function getByFetcher(Fetcher $fetcher);
     /**
      * Default method to save (insert or update depending on context) an object
      * @param VO $object
@@ -93,10 +65,4 @@ interface Manager {
      * @return boolean
      */
     public function deleteById($id);
-
-    /**
-     * Getter and setter to ignore cache flag
-     * @param boolean|null $shallIgnore
-     */
-    public function ignoreAllCache($shallIgnore = null);
 }

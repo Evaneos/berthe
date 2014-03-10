@@ -2,14 +2,7 @@
 
 namespace Berthe;
 
-class Fetcher extends Paginator {
-    protected $filters = array();
-    protected $filtersOperator = array();
-    protected $sorts = array();
-    protected $isRandomSort = false;
-    protected $hasEmptyIN = false;
-    protected $mainOperator = self::OPERATOR_AND;
-
+class Fetcher extends Paginator implements \Serializable {
     const FILTER_TYPE = 1;
     const FILTER_VALUE = 2;
     const FILTER_COLUMN = 3;
@@ -35,6 +28,21 @@ class Fetcher extends Paginator {
     const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
 
+    protected $filters = array();
+    protected $filtersOperator = array();
+    protected $sorts = array();
+    protected $isRandomSort = false;
+    protected $hasEmptyIN = false;
+    protected $mainOperator = self::OPERATOR_AND;
+
+    public function sortById($direction) {
+        $this->addSort('id', $direction);
+    }
+
+    public function hasEmptyIN() {
+        return $this->hasEmptyIN;
+    }
+
     /**
      *
      * @param string $columnName
@@ -43,7 +51,7 @@ class Fetcher extends Paginator {
      * @param mixed $groupName false if not in group, string if in group
      * @return Fetcher
      */
-    public function addFilter($columnName, $typeFilter, $value, $groupName = false) {
+    protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
         if ($typeFilter === self::TYPE_IN) {
             $typeFilter = self::TYPE_EQ;
         }
@@ -66,7 +74,7 @@ class Fetcher extends Paginator {
      * @param mixed $groupName false if not in group, string if in group
      * @return Fetcher
      */
-    public function addFilters($columnName, $typeFilter, array $values, $groupName = false) {
+    protected function addFilters($columnName, $typeFilter, array $values, $groupName = false) {
         if ($typeFilter === self::TYPE_IN && count($values) === 0) {
             $this->hasEmptyIN = true;
         }
@@ -91,7 +99,7 @@ class Fetcher extends Paginator {
      * @param array $filters
      * @throws Exception
      */
-    public function setFilters(array $filters = array()) {
+    protected function setFilters(array $filters = array()) {
         foreach($filters as $filter) {
             $bCol = array_key_exists(self::FILTER_COLUMN, $filter);
             $bType = array_key_exists(self::FILTER_TYPE, $filter);
@@ -145,12 +153,18 @@ class Fetcher extends Paginator {
     /**
      *
      * @param string $columnName
-     * @param string $sortType
+     * @param mixed $sortType
      * @return Fetcher
      */
-    public function addSort($columnName, $sortType) {
-        if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC) {
-            return;
+    protected function addSort($columnName, $sortType) {
+        if(is_bool($sortType))
+        {
+            $sortType = $sortType ? self::SORT_DESC : self::SORT_ASC;
+        }
+
+        if ($sortType != self::SORT_ASC && $sortType != self::SORT_DESC)
+        {
+            throw new \InvalidArgumentException(sprintf("Trying to add a sort in unknown direction, requested '%s'", $direction), 500);
         }
 
         $this->sorts[$columnName] = $sortType;
@@ -187,7 +201,7 @@ class Fetcher extends Paginator {
      * @param array $sorts
      * @throws Exception
      */
-    public function setSorts(array $sorts = array()) {
+    protected function setSorts(array $sorts = array()) {
         foreach($sorts as $sort) {
             if (count($sort) != 2) {
                 throw new \Exception("Invalid sort");
@@ -222,86 +236,6 @@ class Fetcher extends Paginator {
         return $colName;
     }
 
-    public function getSortForQuery() {
-        $sorts = array();
-        $_sorts = $this->getSorts();
-
-        foreach($_sorts as $column => $sort) {
-            $sorts[] = $column . ' ' . $sort;
-        }
-
-        if (count($sorts) < 1) {
-            $sorts[] = "id ASC";
-        }
-
-        return implode(", ", $sorts);
-    }
-
-    public function getFiltersForQuery() {
-        $_filters = $this->getFilters();
-
-        $_filterByCol = array();
-
-        foreach($_filters as $filter) {
-            if (!array_key_exists($filter[self::FILTER_COLUMN], $_filterByCol)) {
-                $_filterByCol[$filter[self::FILTER_COLUMN]] = array();
-            }
-
-            if (!array_key_exists($filter[self::FILTER_GROUP_NAME], $_filterByCol[$filter[self::FILTER_COLUMN]])) {
-                $_filterByCol[$filter[self::FILTER_COLUMN]][$filter[self::FILTER_GROUP_NAME]] = array();
-            }
-
-            $_filterByCol[$filter[self::FILTER_COLUMN]][$filter[self::FILTER_GROUP_NAME]][] = $filter;
-        }
-
-        $aToParameter = array();
-        if($this->mainOperator != self::OPERATOR_OR) {
-            $aImplodedColumns = array("1=1");
-            if ($this->hasEmptyIN) {
-                $aImplodedColumns[] = "1=2";
-            }
-        } else {
-            $aImplodedColumns = array();
-        }
-        foreach($_filterByCol as $columnName => $groups) {
-            $aToColumn = array();
-            foreach($groups as $filters) {
-                $aToGroup = array();
-                foreach($filters as $filter) {
-                    if ($filter[self::FILTER_TYPE] == self::TYPE_IS_NULL) {
-                        $aToGroup[] = $this->strColumnFilterToDbNotation($columnName, $filter[self::FILTER_TYPE]) . ' ' . $this->strFilterToDbNotation($filter[self::FILTER_TYPE]);
-                    }
-                    else if ($filter[self::FILTER_TYPE] == self::TYPE_IS_NOT_NULL) {
-                        $aToGroup[] = $this->strColumnFilterToDbNotation($columnName, $filter[self::FILTER_TYPE]) . ' ' . $this->strFilterToDbNotation($filter[self::FILTER_TYPE]);
-                    }
-                    else {
-                        $aToGroup[] = $this->strColumnFilterToDbNotation($columnName, $filter[self::FILTER_TYPE]) . ' ' . $this->strFilterToDbNotation($filter[self::FILTER_TYPE]);
-                        switch($filter[self::FILTER_TYPE]) {
-                            case self::TYPE_LIKE :
-                            case self::TYPE_ILIKE :
-                                $aToParameter[] = '%' . $filter[self::FILTER_VALUE] . '%';
-                                break;
-                            case self::TYPE_LOWERED_EQ :
-                                $aToParameter[] = strtolower($filter[self::FILTER_VALUE]);
-                                break;
-                            default :
-                                $aToParameter[] = $filter[self::FILTER_VALUE];
-                                break;
-                        }
-                    }
-                }
-                $aToColumn[] = "(" . implode(self::OPERATOR_AND, $aToGroup) . ")";
-            }
-
-            $implodeColumn = "(" . implode($this->getFilterOperator($columnName), $aToColumn) . ")";
-            $aImplodedColumns[] = $implodeColumn;
-        }
-
-        $strQuery = implode($this->mainOperator, $aImplodedColumns);
-
-        return array($strQuery, $aToParameter);
-    }
-
     /**
      * Sets the main operator (AND or OR)
      * @param string $operator self::OPERATOR_AND or self::OPERATOR_OR
@@ -316,9 +250,13 @@ class Fetcher extends Paginator {
                 $this->mainOperator = self::OPERATOR_OR;
                 break;
             default :
-                throw new \InvalidArgumentException(__CLASS__ . '::' . __METHOD__ . '() First argument should be ' . __CLASS__ . '::OPERATOR_AND or ' . __CLASS__ . '::OPERATOR_OR constant');
+                throw new \InvalidArgumentException(__CLASS__ . '::' . __FUNCTION__ . '() First argument should be ' . __CLASS__ . '::OPERATOR_AND or ' . __CLASS__ . '::OPERATOR_OR constant');
                 break;
         }
+    }
+
+    public function getMainOperator() {
+        return $this->mainOperator;
     }
 
     /**
@@ -330,11 +268,27 @@ class Fetcher extends Paginator {
         if (!$page)     {       $page       = $this->getPage();         }
         if (!$nbByPage) {       $nbByPage   = $this->getNbByPage();     }
 
-        $copy = new Fetcher($page, $nbByPage);
+        $copy = new static($page, $nbByPage);
         $copy->filters = $this->filters;
         $copy->sorts = $this->sorts;
         $copy->filtersOperator = $this->filtersOperator;
 
         return $copy;
     }
+
+    public function __toArray() {
+        return get_object_vars($this);
+    }
+
+    public function serialize() {
+        return serialize($this->__toArray());
+    }
+
+    public function unserialize($serializedData) {
+        $datas = unserialize($serializedData);
+        foreach($datas as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
 }

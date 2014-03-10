@@ -17,14 +17,48 @@ abstract class AbstractWriter implements Writer {
 
     protected $escapeCharacter = '"';
 
+    /**
+     * Set the Db Writer
+     *
+     * @param DbWriter $db
+     */
     public function setDb(DbWriter $db) {
         $this->db = $db;
 
         return $this;
     }
 
+    /**
+     * Sets the escape character for field and table names in queries
+     * @param string $char
+     * @return \Berthe\DAL\AbstractWriter
+     */
     public function setEscapeCharacter($char) {
         $this->escapeCharacter = $char;
+
+        return $this;
+    }
+
+    /**
+     * Set the identity column name
+     *
+     * @param string $columnName
+     */
+    public function setIdentityColumn($columnName)
+    {
+        $this->identityColumn = $columnName;
+
+        return $this;
+    }
+
+    /**
+     * Set the table name
+     *
+     * @param string $tableName
+     */
+    public function setTableName($tableName)
+    {
+        $this->tableName = $tableName;
 
         return $this;
     }
