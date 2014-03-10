@@ -124,12 +124,14 @@ abstract class AbstractWriter implements Writer {
         foreach ($mappings as $column => $property) {
             if ($column != $this->identityColumn) {
                 $value = $values[$property];
-                $columnElements[] = $this->escapeCharacter . $column . $this->escapeCharacter;
+                $columnElements[] = $column;
                 $params[':' . $column] = $value;
             }
         }
 
-        $columnAssignment = implode(', ', $columnElements);
+        $columnAssignment = $this->escapeCharacter .
+            implode($this->escapeCharacter . ', ' . $this->escapeCharacter, $columnElements) .
+            $this->escapeCharacter;
         $valueAssignment = ':' . implode(', :', $columnElements);
 
         $query = <<<EOQ
