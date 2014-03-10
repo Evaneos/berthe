@@ -15,8 +15,17 @@ abstract class AbstractWriter implements Writer {
 
     protected $identityColumn = 'id';
 
+    protected $escapeCharacter = '"';
+
     public function setDb(DbWriter $db) {
         $this->db = $db;
+
+        return $this;
+    }
+
+    public function setEscapeCharacter($char) {
+        $this->escapeCharacter = $char;
+
         return $this;
     }
 
@@ -54,7 +63,7 @@ abstract class AbstractWriter implements Writer {
         foreach ($mappings as $column => $property) {
             if ($column != $this->identityColumn) {
                 $value = $values[$property];
-                $columnElements[] = $column;
+                $columnElements[] = $this->escapeCharacter . $column . $this->escapeCharacter;
                 $params[':' . $column] = $value;
             }
         }
@@ -63,7 +72,7 @@ abstract class AbstractWriter implements Writer {
         $valueAssignment = ':' . implode(', :', $columnElements);
 
         $query = <<<EOQ
-INSERT INTO {$this->tableName} ({$columnAssignment})
+INSERT INTO {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter} ({$columnAssignment})
 VALUES ({$valueAssignment});
 EOQ;
 
@@ -96,7 +105,8 @@ EOQ;
 
         foreach ($mappings as $column => $property) {
             $value = $values[$property];
-            $clauseElements[] = sprintf('%s = :%s', $column, $column);
+            $clauseElements[] = sprintf('%s%s%s = :%s', $this->escapeCharacter, $column,
+                $this->escapeCharacter, $column);
             $params[':' . $column] = $value;
         }
 
@@ -105,8 +115,8 @@ EOQ;
         $columnAssignment = implode(', ', $clauseElements);
 
         $query = <<<EOQ
-UPDATE {$this->tableName} SET {$columnAssignment}
-WHERE {$this->identityColumn} = :identity;
+UPDATE {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter} SET {$columnAssignment}
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity;
 EOQ;
 
         return (bool) $this->db->query($query, $params);
@@ -130,7 +140,8 @@ EOQ;
         $this->validateTableAndIdentityColumn();
 
         $query = <<<EOQ
-DELETE FROM {$this->tableName} WHERE {$this->identityColumn} = :identity
+DELETE FROM {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter}
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity
 EOQ;
 
         $params = array(':identity' => $id);
@@ -140,7 +151,6 @@ EOQ;
 
     private function getDefaultMappings(\Berthe\VO $vo) {
         $properties = array_keys($vo->__toArray());
-
         $mappings = array_combine($properties, $properties);
 
         return array_filter($mappings, function($value) {
