@@ -9,6 +9,12 @@ abstract class AbstractReader implements Reader {
     protected $VOFQCN = null;
 
     /**
+     * Name of the DB schema. Can be null or empty to use the default schema
+     * @var string
+     */
+    protected $schemaName = '';
+
+    /**
      * Table name
      * @var string
      */
@@ -32,6 +38,16 @@ abstract class AbstractReader implements Reader {
      */
     public function setDb(DbReader $db) {
         $this->db = $db;
+        return $this;
+    }
+
+    /**
+     * Sets the name of the schema containing the table.
+     * @param string $name Use an empty string to specify the default schema.
+     * @return \Berthe\DAL\AbstractReader
+     */
+    public function setSchema($name) {
+        $this->schemaName = $name;
         return $this;
     }
 
@@ -232,6 +248,11 @@ EOQ;
      */
     protected function getTableName() {
         if($this->tableName) {
+            // @todo Clearly needs refactoring. Blame me, I'll burn in hell for this anyways. - Thibaud
+            if (trim($this->schemaName) !== '') {
+                return $this->schemaName .'.' . $this->tableName;
+            }
+
             return $this->tableName;
         }
 

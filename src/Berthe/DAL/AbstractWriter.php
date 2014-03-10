@@ -11,6 +11,12 @@ abstract class AbstractWriter implements Writer {
      */
     protected $db = null;
 
+    /**
+     * Name of the DB schema containing the table
+     * @var string
+     */
+    protected $schemaName = '';
+
     protected $tableName = self::DEFAULT_TABLE_NAME;
 
     protected $identityColumn = 'id';
@@ -33,7 +39,8 @@ abstract class AbstractWriter implements Writer {
      * @param string $char
      * @return \Berthe\DAL\AbstractWriter
      */
-    public function setEscapeCharacter($char) {
+    public function setEscapeCharacter($char)
+    {
         $this->escapeCharacter = $char;
 
         return $this;
@@ -47,6 +54,13 @@ abstract class AbstractWriter implements Writer {
     public function setIdentityColumn($columnName)
     {
         $this->identityColumn = $columnName;
+
+        return $this;
+    }
+
+    public function setSchema($schemaName)
+    {
+        $this->schemaName = $schemaName;
 
         return $this;
     }
@@ -72,6 +86,19 @@ abstract class AbstractWriter implements Writer {
         if (trim($this->identityColumn) == '') {
             throw new \RuntimeException('Identity column name cannot be null.');
         }
+    }
+
+    private function getTableName()
+    {
+        $tableName = '';
+
+        if (trim($this->schemaName) !== '') {
+            $tableName = $this->escapeCharacter . $this->schemaName . $this->escapeCharacter . '.';
+        }
+
+        $tableName .= $this->escapeCharacter . $this->tableName . $this->escapeCharacter;
+
+        return $tableName;
     }
 
     /**
@@ -106,7 +133,7 @@ abstract class AbstractWriter implements Writer {
         $valueAssignment = ':' . implode(', :', $columnElements);
 
         $query = <<<EOQ
-INSERT INTO {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter} ({$columnAssignment})
+INSERT INTO {$this->getTableName()} ({$columnAssignment})
 VALUES ({$valueAssignment});
 EOQ;
 
@@ -149,7 +176,7 @@ EOQ;
         $columnAssignment = implode(', ', $clauseElements);
 
         $query = <<<EOQ
-UPDATE {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter} SET {$columnAssignment}
+UPDATE {$this->getTableName()} SET {$columnAssignment}
 WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity;
 EOQ;
 
@@ -174,7 +201,7 @@ EOQ;
         $this->validateTableAndIdentityColumn();
 
         $query = <<<EOQ
-DELETE FROM {$this->escapeCharacter}{$this->tableName}{$this->escapeCharacter}
+DELETE FROM {$this->getTableName()}
 WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity
 EOQ;
 
