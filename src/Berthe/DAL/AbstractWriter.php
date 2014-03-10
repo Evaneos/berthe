@@ -15,8 +15,37 @@ abstract class AbstractWriter implements Writer {
 
     protected $identityColumn = 'id';
 
+    /**
+     * Set the Db Writer
+     * 
+     * @param DbWriter $db
+     */
     public function setDb(DbWriter $db) {
         $this->db = $db;
+        return $this;
+    }
+
+    /**
+     * Set the identity column name
+     * 
+     * @param string $columnName
+     */
+    public function setIdentityColumn($columnName)
+    {
+        $this->identityColumn = $columnName;
+
+        return $this;
+    }
+
+    /**
+     * Set the table name
+     * 
+     * @param string $tableName
+     */
+    public function setTableName($tableName)
+    {
+        $this->tableName = $tableName;
+
         return $this;
     }
 
