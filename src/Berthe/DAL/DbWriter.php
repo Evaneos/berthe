@@ -17,8 +17,7 @@ class DbWriter extends DbReader {
         return $this->db->query($sql, $sanitizedBinds);
     }
 
-    public function addSanitizer($typeName, $callable)
-    {
+    public function addSanitizer($typeName, $callable) {
         if (! is_callable($callable)) {
             throw new \InvalidArgumentException('$callable is not a callable.');
         }
