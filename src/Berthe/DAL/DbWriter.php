@@ -39,7 +39,7 @@ class DbWriter extends DbReader {
             }
             elseif (array_key_exists(gettype($value), $this->sanitizers)) {
                 $sanitizer = $this->sanitizers[gettype($value)];
-                $sanitizedValue = $sanitizer($value);
+                $sanitizedValue = call_user_func($sanitizer, $value);
             }
             else {
                 switch(1) {
