@@ -35,7 +35,7 @@ class DbWriter extends DbReader {
         foreach($bind as $key => $value) {
             if (is_object($value) && array_key_exists(get_class($value), $this->sanitizers)) {
                 $sanitizer = $this->sanitizers[get_class($value)];
-                $sanitizedValue = $sanitizer($value);
+                $sanitizedValue = call_user_func($sanitizer, $value);
             }
             else {
                 switch(1) {
