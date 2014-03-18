@@ -37,10 +37,17 @@ class DbWriter extends DbReader {
                 $sanitizer = $this->sanitizers[get_class($value)];
                 $sanitizedValue = call_user_func($sanitizer, $value);
             }
+            elseif (array_key_exists(gettype($value), $this->sanitizers)) {
+                $sanitizer = $this->sanitizers[gettype($value)];
+                $sanitizedValue = $sanitizer($value);
+            }
             else {
                 switch(1) {
                     case ($value instanceof \DateTime) :
                         $sanitizedValue = $value->format('Y-m-d H:i:s');
+                        break;
+                    case is_bool($value) :
+                        $sanitizedValue = (int) $value;
                         break;
                     case is_string($value) :
                         $sanitizedValue = mb_check_encoding($value, 'UTF-8') ? $value : utf8_encode($value);

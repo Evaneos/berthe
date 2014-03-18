@@ -140,7 +140,7 @@ VALUES ({$valueAssignment});
 EOQ;
 
         if ((bool) $this->db->query($query, $params)) {
-            $id = (int) $this->db->lastInsertId($this->tableName, $this->identityColumn);
+            $id = (int) $this->db->lastInsertId($this->getTableName(), $this->identityColumn);
             $object->setId($id);
         }
 
