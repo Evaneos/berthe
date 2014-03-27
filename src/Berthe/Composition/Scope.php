@@ -29,14 +29,16 @@ class Scope {
         $composerName = $this->resource->getComposer();
 
         $composer = $this->composerManager->getComposer($composerName);
+
+        $data = is_object($this->resource->getData()) ? array($this->resource->getData()) : $this->resource->getData();
         
         // Get embeded composed models
-        $embededModels = $composer->getEmbededModels($this, $this->resource->getData());
+        $embededModels = $composer->getEmbededModels($this, $data);
         
         // Compose resource
         $embededModels = $embededModels ? $embededModels : array();
         
-        return $composer->compose($this->resource->getData(), $embededModels);
+        return $composer->compose($data, $embededModels);
     }
 
     public function isRequested($checkScopeSegment)
