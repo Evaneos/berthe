@@ -12,4 +12,6 @@ abstract class AbstractFetchable implements Fetchable
     {
         $this->manager = $manager;
     }
+
+    abstract protected function checkFetcherValidity(Fetcher $fetcher);
 }

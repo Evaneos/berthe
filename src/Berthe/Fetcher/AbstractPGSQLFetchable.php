@@ -27,6 +27,8 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
 
     public function fetch(Fetcher $fetcher)
     {
+        $this->checkFetcherValidity($fetcher);
+
         $count = $this->getCountByFetcher($fetcher);
         $ids = $this->getIdsByFetcher($fetcher);
         $objects = $this->manager->getByIds($ids);
