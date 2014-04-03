@@ -60,6 +60,19 @@ abstract class AbstractComposer
         $embededData = array();
         $embededDataCount = 0;
 
+        if (is_array($this->defaultEmbeds)) {
+
+            foreach ($this->defaultEmbeds as $potentialEmbed) {
+
+                if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
+                    continue;
+                }
+
+                $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
+                ++$embededDataCount;
+            }
+        }
+
         if (is_array($this->availableEmbeds)) {
 
             foreach ($this->availableEmbeds as $potentialEmbed) {
