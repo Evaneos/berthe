@@ -84,7 +84,8 @@ SQL;
         else {
             $sql = <<<SQL
 SELECT
-    DISTINCT id
+    DISTINCT id,
+    sub.*
 FROM
     ($query)  as sub
 WHERE
