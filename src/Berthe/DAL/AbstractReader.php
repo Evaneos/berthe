@@ -27,6 +27,13 @@ abstract class AbstractReader implements Reader {
 
     protected $queryBuilder = null;
 
+    protected $translator = null;
+
+    public function __construct()
+    {
+        $this->translator = new NullTranslator();
+    }
+
     public function setQueryBuilder(FetcherQueryBuilder $qb) {
         $this->queryBuilder = $qb;
         return $this;
@@ -38,6 +45,12 @@ abstract class AbstractReader implements Reader {
      */
     public function setDb(DbReader $db) {
         $this->db = $db;
+        return $this;
+    }
+
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
         return $this;
     }
 
@@ -98,11 +111,47 @@ abstract class AbstractReader implements Reader {
             throw new \RuntimeException('VOFQCN is not defined for ' . get_called_class());
         }
 
+        $datas = $this->translationLoader($class, $datas);
+
         foreach($datas as &$row) {
             $ret[$row[$this->getIdentityColumn()]] = new $class($row);
         }
 
         return $ret;
+    }
+
+    protected function translationLoader($vofqcn, array $datas = array())
+    {
+        $vo = new $vofqcn();
+        $translatableFields = $vo->getTranslatableFields();
+
+        $translationIdsToFetch = array();
+        $translationIdsMapping = array();
+        foreach($datas as $rownum => $row) {
+            foreach($translatableFields as $translatableField) {
+                if (array_key_exists($translatableField, $row)) {
+                    $translationIdsToFetch[] = $row[$translatableField];
+
+                    if (!array_key_exists($row[$translatableField], $translationIdsMapping)) {
+                        $translationIdsMapping[$row[$translatableField]] = array();
+                    }
+                    $translationIdsMapping[$row[$translatableField]][] = array('rownum' => $rownum, 'field' => $translatableField);
+                }
+            }
+        }
+
+        $translations = $this->translator->getTranslations($translationIdsToFetch);
+
+        foreach($translations as $translationObject) {
+            $id = $translationObject->getId();
+            $datasToUpdate = $translationIdsMapping[$id];
+            foreach($datasToUpdate as $infos) {
+                $datas[$infos['rownum']][$infos['field']] = $translationObject;
+            }
+        }
+        unset($vo);
+
+        return $datas;
     }
 
     /**

@@ -3,7 +3,10 @@
 namespace Berthe\DAL;
 
 interface Reader {
-
+    /**
+     * @param Translator $translator
+     */
+    function setTranslator(Translator $translator);
     /**
      * Returns the Class name of the VO for current package
      * @return string

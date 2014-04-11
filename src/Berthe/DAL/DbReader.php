@@ -3,9 +3,9 @@
 namespace Berthe\DAL;
 
 class DbReader extends DbAdapter {
-    
+
     protected $sanitizers = array();
-    
+
     /**
      * @param string $sql
      * @param array $array
@@ -76,10 +76,10 @@ class DbReader extends DbAdapter {
     public function describeTable($tableName, $schemaName = null) {
         return $this->db->describeTable($tableName, $schemaName);
     }
-    
+
     /**
      * Adds a sanitaizer
-     * 
+     *
      * @param string $typeName
      * @param string $callable
      * @throws \InvalidArgumentException
@@ -88,10 +88,10 @@ class DbReader extends DbAdapter {
         if (! is_callable($callable)) {
             throw new \InvalidArgumentException('$callable is not a callable.');
         }
-    
+
         $this->sanitizers[$typeName] = $callable;
     }
-    
+
     /**
      * Sanitize binds
      * @param array $bind
@@ -110,6 +110,9 @@ class DbReader extends DbAdapter {
             }
             else {
                 switch(1) {
+                    case ($value instanceof \Berthe\Translation\Translation) :
+                        $sanitizedValue = $value->getId();
+                        break;
                     case ($value instanceof \DateTime) :
                         $sanitizedValue = $value->format('Y-m-d H:i:s');
                         break;

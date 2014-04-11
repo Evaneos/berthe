@@ -3,7 +3,10 @@
 namespace Berthe\DAL;
 
 interface Writer {
-
+    /**
+     * @param Translator $translator
+     */
+    function setTranslator(Translator $translator);
     /**
      * Insert the object in database
      * @param \Berthe\VO $object the object to insert

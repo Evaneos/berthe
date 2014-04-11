@@ -23,6 +23,22 @@ abstract class AbstractWriter implements Writer {
 
     protected $escapeCharacter = '"';
 
+    protected $translator = null;
+
+    public function __construct()
+    {
+        $this->translator = new NullTranslator();
+    }
+
+    /**
+     * @param Translator $translator
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+        return $this;
+    }
+
     /**
      * Set the Db Writer
      *
@@ -126,6 +142,10 @@ abstract class AbstractWriter implements Writer {
                 $value = $values[$property];
                 $columnElements[] = $column;
                 $params[':' . $column] = $value;
+
+                if ($value instanceof \Berthe\Translation\Translation) {
+                    $this->translator->saveTranslation($value);
+                }
             }
         }
 
@@ -171,6 +191,10 @@ EOQ;
             $clauseElements[] = sprintf('%s%s%s = :%s', $this->escapeCharacter, $column,
                 $this->escapeCharacter, $column);
             $params[':' . $column] = $value;
+
+            if ($value instanceof \Berthe\Translation\Translation) {
+                $this->translator->saveTranslation($value);
+            }
         }
 
         $params[':identity'] = $object->getId();
