@@ -1,5 +1,4 @@
 <?php
-
 namespace Berthe;
 
 interface Builder {
