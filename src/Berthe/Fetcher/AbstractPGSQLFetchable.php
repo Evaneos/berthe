@@ -9,7 +9,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
     protected $queryBuilder = null;
     protected $db = null;
 
-    abstract protected function getQuery();
+    abstract protected function getQuery(Fetcher $fetcher=null);
 
     public function setQueryBuilder(\Berthe\DAL\FetcherPGSQLQueryBuilder $qb) {
         $this->queryBuilder = $qb;
