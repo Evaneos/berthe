@@ -108,7 +108,6 @@ FROM
 {$limit}
 SQL;
         }
-     die($sql);
 
         return $this->db->fetchCol($sql, $filterToParameter);
     }
