@@ -52,7 +52,6 @@ FROM
 WHERE
     {$filterInReq}
 SQL;
-
         return $this->db->fetchOne($sql, $filterToParameter);
     }
 
@@ -69,32 +68,47 @@ SQL;
         if ($isRandom) {
             $sql = <<<SQL
 SELECT
-    DISTINCT id
+    id
 FROM
-    (SELECT
-        *
+    (
+    SELECT
+        DISTINCT ON (id) id
     FROM
-        ($query) as sub
-    WHERE
-        {$filterInReq}
-    ORDER BY 2
-    {$limit}) randomized
+        (
+            SELECT
+                sub.*
+            FROM
+                ($query) as sub
+            WHERE
+                ($filterInReq)
+        ) as lastsub
+    ORDER BY
+        id ASC
+    ) as lastsub
+ORDER BY
+    RANDOM() ASC
+{$limit}
 SQL;
         }
         else {
             $sql = <<<SQL
 SELECT
-    DISTINCT id,
-    sub.*
+    DISTINCT id
 FROM
-    ($query)  as sub
-WHERE
-    {$filterInReq}
-ORDER BY
-    {$sortInReq}
+    (
+    SELECT
+        sub.*
+    FROM
+        ($query)  as sub
+    WHERE
+        {$filterInReq}
+    ORDER BY
+        {$sortInReq}
+    ) as lastsub
 {$limit}
 SQL;
         }
+     die($sql);
 
         return $this->db->fetchCol($sql, $filterToParameter);
     }
