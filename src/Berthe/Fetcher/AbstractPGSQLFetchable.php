@@ -78,13 +78,13 @@ FROM
             SELECT
                 sub.*
             FROM
-                ($query) as sub
+                ($query) AS sub
             WHERE
                 ($filterInReq)
         ) as lastsub
     ORDER BY
         id ASC
-    ) as lastsub
+    ) AS lastsub
 ORDER BY
     RANDOM() ASC
 {$limit}
@@ -93,22 +93,22 @@ SQL;
         else {
             $sql = <<<SQL
 SELECT
-    DISTINCT id
+    did AS id
 FROM
     (
     SELECT
+        DISTINCT (sub.id) AS did,
         sub.*
     FROM
-        ($query)  as sub
+        ($query)  AS sub
     WHERE
         {$filterInReq}
     ORDER BY
         {$sortInReq}
-    ) as lastsub
+    ) AS lastsub
 {$limit}
 SQL;
         }
-
         return $this->db->fetchCol($sql, $filterToParameter);
     }
     
