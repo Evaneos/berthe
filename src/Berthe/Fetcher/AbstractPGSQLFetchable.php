@@ -61,6 +61,7 @@ SQL;
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
+        $sortWrappingQuery = implode(', ', array_merge(array("DISTINCT (lastsub.id) AS id"), array_keys($fetcher->getSorts())));
         $limit = $this->queryBuilder->buildLimit($fetcher);
 
         $isRandom = $fetcher->isRandomSort();
@@ -93,11 +94,10 @@ SQL;
         else {
             $sql = <<<SQL
 SELECT
-    did AS id
+    {$sortWrappingQuery}
 FROM
     (
     SELECT
-        DISTINCT (sub.id) AS did,
         sub.*
     FROM
         ($query)  AS sub
@@ -106,18 +106,20 @@ FROM
     ORDER BY
         {$sortInReq}
     ) AS lastsub
+ORDER BY
+    {$sortInReq}
 {$limit}
 SQL;
         }
         return $this->db->fetchCol($sql, $filterToParameter);
     }
-    
-    
+
+
     protected function getSelectedColumnsjoins($column, $mainTableAlias, array $selectedColumns = array(), $selectedJoin = array(0, -1)) {
         $columns = $this->getColumns();
         if ($columns != null && array_key_exists($column, $columns)) {
             $selectedColumns[$column] = $columns[$column]['select'];
-    
+
             $join = $columns[$column]['join'];
             if ($join[0]<$selectedJoin[0]) {
                 $selectedJoin[0] = $join[0];
@@ -128,30 +130,30 @@ SQL;
         } else {
             $selectedColumns[$column] = $mainTableAlias.'.'.$column;
         }
-    
+
         return array($selectedColumns, $selectedJoin);
     }
-    
+
     protected function getQueryParameters(Fetcher $fetcher = null, $mainTableAlias='ref')
     {
         $select = '';
         $from = '';
-    
+
         if ($fetcher != null) {
-    
+
             $selectedColumns = array();
             $selectedJoin = array(0, -1);
-    
+
             $filters = $fetcher->getFilters();
             foreach ($filters as $filter) {
                 list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($filter[3], $mainTableAlias, $selectedColumns, $selectedJoin);
             }
-    
+
             $sorts = $fetcher->getSorts();
             foreach ($sorts as $column=>$sortOrder) {
                 list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($column, $mainTableAlias, $selectedColumns, $selectedJoin);
             }
-    
+
             if (count($selectedColumns)>0) {
                 $select = ', '.implode(', ', $selectedColumns);
             }
@@ -161,16 +163,16 @@ SQL;
                 $from = implode(' ', $selectedJoins);
             }
         }
-    
+
         return array($select, $from);
     }
-    
+
     protected function getColumns() {
         return array();
     }
-    
+
     protected function getJoins() {
         return array();
     }
-    
+
 }
