@@ -93,13 +93,13 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
                 $params = array_merge($params, $returnParams);
             }
             
-            $query = '('.implode($operation->getOperator(), $strings).')';
+            $query = implode($operation->getOperator(), $strings);
             
         } else {
             throw new \InvalidArgumentException('Givent operation is not supported');
         }
         
-        return array($query, $params);
+        return array('('.$query.')', $params);
     }
     
     protected function getOperationValue(SimpleOperation $operation)
