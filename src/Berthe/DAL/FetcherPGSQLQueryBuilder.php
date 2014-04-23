@@ -2,6 +2,9 @@
 
 namespace Berthe\DAL;
 use Berthe\Fetcher;
+use Berthe\Fetcher\FetcherOperation;
+use Berthe\Fetcher\Operation\ListOperation;
+use Berthe\Fetcher\Operation\SimpleOperation;
 
 class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
 {
@@ -35,68 +38,76 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
 
     public function buildFilters(Fetcher $fetcher)
     {
-        $_filters = $fetcher->getFilters();
-
-        $_filterByCol = array();
-
-        foreach($_filters as $filter) {
-            if (!array_key_exists($filter[Fetcher::FILTER_COLUMN], $_filterByCol)) {
-                $_filterByCol[$filter[Fetcher::FILTER_COLUMN]] = array();
-            }
-
-            if (!array_key_exists($filter[Fetcher::FILTER_GROUP_NAME], $_filterByCol[$filter[Fetcher::FILTER_COLUMN]])) {
-                $_filterByCol[$filter[Fetcher::FILTER_COLUMN]][$filter[Fetcher::FILTER_GROUP_NAME]] = array();
-            }
-
-            $_filterByCol[$filter[Fetcher::FILTER_COLUMN]][$filter[Fetcher::FILTER_GROUP_NAME]][] = $filter;
-        }
-
-        $aToParameter = array();
-        if($fetcher->getMainOperator() != Fetcher::OPERATOR_OR) {
-            $aImplodedColumns = array("1=1");
-            if ($fetcher->hasEmptyIN()) {
-                $aImplodedColumns[] = "1=2";
-            }
-        } else {
-            $aImplodedColumns = array();
-        }
-
-        foreach($_filterByCol as $columnName => $groups) {
-            $aToColumn = array();
-            foreach($groups as $filters) {
-                $aToGroup = array();
-                foreach($filters as $filter) {
-                    if ($filter[Fetcher::FILTER_TYPE] == Fetcher::TYPE_IS_NULL) {
-                        $aToGroup[] = $fetcher->strColumnFilterToDbNotation($columnName, $filter[Fetcher::FILTER_TYPE]) . ' ' . $fetcher->strFilterToDbNotation($filter[Fetcher::FILTER_TYPE]);
-                    }
-                    else if ($filter[Fetcher::FILTER_TYPE] == Fetcher::TYPE_IS_NOT_NULL) {
-                        $aToGroup[] = $fetcher->strColumnFilterToDbNotation($columnName, $filter[Fetcher::FILTER_TYPE]) . ' ' . $fetcher->strFilterToDbNotation($filter[Fetcher::FILTER_TYPE]);
-                    }
-                    else {
-                        $aToGroup[] = $fetcher->strColumnFilterToDbNotation($columnName, $filter[Fetcher::FILTER_TYPE]) . ' ' . $fetcher->strFilterToDbNotation($filter[Fetcher::FILTER_TYPE]);
-                        switch($filter[Fetcher::FILTER_TYPE]) {
-                            case Fetcher::TYPE_LIKE :
-                            case Fetcher::TYPE_ILIKE :
-                                $aToParameter[] = '%' . $filter[Fetcher::FILTER_VALUE] . '%';
-                                break;
-                            case Fetcher::TYPE_LOWERED_EQ :
-                                $aToParameter[] = strtolower($filter[Fetcher::FILTER_VALUE]);
-                                break;
-                            default :
-                                $aToParameter[] = $filter[Fetcher::FILTER_VALUE];
-                                break;
-                        }
-                    }
+        return $this->buildOperation($fetcher);
+    }
+    
+    public function buildOperation(Fetcher $fetcher)
+    {
+        $rootOperation = $fetcher->getRootOperation();
+        $operations = $rootOperation->getOperations();
+        
+        //We replace the operator by the groupName value from the fetcher
+        foreach ($operations as $operation) {
+            if ($operation instanceof ListOperation) {
+                $realFilterOperator = $fetcher->getRealFilterOperator($operation->getGroupName());
+                if ($realFilterOperator != null) {
+                    $operation->setOperator($realFilterOperator);
                 }
-                $aToColumn[] = "(" . implode(Fetcher::OPERATOR_AND, $aToGroup) . ")";
             }
-
-            $implodeColumn = "(" . implode($fetcher->getFilterOperator($columnName), $aToColumn) . ")";
-            $aImplodedColumns[] = $implodeColumn;
         }
-
-        $strQuery = implode($fetcher->getMainOperator(), $aImplodedColumns);
-
-        return array($strQuery, $aToParameter);
+        
+        //We replace the operator by the main operator value from the fetcher
+        $rootOperation->setOperator($fetcher->getMainOperator());
+        
+        return $this->getOperationAsString($fetcher, $rootOperation);
+            
+    }
+    
+    protected function getOperationAsString(Fetcher $fetcher, FetcherOperation $operation)
+    {
+        $query = '';
+        $params = array();
+        
+        if ($operation instanceof SimpleOperation) {
+            
+            $query  = $fetcher->strColumnFilterToDbNotation($operation->getColumnName(), $operation->getOperator());
+            $query .= ' ' ;
+            $query .= $fetcher->strFilterToDbNotation($operation->getOperator());
+            
+            $params[] = $this->getOperationValue($operation);
+            
+        } else if ($operation instanceof ListOperation) {
+            
+            $operations = $operation->getOperations();
+            $strings = array();
+            
+            foreach ($operations as $currentOperation) {
+                
+                list($returnQuery, $returnParams) = $this->getOperationAsString($fetcher, $currentOperation);
+                
+                $strings[] = $returnQuery;
+                $params = array_merge($params, $returnParams);
+            }
+            
+            $query = '('.implode($operation->getOperator(), $strings).')';
+            
+        } else {
+            throw new \InvalidArgumentException('Givent operation is not supported');
+        }
+        
+        return array($query, $params);
+    }
+    
+    protected function getOperationValue(SimpleOperation $operation)
+    {
+        switch($operation->getOperator()) {
+            case Fetcher::TYPE_LIKE :
+            case Fetcher::TYPE_ILIKE :
+                return '%' . $operation->getValue() . '%';
+            case Fetcher::TYPE_LOWERED_EQ :
+                return strtolower($operation->getValue());
+            default :
+                return $operation->getValue();
+        }
     }
 }

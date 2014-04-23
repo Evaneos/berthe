@@ -43,7 +43,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         $query = $this->getQuery($fetcher);
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
-
+        
         $sql = <<<SQL
 SELECT
     count(DISTINCT id)
@@ -144,9 +144,9 @@ SQL;
             $selectedColumns = array();
             $selectedJoin = array(0, -1);
 
-            $filters = $fetcher->getFilters();
-            foreach ($filters as $filter) {
-                list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($filter[3], $mainTableAlias, $selectedColumns, $selectedJoin);
+            $columns = $fetcher->getFilterColumns();
+            foreach ($columns as $column) {
+                list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($column, $mainTableAlias, $selectedColumns, $selectedJoin);
             }
 
             $sorts = $fetcher->getSorts();
@@ -157,7 +157,7 @@ SQL;
             if (count($selectedColumns)>0) {
                 $select = ', '.implode(', ', $selectedColumns);
             }
-            if ($selectedJoin[1]>0) {
+            if ($selectedJoin[1]>=0) {
                 $joins = $this->getJoins();
                 $selectedJoins = array_slice($joins, $selectedJoin[0], $selectedJoin[1]+1);
                 $from = implode(' ', $selectedJoins);

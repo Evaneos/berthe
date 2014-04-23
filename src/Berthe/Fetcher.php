@@ -2,6 +2,9 @@
 
 namespace Berthe;
 
+use Berthe\Fetcher\Operation\ListOperation;
+use Berthe\Fetcher\FetcherOperation;
+use Berthe\Fetcher\Operation\SimpleOperation;
 class Fetcher extends Paginator implements \Serializable {
     const FILTER_TYPE = 1;
     const FILTER_VALUE = 2;
@@ -30,11 +33,23 @@ class Fetcher extends Paginator implements \Serializable {
 
     protected $filters = array();
     protected $filtersOperator = array();
+    
+    /**
+     * 
+     * @var ListOperation
+     */
+    protected $rootOperation = null;
+    
     protected $sorts = array();
     protected $isRandomSort = false;
     protected $hasEmptyIN = false;
     protected $mainOperator = self::OPERATOR_AND;
 
+    public function __construct($page = 1, $nbByPage = 25, array $elements = array()) {
+        parent::__construct($page, $nbByPage, $elements);
+        $this->rootOperation = new ListOperation($this->mainOperator);
+    }
+    
     public function sortById($direction) {
         $this->addSort('id', $direction);
     }
@@ -45,10 +60,13 @@ class Fetcher extends Paginator implements \Serializable {
 
     /**
      *
+     * @deprecated
+     *
      * @param string $columnName
      * @param int $typeFilter
      * @param string $value
      * @param mixed $groupName false if not in group, string if in group
+     * 
      * @return Fetcher
      */
     protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
@@ -63,6 +81,49 @@ class Fetcher extends Paginator implements \Serializable {
             self::FILTER_GROUP_NAME => $groupName ? $groupName : count($this->filters)
         );
 
+        $this->addFilterOperation(new SimpleOperation($typeFilter, $columnName, $value, $groupName?$groupName:$columnName));
+        
+        return $this;
+    }
+    
+    /**
+     * 
+     * @param FetcherOperation $operation
+     * @throws \InvalidArgumentException
+     * 
+     * @return \Berthe\Fetcher
+     */
+    protected function addFilterOperation(FetcherOperation $operation) {
+        
+        $newOperation = $operation;
+        $groupName = $operation->getGroupName();
+        $previousOperation = $this->rootOperation->getOperation($groupName);
+        
+        //If there's already an operation for that group
+        if ($previousOperation != null) {
+            //If it's a simple operation
+            if ($previousOperation instanceof SimpleOperation) {
+                //We crate a list operation with the name of the group
+                $newOperation = new ListOperation($this->getFilterOperator($groupName), $groupName);
+                //We unset the group name on the simple operation level to avoid data replacement
+                $previousOperation->setGroupName(null);
+                //We add the retrieved operation to the new operation created
+                $newOperation->addOperation($previousOperation);
+            } else if ($previousOperation instanceof ListOperation) {
+                //If it's already a list, we have nothing to do at this moment
+                $newOperation = $previousOperation;
+            } else {
+                throw new \InvalidArgumentException('Invalid operation!');
+            }
+            //We unset the group name on the simple operation level to avoid data replacement
+            $operation->setGroupName(null);
+            //We add the new operation to the list operation retrieved/created
+            $newOperation->addOperation($operation);
+        }
+        
+        //If it's the first for its group, we keep it unchanged
+        $this->rootOperation->addOperation($newOperation);
+        
         return $this;
     }
 
@@ -94,7 +155,36 @@ class Fetcher extends Paginator implements \Serializable {
     public function getFilters() {
         return $this->filters;
     }
+    
+    /**
+     * @return ListOperation
+     */
+    public function getRootOperation() {
+        return $this->rootOperation;
+    }
 
+    public function getFilterColumns() {
+        return array_unique($this->getColumnsFromOperation($this->rootOperation));
+    }
+    
+    private function getColumnsFromOperation(FetcherOperation $operation) {
+        
+        $columns = array();
+        
+        if($operation instanceof SimpleOperation) {
+            $columns[] = $operation->getColumnName();
+        } else if ($operation instanceof ListOperation) {
+            $operations = $operation->getOperations();
+            foreach ($operations as $curOperation) {
+               $columns = array_merge($columns, $this->getColumnsFromOperation($curOperation));
+            }
+        } else {
+            throw new \InvalidArgumentException('Invalid operation!');
+        }
+        
+        return $columns;
+    }
+    
     /**
      * @param array $filters
      * @throws Exception
@@ -127,12 +217,18 @@ class Fetcher extends Paginator implements \Serializable {
      * @return string
      */
     public function getFilterOperator($columnName) {
+        $realFilterOperator = $this->getRealFilterOperator($columnName);
+        if ($realFilterOperator == null) {
+            return self::OPERATOR_OR;
+        }
+        return $realFilterOperator;
+    }
+    
+    public function getRealFilterOperator($columnName) {
         if (array_key_exists($columnName, $this->filtersOperator)) {
             return $this->filtersOperator[$columnName];
         }
-        else {
-            return self::OPERATOR_OR;
-        }
+        return null;
     }
 
     /**
@@ -141,6 +237,7 @@ class Fetcher extends Paginator implements \Serializable {
      * @return array
      */
     public function getFiltersByType($type) {
+        //TODO get with the new operations
         $output = array();
         foreach($this->filters as $filter) {
             if ($filter[self::FILTER_TYPE] === $type) {
@@ -253,6 +350,7 @@ class Fetcher extends Paginator implements \Serializable {
                 throw new \InvalidArgumentException(__CLASS__ . '::' . __FUNCTION__ . '() First argument should be ' . __CLASS__ . '::OPERATOR_AND or ' . __CLASS__ . '::OPERATOR_OR constant');
                 break;
         }
+        $this->rootOperation->setOperator($this->mainOperator);
     }
 
     public function getMainOperator() {
@@ -270,6 +368,7 @@ class Fetcher extends Paginator implements \Serializable {
 
         $copy = new static($page, $nbByPage);
         $copy->filters = $this->filters;
+        $copy->rootOperation = $this->rootOperation;
         $copy->sorts = $this->sorts;
         $copy->filtersOperator = $this->filtersOperator;
 
