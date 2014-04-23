@@ -101,22 +101,30 @@ class Fetcher extends Paginator implements \Serializable {
         
         //If there's already an operation for that group
         if ($previousOperation != null) {
-            //If it's a simple operation
-            if ($previousOperation instanceof SimpleOperation) {
+            
+            $groupFilterOperator = $this->getFilterOperator($groupName);
+            
+            $createNewList = true;
+            if ($previousOperation instanceof ListOperation) {
+                //If the previous operation is a list containing the groupName, we don't create a new list
+                $subOperations = $previousOperation->getOperations();
+                foreach($subOperations as $subOperation) {
+                    if ($subOperation->getGroupName() == $groupName) {
+                        $createNewList = false;
+                        break;
+                    }
+                }
+            }
+            
+            if ($createNewList) {
                 //We crate a list operation with the name of the group
-                $newOperation = new ListOperation($this->getFilterOperator($groupName), $groupName);
-                //We unset the group name on the simple operation level to avoid data replacement
-                $previousOperation->setGroupName(null);
+                $newOperation = new ListOperation($groupFilterOperator, $groupName);
                 //We add the retrieved operation to the new operation created
                 $newOperation->addOperation($previousOperation);
-            } else if ($previousOperation instanceof ListOperation) {
-                //If it's already a list, we have nothing to do at this moment
-                $newOperation = $previousOperation;
             } else {
-                throw new \InvalidArgumentException('Invalid operation!');
+                $newOperation = $previousOperation;
             }
-            //We unset the group name on the simple operation level to avoid data replacement
-            $operation->setGroupName(null);
+            
             //We add the new operation to the list operation retrieved/created
             $newOperation->addOperation($operation);
         }

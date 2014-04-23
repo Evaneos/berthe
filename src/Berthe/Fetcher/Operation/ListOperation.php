@@ -51,7 +51,7 @@ class ListOperation extends AbstractOperation
      */
     public function addOperation(FetcherOperation $operation) {
         $groupName = $operation->getGroupName();
-        if ($groupName != null) {
+        if ($groupName != null && $groupName != $this->groupName) {
             $this->operations[$groupName] = $operation;
         } else {
             $this->operations[] = $operation;

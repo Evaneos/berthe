@@ -38,7 +38,11 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
 
     public function buildFilters(Fetcher $fetcher)
     {
-        return $this->buildOperation($fetcher);
+        list($filterInReq, $filterToParameter) = $this->buildOperation($fetcher);
+        if ($filterInReq == '') {
+            $filterInReq = '1=1';
+        }
+        return array($filterInReq, $filterToParameter);
     }
     
     public function buildOperation(Fetcher $fetcher)
