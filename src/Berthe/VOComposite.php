@@ -27,5 +27,8 @@ class VOComposite
 
            return $ret;
         }
+        else {
+            throw new \BadMethodCallException(sprintf('%s::%s doesn\'t exist', get_class($this->component), $name));
+        }
     }
 }
