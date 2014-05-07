@@ -70,8 +70,9 @@ class Fetcher extends Paginator implements \Serializable {
      * @return Fetcher
      */
     protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
-        if ($typeFilter === self::TYPE_IN) {
-            $typeFilter = self::TYPE_EQ;
+        if (is_array($value)) {
+            $this->addFilters($columnName, $typeFilter, $value, $groupName);
+            return $this;
         }
 
         $this->filters[] = array(
@@ -148,6 +149,9 @@ class Fetcher extends Paginator implements \Serializable {
             $this->hasEmptyIN = true;
         }
         else {
+            if ($typeFilter === self::TYPE_IN) {
+                $typeFilter = self::TYPE_EQ;
+            }
             foreach($values as $value) {
                 $this->addFilter($columnName, $typeFilter, $value, $groupName);
             }
