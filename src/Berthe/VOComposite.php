@@ -6,11 +6,11 @@ class VOComposite
 {
     /**
      * Internal component
-     * @var \Berthe\VO
+     * @var object
      */
     private $component;
 
-    public function __construct(VO $component)
+    public function __construct($component)
     {
         $this->component = $component;
     }
