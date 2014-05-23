@@ -69,7 +69,7 @@ abstract class AbstractService implements Service {
     
     /**
      * (non-PHPdoc)
-     * @see \Berthe\Service::getByFetcher()
+     * @see \Berthe\Fetcher\Fetchable::getByFetcher()
      */
     public function getByFetcher(Fetcher $fetcher) {
         return $this->manager->getByFetcher($fetcher);

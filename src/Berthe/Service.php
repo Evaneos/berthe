@@ -1,7 +1,9 @@
 <?php
 namespace Berthe;
 
-interface Service {
+use Berthe\Fetcher\Fetchable;
+
+interface Service extends Fetchable {
 
     /**
      * @return VO[]
@@ -22,12 +24,6 @@ interface Service {
      */
     public function getByIds(array $ids = array());
 
-    /**
-     * @param Fetcher $paginator
-     * @return Fetcher
-     */
-    public function getByFetcher(Fetcher $fetcher);
-    
     /**
      * Creates a new VO
      * @param array $data
