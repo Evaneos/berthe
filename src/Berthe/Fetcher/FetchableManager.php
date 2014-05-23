@@ -4,7 +4,7 @@ namespace Berthe\Fetcher;
 
 use Berthe\Fetcher;
 
-class FetchableManager
+class FetchableManager implements Fetchable
 {
     protected $fetchables = array();
 
@@ -13,10 +13,10 @@ class FetchableManager
         $this->fetchables[] = $fetchable;
     }
 
-    public function fetch(Fetcher $fetcher)
+    public function getByFetcher(Fetcher $fetcher)
     {
         foreach($this->fetchables as $fetchable) {
-            $fetcher = $fetchable->fetch($fetcher);
+            $fetcher = $fetchable->getByFetcher($fetcher);
             if (count($fetcher->getResultSet())) {
                 break;
             }

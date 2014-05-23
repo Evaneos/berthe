@@ -6,5 +6,9 @@ use Berthe\Fetcher as Fetcher;
 
 interface Fetchable
 {
-    function fetch(Fetcher $fetcher);
+	/**
+     * @param Fetcher $paginator
+     * @return Fetcher
+     */
+    function getByFetcher(Fetcher $fetcher);
 }
