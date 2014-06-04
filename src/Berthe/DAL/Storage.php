@@ -3,8 +3,9 @@ namespace Berthe\DAL;
 
 use Berthe\VO;
 use Berthe\Fetcher;
+use Berthe\Fetcher\Fetchable;
 
-interface Storage
+interface Storage extends Fetchable
 {
     /**
      * @param Store $store
@@ -36,12 +37,6 @@ interface Storage
      * @return VO[]
      */
     function getByIds(array $ids = array());
-
-    /**
-     * @param Fetcher $fetcher
-     * @return Fetcher
-     */
-    function getByFetcher(Fetcher $fetcher);
 
     /**
      * Saves a VO

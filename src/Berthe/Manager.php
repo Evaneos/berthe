@@ -2,7 +2,9 @@
 
 namespace Berthe;
 
-interface Manager {
+use Berthe\Fetcher\Fetchable;
+
+interface Manager extends Fetchable {
 
     /**
      * Get validator
@@ -40,11 +42,6 @@ interface Manager {
      */
     public function getByIds(array $ids = array());
 
-    /**
-     * @param Fetcher $paginator
-     * @return Fetcher
-     */
-    public function getByFetcher(Fetcher $fetcher);
     /**
      * Default method to save (insert or update depending on context) an object
      * @param VO $object

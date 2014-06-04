@@ -2,9 +2,13 @@
 
 namespace Berthe\Fetcher;
 
-use Berthe\Fetcher as Fetcher;
+use Berthe\Fetcher;
 
 interface Fetchable
 {
-    function fetch(Fetcher $fetcher);
+    /**
+     * @param Fetcher $paginator
+     * @return Fetcher
+     */
+    public function getByFetcher(Fetcher $fetcher);
 }

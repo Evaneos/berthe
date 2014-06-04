@@ -1,7 +1,12 @@
 <?php
+
 namespace Berthe;
 
-abstract class AbstractService implements Service {
+use Berthe\Fetcher;
+use Berthe\Fetcher\Fetchable;
+
+abstract class AbstractService implements Service
+{
     
     /**
      * 
@@ -15,6 +20,12 @@ abstract class AbstractService implements Service {
      */
     protected $builder;
     
+    /**
+     * 
+     * @var Builder
+     */
+    protected $fetchable;
+
     /**
      * Constructor
      * 
@@ -44,6 +55,15 @@ abstract class AbstractService implements Service {
     }
     
     /**
+    * Fetchable setter
+    *
+    * @param Fetchable $fetchable
+    */
+    public function setFetchable(Fetchable $fetchable) {
+        $this->fetchable = $fetchable;
+    }
+
+    /**
      * (non-PHPdoc)
      * @see \Berthe\Service::getAll()
      */
@@ -69,9 +89,12 @@ abstract class AbstractService implements Service {
     
     /**
      * (non-PHPdoc)
-     * @see \Berthe\Service::getByFetcher()
+     * @see \Berthe\Fetcher\Fetchable::getByFetcher()
      */
     public function getByFetcher(Fetcher $fetcher) {
+        if (isset($this->fetchable)) {
+            return $this->fetchable->getByFetcher($fetcher);
+        }
         return $this->manager->getByFetcher($fetcher);
     }
     

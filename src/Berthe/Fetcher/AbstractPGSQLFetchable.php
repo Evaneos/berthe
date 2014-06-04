@@ -25,7 +25,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         return $this;
     }
 
-    public function fetch(Fetcher $fetcher)
+    public function getByFetcher(Fetcher $fetcher)
     {
         $this->checkFetcherValidity($fetcher);
 
