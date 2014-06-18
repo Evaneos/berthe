@@ -236,7 +236,7 @@ EOQ;
         return (bool) $this->db->query($query, $params);
     }
 
-    private function getDefaultMappings(\Berthe\VO $vo) {
+    protected function getDefaultMappings(\Berthe\VO $vo) {
         $properties = array_keys($vo->__toArray());
         $mappings = array_combine($properties, $properties);
 
