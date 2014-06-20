@@ -69,7 +69,7 @@ abstract class AbstractVO implements VO
         $toArray = get_object_vars($this);
         $translatable = $this->getTranslatableFields();
         foreach ($translatable as $field) {
-            if (array_key_exists($field, $toArray)) {
+            if (array_key_exists($field, $toArray) && !is_null($toArray[$field])) {
                 $toArray[$field] = $toArray[$field]->__toArray();
             }
         }
