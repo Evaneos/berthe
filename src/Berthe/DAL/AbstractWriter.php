@@ -93,7 +93,7 @@ abstract class AbstractWriter implements Writer {
         return $this;
     }
 
-    private function validateTableAndIdentityColumn()
+    protected function validateTableAndIdentityColumn()
     {
         if ($this->tableName == self::DEFAULT_TABLE_NAME || trim($this->tableName) == '') {
             throw new \RuntimeException('Table name is not set !');
@@ -104,7 +104,7 @@ abstract class AbstractWriter implements Writer {
         }
     }
 
-    private function getTableName()
+    protected function getTableName()
     {
         $tableName = '';
 
