@@ -187,7 +187,9 @@ EOQ;
         $values = $object->__toArray();
 
         foreach ($mappings as $column => $property) {
-            $value = $values[$property];
+            $value = in_array($property, $object->getTranslatableFields()) ?
+                $object->getAttribute($property) :
+                $values[$property];
             $clauseElements[] = sprintf('%s%s%s = :%s', $this->escapeCharacter, $column,
                 $this->escapeCharacter, $column);
             $params[':' . $column] = $value;

@@ -11,6 +11,21 @@ abstract class AbstractVO implements VO
         return array();
     }
 
+    /**
+     * Return asked attribute
+     *
+     * @param string $name attribute name
+     * @return mixed
+     */
+    public function getAttribute($name)
+    {
+        if (!isset($this->$name)) {
+            return null;
+        }
+
+        return $this->$name;
+    }
+
     public function setVersion($version)
     {
         $this->version = $version;
