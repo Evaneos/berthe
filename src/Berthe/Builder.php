@@ -11,6 +11,6 @@ interface Builder {
      * 
      * @return VO
      */
-    public function updateFromArray($object, $data = null);
+    public function updateFromArray($object, array $data = array());
 
 }
