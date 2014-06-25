@@ -37,7 +37,7 @@ interface Service extends Fetchable {
      * @param array $data
      * @return VO
      */
-    public function save($object, array $data = array());
+    public function save($object, $data = null);
 
     /**
      * Default method to delete an object

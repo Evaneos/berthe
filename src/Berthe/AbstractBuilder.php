@@ -3,7 +3,7 @@ namespace Berthe;
 
 abstract class AbstractBuilder implements Builder {
     
-    public function updateFromArray($object, array $data = array()) {
+    public function updateFromArray($object, $data = null) {
         return $object;
     }
 }
