@@ -8,12 +8,17 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
 {
     protected $queryBuilder = null;
     protected $db = null;
+    protected $fetcherFqcn = "";
 
     abstract protected function getQuery(Fetcher $fetcher=null);
 
     public function setQueryBuilder(\Berthe\DAL\FetcherPGSQLQueryBuilder $qb) {
         $this->queryBuilder = $qb;
         return $this;
+    }
+
+    public function setFetcherFqcn($className) {
+        $this->fetcherFqcn = $className;
     }
 
     /**
@@ -43,7 +48,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         $query = $this->getQuery($fetcher);
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
-        
+
         $sql = <<<SQL
 SELECT
     count(DISTINCT id)
@@ -173,6 +178,13 @@ SQL;
 
     protected function getJoins() {
         return array();
+    }
+
+    protected function checkFetcherValidity(Fetcher $fetcher)
+    {
+        if (!$fetcher instanceof $this->fetcherFqcn) {
+            throw new \InvalidArgumentException(get_called_class() . ' expects a ' . $this->fetcherFqcn . '.');
+        }
     }
 
 }

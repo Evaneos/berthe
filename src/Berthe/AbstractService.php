@@ -7,53 +7,53 @@ use Berthe\Fetcher\Fetchable;
 
 abstract class AbstractService implements Service
 {
-    
+
     /**
-     * 
+     *
      * @var Manager
      */
     protected $manager;
-    
+
     /**
-     * 
+     *
      * @var Builder
      */
     protected $builder;
-    
+
     /**
-     * 
+     *
      * @var Builder
      */
     protected $fetchable;
 
     /**
      * Constructor
-     * 
+     *
      * @param Manager $manager
      */
     public function __construct(Manager $manager = null, Builder $builder = null) {
         $this->manager = $manager;
         $this->builder = $builder;
     }
-    
+
     /**
      * Manager setter
-     * 
+     *
      * @param Manager $manager
      */
     public function setManager(Manager $manager) {
         $this->manager = $manager;
     }
-    
+
     /**
      * Builder setter
-     * 
+     *
      * @param Builder $builder
      */
     public function setBuilder(Builder $builder) {
         $this->builder = $builder;
     }
-    
+
     /**
     * Fetchable setter
     *
@@ -70,7 +70,7 @@ abstract class AbstractService implements Service
     public function getAll() {
         return $this->manager->getAll();
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::getById()
@@ -78,7 +78,7 @@ abstract class AbstractService implements Service
     public function getById($id) {
         return $this->manager->getById($id);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::getByIds()
@@ -86,7 +86,7 @@ abstract class AbstractService implements Service
     public function getByIds(array $ids = array()) {
         return $this->manager->getByIds($ids);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Fetcher\Fetchable::getByFetcher()
@@ -97,7 +97,7 @@ abstract class AbstractService implements Service
         }
         return $this->manager->getByFetcher($fetcher);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::createNew()
@@ -106,21 +106,21 @@ abstract class AbstractService implements Service
         $object = $this->manager->getVoForCreation();
         return $this->save($object, $data);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::save()
      */
     public function save($object, $data = null) {
         $object = $this->builder->updateFromArray($object, $data);
-        
+
         if (!$this->manager->save($object)) {
             throw new \FunctionalErrorException('Creation failed!', 500);
         }
-        
+
         return $object;
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::delete()
@@ -128,7 +128,7 @@ abstract class AbstractService implements Service
     public function delete($object) {
         return $this->manager->delete($object);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Berthe\Service::deleteById()
@@ -136,5 +136,5 @@ abstract class AbstractService implements Service
     public function deleteById($id) {
         return $this->manager->deleteById($id);
     }
-    
+
 }
