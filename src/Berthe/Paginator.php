@@ -133,7 +133,8 @@ class Paginator implements \ArrayAccess {
         if (reset($this->_elements) instanceof VO) {
             $res = array();
             foreach($this->_elements as $key => /* @var $value VO */ $value) {
-                $res[$value->getId()] = $value;
+                $key = $this->_keyGetter !== null ? $value->{$this->_keyGetter}() : $value->getId();
+                $res[$key] = $value;
             }
             return $res;
         }
