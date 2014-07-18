@@ -11,6 +11,7 @@ class Paginator implements \ArrayAccess {
     protected $_nbByPage = 25;
     protected $_ttlCount = 0;
     protected $_count = 0;
+    protected $_keyGetter = null;
 
     /**
      * Checks if an offset exists
@@ -69,7 +70,17 @@ class Paginator implements \ArrayAccess {
         }
 
         if ($preserveIds) {
-            $this->_elements = $array;
+            if($this->_keyGetter !== null) {
+                $elementsWithNewKey = array();
+                foreach($array as $element) {
+                    $key = $element->{$this->_keyGetter}();
+                    $elementsWithNewKey[$key] = $element;
+                }
+                $this->_elements = $elementsWithNewKey;
+            }
+            else {
+                $this->_elements = $array;
+            }
         }
         else {
             $this->_elements = array_values($array);
@@ -145,5 +156,9 @@ class Paginator implements \ArrayAccess {
 
     public function getNbPages() {
         return ceil((float)$this->_ttlCount / (float)$this->_nbByPage);
+    }
+
+    public function setKeyGetter($keyGetter) {
+        $this->_keyGetter = $keyGetter;
     }
 }
