@@ -40,3 +40,9 @@ Thumbs.db
 ##################
 vendor
 composer.lock
+
+# IDE files #
+#############
+/.settings
+/.buildpath
+/.project

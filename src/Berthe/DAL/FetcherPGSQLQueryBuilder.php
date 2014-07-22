@@ -76,11 +76,16 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
         
         if ($operation instanceof SimpleOperation) {
             
-            $query  = $fetcher->strColumnFilterToDbNotation($operation->getColumnName(), $operation->getOperator());
-            $query .= ' ' ;
-            $query .= $fetcher->strFilterToDbNotation($operation->getOperator());
+            $operator = $operation->getOperator();
             
-            $params[] = $this->getOperationValue($operation);
+            $query  = $fetcher->strColumnFilterToDbNotation($operation->getColumnName(), $operator);
+            $query .= ' ' ;
+            $query .= $fetcher->strFilterToDbNotation($operator);
+            
+            if ($operator !== Fetcher::TYPE_IS_NOT_NULL && $operator !== Fetcher::TYPE_IS_NULL) {
+                // If the operation has 2 members
+                $params[] = $this->getOperationValue($operation);
+            }
             
         } else if ($operation instanceof ListOperation) {
             
