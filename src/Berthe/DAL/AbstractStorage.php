@@ -207,6 +207,7 @@ abstract class AbstractStorage implements Storage {
         $stores = $this->stores;
 
         foreach($this->stores as $storeName => $store) {
+            
             if(count($idsNotFound) > 0) {
                 $objects = $store->load($idsNotFound);
 
@@ -215,7 +216,7 @@ abstract class AbstractStorage implements Storage {
                 $idsNotFound = $remainingKeys;
                 $output = $output + $objects;
 
-                if (count($objects)) {
+                if (count($objects) > 0 && $store == $this->primaryStore) {
                     foreach($stores as $storeName2 => $store2) {
                         if ($storeName2 !== $storeName) {
                             $ret = $store2->saveMulti($objects);
