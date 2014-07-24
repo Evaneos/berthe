@@ -2,7 +2,8 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractWriter implements Writer {
+abstract class AbstractWriter implements Writer
+{
 
     const DEFAULT_TABLE_NAME = 'Berthe\DAL\AbstractWriter\UnsetTableName';
 
@@ -131,8 +132,8 @@ abstract class AbstractWriter implements Writer {
             $mappings = $this->getDefaultMappings($object);
         }
 
-        $columnElements = array();
         $valueElements = array();
+        $columnElements = array();
         $params = array();
 
         $values = $object->__toArray();
@@ -141,7 +142,7 @@ abstract class AbstractWriter implements Writer {
             if ($column != $this->identityColumn) {
                 $value = $values[$property];
                 $columnElements[] = $column;
-                $params[':' . $column] = $value;
+                $params[$column] = $value;
 
                 if ($value instanceof \Berthe\Translation\Translation) {
                     $this->translator->saveTranslation($value);
@@ -152,15 +153,15 @@ abstract class AbstractWriter implements Writer {
         $columnAssignment = $this->escapeCharacter .
             implode($this->escapeCharacter . ', ' . $this->escapeCharacter, $columnElements) .
             $this->escapeCharacter;
-        $valueAssignment = ':' . implode(', :', $columnElements);
+        $valueAssignment = '%s' . str_repeat(', %s', count($columnElements) -1);
 
         $query = <<<EOQ
 INSERT INTO {$this->getTableName()} ({$columnAssignment})
 VALUES ({$valueAssignment});
 EOQ;
 
-        if ((bool) $this->db->query($query, $params)) {
-            $id = (int) $this->db->lastInsertId($this->getTableName(), $this->identityColumn);
+        if ((bool)$this->db->query($query, $params)) {
+            $id = (int)$this->db->lastInsertId($this->getTableName(), $this->identityColumn);
             $object->setId($id);
         }
 
@@ -187,28 +188,30 @@ EOQ;
         $values = $object->__toArray();
 
         foreach ($mappings as $column => $property) {
-            $value = in_array($property, $object->getTranslatableFields()) ?
-                $object->getAttribute($property) :
-                $values[$property];
-            $clauseElements[] = sprintf('%s%s%s = :%s', $this->escapeCharacter, $column,
-                $this->escapeCharacter, $column);
-            $params[':' . $column] = $value;
+            $escape = $this->escapeCharacter;
+            $clauseElements[] = sprintf('%s%s%s = %%s', $escape, $column, $escape);
+            if (in_array($property, $object->getTranslatableFields())) {
+                $value = $object->getAttribute($property);
+            } else {
+                $value = $values[$property];
+            }
+            $params[$column] = $value;
 
             if ($value instanceof \Berthe\Translation\Translation) {
                 $this->translator->saveTranslation($value);
             }
         }
 
-        $params[':identity'] = $object->getId();
+        $params['identity'] = $object->getId();
 
         $columnAssignment = implode(', ', $clauseElements);
 
         $query = <<<EOQ
 UPDATE {$this->getTableName()} SET {$columnAssignment}
-WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity;
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s;
 EOQ;
 
-        return (bool) $this->db->query($query, $params);
+        return (bool)$this->db->query($query, $params);
     }
 
     /**
@@ -230,12 +233,12 @@ EOQ;
 
         $query = <<<EOQ
 DELETE FROM {$this->getTableName()}
-WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = :identity
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
 EOQ;
 
-        $params = array(':identity' => $id);
+        $params = array('identity' => $id);
 
-        return (bool) $this->db->query($query, $params);
+        return (bool)$this->db->query($query, $params);
     }
 
     protected function getDefaultMappings(\Berthe\VO $vo) {
