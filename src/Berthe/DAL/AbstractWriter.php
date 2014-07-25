@@ -2,7 +2,8 @@
 
 namespace Berthe\DAL;
 
-abstract class AbstractWriter {
+abstract class AbstractWriter
+{
 
     const DEFAULT_TABLE_NAME = 'Berthe\DAL\AbstractWriter\UnsetTableName';
 
@@ -15,7 +16,8 @@ abstract class AbstractWriter {
 
     protected $identityColumn = 'id';
 
-    public function setDb(DbWriter $db) {
+    public function setDb(DbWriter $db)
+    {
         $this->db = $db;
         return $this;
     }
@@ -36,7 +38,8 @@ abstract class AbstractWriter {
      * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    public function insert(\Berthe\AbstractVO $object) {
+    public function insert(\Berthe\AbstractVO $object)
+    {
         $this->validateTableAndIdentityColumn();
 
         $mappings = $this->getSaveMappings();
@@ -69,8 +72,8 @@ abstract class AbstractWriter {
             VALUES ({$valueAssignment});
 EOQ;
 
-        if ((bool) $this->db->query($query, $params)) {
-            $id = (int) $this->db->lastInsertId($this->tableName, $this->identityColumn);
+        if ((bool)$this->db->query($query, $params)) {
+            $id = (int)$this->db->lastInsertId($this->tableName, $this->identityColumn);
             $object->setId($id);
         }
 
@@ -82,7 +85,8 @@ EOQ;
      * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    public function update(\Berthe\AbstractVO $object) {
+    public function update(\Berthe\AbstractVO $object)
+    {
         $this->validateTableAndIdentityColumn();
 
         $mappings = $this->getSaveMappings();
@@ -113,7 +117,7 @@ EOQ;
             WHERE {$this->identityColumn} = :identity;
 EOQ;
 
-        return (bool) $this->db->query($query, $params);
+        return (bool)$this->db->query($query, $params);
     }
 
     /**
@@ -121,7 +125,8 @@ EOQ;
      * @param \Berthe\AbstractVO $object the object to insert
      * @return boolean
      */
-    public function delete(\Berthe\AbstractVO $object) {
+    public function delete(\Berthe\AbstractVO $object)
+    {
         return $this->deleteById($object->getId());
     }
 
@@ -130,7 +135,8 @@ EOQ;
      * @param int $int object identifier
      * @return boolean
      */
-    public function deleteById($id) {
+    public function deleteById($id)
+    {
         $this->validateTableAndIdentityColumn();
 
         $query = <<<EOQ
@@ -139,20 +145,25 @@ EOQ;
 
         $params = array(':identity' => $id);
 
-        return (bool) $this->db->query($query, $params);
+        return (bool)$this->db->query($query, $params);
     }
 
-    private function getDefaultMappings(\Berthe\AbstractVO $vo) {
+    private function getDefaultMappings(\Berthe\AbstractVO $vo)
+    {
         $properties = array_keys($vo->__toArray());
 
         $mappings = array_combine($properties, $properties);
 
-        return array_filter($mappings, function($value) {
-            return ! ($value == 'id' || $value == 'version');
-        });
+        return array_filter(
+            $mappings,
+            function ($value) {
+                return !($value == 'id' || $value == 'version');
+            }
+        );
     }
 
-    protected function getSaveMappings() {
+    protected function getSaveMappings()
+    {
         return array();
     }
 }
