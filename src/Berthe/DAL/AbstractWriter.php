@@ -139,7 +139,9 @@ abstract class AbstractWriter implements Writer {
 
         foreach ($mappings as $column => $property) {
             if ($column != $this->identityColumn) {
-                $value = $values[$property];
+                $value = in_array($property, $object->getTranslatableFields()) ?
+                    $object->getAttribute($property) :
+                    $values[$property];
                 $columnElements[] = $column;
                 $params[':' . $column] = $value;
 
