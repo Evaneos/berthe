@@ -154,9 +154,17 @@ SQL;
                 list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($column, $mainTableAlias, $selectedColumns, $selectedJoin);
             }
 
-            if (count($selectedColumns)>0) {
-                $select = ', '.implode(', ', $selectedColumns);
+            $toUse = array();
+            foreach($selectedColumns as $key => $value) {
+                if (!preg_match('`'.$mainTableAlias.'.id`i', $value)) {
+                    $toUse[$key] = $value;
+                }
             }
+
+            if (count($toUse)>0) {
+                $select = ', '.implode(', ', $toUse);
+            }
+
             if ($selectedJoin[1]>=0) {
                 $joins = $this->getJoins();
                 $selectedJoins = array_slice($joins, $selectedJoin[0], $selectedJoin[1]+1);
