@@ -28,7 +28,6 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
     public function getByFetcher(Fetcher $fetcher)
     {
         $this->checkFetcherValidity($fetcher);
-
         $count = $this->getCountByFetcher($fetcher);
         $ids = $this->getIdsByFetcher($fetcher);
         $objects = $this->manager->getByIds($ids);
@@ -43,7 +42,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         $query = $this->getQuery($fetcher);
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
-        
+
         $sql = <<<SQL
 SELECT
     count(DISTINCT id)

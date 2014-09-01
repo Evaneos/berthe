@@ -2,7 +2,8 @@
 
 namespace Berthe\DAL;
 
-class DbReader extends DbAdapter {
+class DbReader extends DbAdapter
+{
 
     protected $sanitizers = array();
 
@@ -117,7 +118,7 @@ class DbReader extends DbAdapter {
                         $sanitizedValue = $value->format('Y-m-d H:i:s');
                         break;
                     case is_bool($value) :
-                        $sanitizedValue = (int) $value;
+                        $sanitizedValue = (int)$value;
                         break;
                     case is_string($value) :
                         $sanitizedValue = mb_check_encoding($value, 'UTF-8') ? $value : utf8_encode($value);
@@ -129,5 +130,35 @@ class DbReader extends DbAdapter {
             $sanitizedBinds[$key] = $sanitizedValue;
         }
         return $sanitizedBinds;
+    }
+
+    /**
+     * @param  array  $values
+     * @return string[] params names to use
+     */
+    protected function transformToBinds(array $values = array()) {
+        $binds = array();
+        $sprintfArgs = array();
+
+        foreach ($values as $key => $value) {
+            if ($value instanceof \Berthe\DAL\ComplexType) {
+                list($query, $params) = $value->toDbRepresentation();
+                $args = array();
+                foreach ($params as $paramKey => $paramValue) {
+                    $paramName = $key . '_' . $paramKey;
+                    $args[] = $paramName;
+                    $binds[':' . $paramName] = $paramValue;
+                }
+                $sprintfArgs[] = vsprintf($query, $args);
+            } else {
+                $sprintfArgs[] = ':' . $key;
+                $binds[':' . $key] = $value;
+            }
+        }
+
+        return array(
+            'sprintfArgs' => $sprintfArgs,
+            'binds' => $binds
+        );
     }
 }

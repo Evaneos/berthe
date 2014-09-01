@@ -2,16 +2,25 @@
 
 namespace Berthe\DAL;
 
-class DbWriter extends DbReader {
+class DbWriter extends DbReader
+{
 
     /**
      * Execute statement
      * @param string $sql
-     * @param array $bind
+     * @param array $values array of key => value
      * @return boolean
      */
-    public function query($sql, array $bind = array()) {
-        $sanitizedBinds = $this->sanitizeBinds($bind);
+    public function query($sql, array $values = array()) {
+        // retro-compatibility
+        if (empty($values) || isset($values[0])) {
+            $binds = $values;
+        } else {
+            $result = $this->transformToBinds($values);
+            $sql = vsprintf($sql, $result['sprintfArgs']);
+            $binds = $result['binds'];
+        }
+        $sanitizedBinds = $this->sanitizeBinds($binds);
         return $this->db->query($sql, $sanitizedBinds);
     }
 
