@@ -102,8 +102,6 @@ FROM
         ($query)  AS sub
     WHERE
         {$filterInReq}
-    ORDER BY
-        {$sortInReq}
     ) AS lastsub
 ORDER BY
     {$sortInReq}
