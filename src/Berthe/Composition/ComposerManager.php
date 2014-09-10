@@ -2,13 +2,14 @@
 
 namespace Berthe\Composition;
 
-class ComposerManager {
-     
+class ComposerManager
+{
+
     protected $requestedScopes = array();
 
     public function __construct(ComposerProvider $composerProvider)
     {
-        $this->composerProvider = $composerProvider;   
+        $this->composerProvider = $composerProvider;
     }
 
     public function getComposer($composerName)
@@ -28,7 +29,7 @@ class ComposerManager {
     }
 
     public function compose($resource, $scopeIdentifier = null, $parentScopeInstance = null)
-    {   
+    {
         $scopeInstance = new Scope($this, $resource, $scopeIdentifier);
 
         // Update scope history
@@ -62,5 +63,4 @@ class ComposerManager {
 
         return array_values(array_unique($parsed));
     }
-
 }
