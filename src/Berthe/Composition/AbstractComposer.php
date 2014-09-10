@@ -17,7 +17,7 @@ abstract class AbstractComposer
      * @var array
      */
     protected $defaultEmbeds;
-    
+
     /**
      * A callable to process the data attached to this resource
      *
@@ -55,10 +55,27 @@ abstract class AbstractComposer
         return $this->manager;
     }
 
-    public function getEmbededModels(Scope $scope, $data)
+    public function getEmbededModels(Scope $scope, $data, $forcedEmbeds = array())
     {
         $embededData = array();
         $embededDataCount = 0;
+
+        if (is_array($forcedEmbeds)) {
+
+            foreach ($forcedEmbeds as $potentialEmbed) {
+                // Check if the embed is already in the data
+                if (array_key_exists($potentialEmbed, $embededData)) {
+                    continue;
+                }
+
+                if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
+                    continue;
+                }
+
+                $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
+                ++$embededDataCount;
+            }
+        }
 
         if (is_array($this->defaultEmbeds)) {
 
@@ -76,6 +93,11 @@ abstract class AbstractComposer
         if (is_array($this->availableEmbeds)) {
 
             foreach ($this->availableEmbeds as $potentialEmbed) {
+                // Check if the embed is already in the data
+                if (array_key_exists($potentialEmbed, $embededData)) {
+                    continue;
+                }
+
                 // Check if an available embed is requested
                 if (! $scope->isRequested($potentialEmbed)) {
                     continue;
@@ -153,10 +175,13 @@ abstract class AbstractComposer
     /**
      * Create a new item resource object
      *
+     * @param array|ArrayIterator $data
+     * @param callable|string $composer
+     * @param  array|ArrayIterator $forcedEmbeds
      * @return Berthe\Composition\Resource
      */
-    protected function resource($data, $transformer)
+    protected function resource($data, $transformer, $forcedEmbeds = array())
     {
-        return new Resource($data, $transformer);
+        return new Resource($data, $transformer, $forcedEmbeds);
     }
 }
