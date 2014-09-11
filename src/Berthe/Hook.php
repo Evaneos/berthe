@@ -2,7 +2,8 @@
 
 namespace Berthe;
 
-interface Hook {
+interface Hook
+{
     /**
      * Will be run before the hooked method
      * Should be abstract, but PHP won't fix the type hinting issue on abstract due to laziness (php bug #36601)
@@ -16,5 +17,4 @@ interface Hook {
      * @return void
      */
     public function after($data);
-    
 }
