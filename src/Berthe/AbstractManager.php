@@ -2,7 +2,8 @@
 
 namespace Berthe;
 
-abstract class AbstractManager implements Manager {
+abstract class AbstractManager implements Manager
+{
 
     /**
      * VO class name
@@ -20,7 +21,14 @@ abstract class AbstractManager implements Manager {
      */
     protected $validator = null;
 
+    /**
+     * @var Hook[]
+     */
     protected $saveHooks = array();
+
+    /**
+     * @var Hook[]
+     */
     protected $deleteHooks = array();
 
     /**
@@ -39,15 +47,40 @@ abstract class AbstractManager implements Manager {
         return $this;
     }
 
+    /**
+     * @return DAL\AbstractStorage $storage
+     */
     public function getStorage() {
         return $this->storage;
     }
 
+    /**
+     * @param DAL\AbstractStorage $storage
+     * @return self
+     */
     public function setStorage(DAL\AbstractStorage $storage) {
         $this->storage = $storage;
         return $this;
     }
 
+    /**
+     * @param Hook $hook
+     */
+    public function addSaveHook(Hook $hook) {
+        $this->saveHooks[] = $hook;
+    }
+
+    /**
+     * @param Hook $hook
+     */
+    public function addDeleteHook(Hook $hook) {
+        $this->deleteHooks[] = $hook;
+    }
+
+    /**
+     * set VO Fully-Qualified Class Name
+     * @param string $VOFQCN
+     */
     public function setVOFQCN($VOFQCN) {
         $this->VOFQCN = $VOFQCN;
         return $this;
@@ -58,7 +91,7 @@ abstract class AbstractManager implements Manager {
      * @return VO the VO with its default values
      */
     public function getVOForCreation() {
-        if($this->VOFQCN) {
+        if ($this->VOFQCN) {
             return new $this->VOFQCN;
         }
 
