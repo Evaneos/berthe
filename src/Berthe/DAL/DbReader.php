@@ -146,7 +146,7 @@ class DbReader extends DbAdapter
                 $args = array();
                 foreach ($params as $paramKey => $paramValue) {
                     $paramName = $key . '_' . $paramKey;
-                    $args[] = $paramName;
+                    $args[] = ':' . $paramName;
                     $binds[':' . $paramName] = $paramValue;
                 }
                 $sprintfArgs[] = vsprintf($query, $args);
