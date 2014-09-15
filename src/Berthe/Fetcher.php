@@ -26,6 +26,7 @@ class Fetcher extends Paginator implements \Serializable
     const TYPE_IS_NOT_NULL = 11;
     const TYPE_LOWERED_EQ = 12;
     const TYPE_IN = 13;
+    const TYPE_NOT_IN = 14;
 
     const OPERATOR_AND = ' AND ';
     const OPERATOR_OR  = ' OR ';
@@ -153,6 +154,16 @@ class Fetcher extends Paginator implements \Serializable
         else {
             if ($typeFilter === self::TYPE_IN) {
                 $typeFilter = self::TYPE_EQ;
+            }
+            if ($typeFilter === self::TYPE_NOT_IN) {
+                $newOperation = new ListOperation(Fetcher::OPERATOR_AND);
+                $this->addFilterOperation($newOperation);
+                foreach($values as $val) {
+                    $newOperation->addOperation(
+                        new SimpleOperation(Fetcher::TYPE_DIFF, $columnName, $val)
+                    );
+                }
+                return $this;
             }
             foreach($values as $value) {
                 $this->addFilter($columnName, $typeFilter, $value, $groupName);

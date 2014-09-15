@@ -97,6 +97,18 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
 
                 list($query, $params) = $this->getOperationAsString($fetcher, $newOperation);
 
+            } else if ($operator === Fetcher::TYPE_NOT_IN) {
+
+                $newOperation = new ListOperation(Fetcher::OPERATOR_AND);
+
+                foreach($operation->getValue() as $val) {
+                    $newOperation->addOperation(
+                        new SimpleOperation(Fetcher::TYPE_DIFF, $operation->getColumnName(), $val)
+                    );
+                }
+
+                list($query, $params) = $this->getOperationAsString($fetcher, $newOperation);
+
             } else {
                 if ($operator === Fetcher::TYPE_CUSTOM) {
                     $value = $operation->getValue();
