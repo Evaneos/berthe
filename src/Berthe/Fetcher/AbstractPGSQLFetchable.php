@@ -60,7 +60,10 @@ SQL;
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
-        $sortWrappingQuery = implode(', ', array_merge(array("DISTINCT (lastsub.id) AS id"), array_keys($fetcher->getSorts())));
+        $sortWrappingQuery = implode(', ', array_merge(
+            array("DISTINCT (lastsub.id) AS id"),
+            array_keys($fetcher->getSorts())
+        ));
         $limit = $this->queryBuilder->buildLimit($fetcher);
 
         $isRandom = $fetcher->isRandomSort();
@@ -112,25 +115,41 @@ SQL;
     }
 
 
-    protected function getSelectedColumnsjoins($column, $mainTableAlias, array $selectedColumns = array(), $selectedJoin = array(0, -1)) {
+    /**
+     * @param string $column
+     * @param string $mainTableAlias
+     * @param string[] $selectedColumns
+     * @param bool[] $selectedJoins
+     * @return array array(string[] $selectedColumns, bool[] $selectedJoins)
+     */
+    protected function getSelectedColumnsJoins($column, $mainTableAlias,
+                                        array $selectedColumns = array(), array $selectedJoins = array()) {
         $columns = $this->getColumns();
         if ($columns != null && array_key_exists($column, $columns)) {
             $selectedColumns[$column] = $columns[$column]['select'];
 
-            $join = $columns[$column]['join'];
-            if ($join[0]<$selectedJoin[0]) {
-                $selectedJoin[0] = $join[0];
-            }
-            if ($join[1]>$selectedJoin[1]) {
-                $selectedJoin[1] = $join[1];
+            if (isset($columns[$column]['join'])) {
+                foreach(range($join[0], $join[1]) as $joinValue) {
+                    $selectedJoins[$joinValue] = true;
+                }
+            } else {
+                $joins = $columns[$column]['joins'];
+                foreach($joins as $join) {
+                    $selectedJoins[$join] = true;
+                }
             }
         } else {
             $selectedColumns[$column] = $mainTableAlias.'.'.$column;
         }
 
-        return array($selectedColumns, $selectedJoin);
+        return array($selectedColumns, $selectedJoins);
     }
 
+    /**
+     * @param Fetcher $fetcher
+     * @param string $mainTableAlias
+     * @return string[]
+     */
     protected function getQueryParameters(Fetcher $fetcher = null, $mainTableAlias='ref')
     {
         $select = '';
@@ -139,16 +158,16 @@ SQL;
         if ($fetcher != null) {
 
             $selectedColumns = array();
-            $selectedJoin = array(0, -1);
+            $selectedJoins = array();
 
             $columns = $fetcher->getFilterColumns();
             foreach ($columns as $column) {
-                list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($column, $mainTableAlias, $selectedColumns, $selectedJoin);
+                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins($column, $mainTableAlias, $selectedColumns, $selectedJoins);
             }
 
             $sorts = $fetcher->getSorts();
             foreach ($sorts as $column=>$sortOrder) {
-                list($selectedColumns, $selectedJoin) = $this->getSelectedColumnsjoins($column, $mainTableAlias, $selectedColumns, $selectedJoin);
+                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins($column, $mainTableAlias, $selectedColumns, $selectedJoins);
             }
 
             $toUse = array();
@@ -162,10 +181,10 @@ SQL;
                 $select = ', '.implode(', ', $toUse);
             }
 
-            if ($selectedJoin[1]>=0) {
+            if (!empty($selectedJoins)) {
                 $joins = $this->getJoins();
-                $selectedJoins = array_slice($joins, $selectedJoin[0], $selectedJoin[1]+1);
-                $from = implode(' ', $selectedJoins);
+                $selectedJoinsSql = array_intersect_key($joins, $selectedJoins);
+                $from = implode(' ', $selectedJoinsSql);
             }
         }
 
@@ -179,5 +198,4 @@ SQL;
     protected function getJoins() {
         return array();
     }
-
 }
