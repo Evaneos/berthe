@@ -19,13 +19,22 @@ class Resource
     protected $composer;
 
     /**
+     * A list of embeds
+     *
+     * @var array|ArrayIterator
+     */
+    protected $forcedEmbeds;
+
+    /**
      * @param array|ArrayIterator $data
      * @param callable|string $composer
+     * @param  array|ArrayIterator $forcedEmbeds
      */
-    public function __construct($data, $composer)
+    public function __construct($data, $composer, $forcedEmbeds = array())
     {
         $this->data = $data;
         $this->composer = $composer;
+        $this->forcedEmbeds = $forcedEmbeds;
     }
 
     /**
@@ -48,4 +57,13 @@ class Resource
         return $this->composer;
     }
 
+    /**
+     * Getter for forcedEmbeds
+     *
+     * @return array|ArrayIterator
+     */
+    public function getForcedEmbeds()
+    {
+        return $this->forcedEmbeds;
+    }
 }

@@ -2,7 +2,8 @@
 
 namespace Berthe\Composition;
 
-class Scope {
+class Scope
+{
 
     protected $composerManager;
 
@@ -30,14 +31,19 @@ class Scope {
 
         $composer = $this->composerManager->getComposer($composerName);
 
-        $data = is_object($this->resource->getData()) ? array($this->resource->getData()) : $this->resource->getData();
-        
+        $data = $this->resource->getData();
+        if (is_object($data)) {
+            $data = array($this->resource->getData());
+        }
+
+        $forcedEmbeds = $this->resource->getForcedEmbeds();
+
         // Get embeded composed models
-        $embededModels = $composer->getEmbededModels($this, $data);
-        
+        $embededModels = $composer->getEmbededModels($this, $data, $forcedEmbeds);
+
         // Compose resource
         $embededModels = $embededModels ? $embededModels : array();
-        
+
         return $composer->compose($data, $embededModels);
     }
 
@@ -50,7 +56,7 @@ class Scope {
             $scopeArray = array($checkScopeSegment);
         }
 
-        $scopeString = implode('.', (array) $scopeArray);
+        $scopeString = implode('.', (array)$scopeArray);
 
         $checkAgainstArray = $this->composerManager->getRequestedScopes();
 
@@ -89,5 +95,4 @@ class Scope {
     {
         return $this->parentScopes;
     }
-
 }
