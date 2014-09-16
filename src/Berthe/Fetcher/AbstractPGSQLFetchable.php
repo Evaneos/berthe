@@ -129,6 +129,7 @@ SQL;
             $selectedColumns[$column] = $columns[$column]['select'];
 
             if (isset($columns[$column]['join'])) {
+                $join = $columns[$column]['join'];
                 foreach(range($join[0], $join[1]) as $joinValue) {
                     $selectedJoins[$joinValue] = true;
                 }
