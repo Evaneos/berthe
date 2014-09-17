@@ -183,12 +183,16 @@ abstract class AbstractReader implements Reader
         foreach ($datas as $rownum => $row) {
             foreach ($translatableFields as $translatableField) {
                 if (array_key_exists($translatableField, $row)) {
-                    $translationIdsToFetch[] = $row[$translatableField];
+                    if ($row[$translatableField]) {
+                        $translationIdsToFetch[] = $row[$translatableField];
 
-                    if (!array_key_exists($row[$translatableField], $translationIdsMapping)) {
-                        $translationIdsMapping[$row[$translatableField]] = array();
+                        if (!array_key_exists($row[$translatableField], $translationIdsMapping)) {
+                            $translationIdsMapping[$row[$translatableField]] = array();
+                        }
+                        $translationIdsMapping[$row[$translatableField]][] = array('rownum' => $rownum, 'field' => $translatableField);
+                    } else {
+                        $datas[$rownum][$translatableField] = null;
                     }
-                    $translationIdsMapping[$row[$translatableField]][] = array('rownum' => $rownum, 'field' => $translatableField);
                 }
             }
         }
