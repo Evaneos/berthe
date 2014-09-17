@@ -1,5 +1,6 @@
 <?php
-namespace My;
+
+namespace Berthe\Test\Fixture\My;
 
 class Manager extends \Berthe\AbstractManager {
     public function getVoForCreation() {
