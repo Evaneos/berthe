@@ -113,7 +113,7 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
                 if ($operator === Fetcher::TYPE_CUSTOM) {
                     $value = $operation->getValue();
                     if (!($value instanceof OperationValue)) {
-                        throw new Exception('OperationValue expected');
+                        throw new \Exception('OperationValue expected');
                     }
 
                     list($operationValueQuery, $operationValueParams) = $value->getOperationValue($operation->getColumnName());
