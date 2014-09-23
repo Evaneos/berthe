@@ -115,31 +115,37 @@ abstract class AbstractVO implements VO
      */
     protected function setDatetimeValue($key, $value)
     {
-        if (null === $value || $value instanceof \DateTime) {
-            $this->{$key} = $value;
-        } else {
+        if (null !== $value && !($value instanceof \DateTime)) {
             try {
-                if (!is_string($value)) {
-                    throw new \InvalidArgumentException(sprintf('Invalid type specified for field "%s" of class "%s". Expected string|Datetime, got %s', $key, get_class($this), gettype($value)));
-                }
-                if (strlen($value) > 19) {
-                    $value = substr($value, 0, 19);
-                }
-                if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
-                    throw new \InvalidArgumentException(sprintf('Invalid datetime format specified for field "%s" of class "%s". Expected "Y-m-d H:i:s", got "%s"', $key, get_class($this), $value));
+                //string datetime format yyyy-mm-dd hh:mm:ss
+                if (is_string($value)) {
+                    if (strlen($value) > 19) {
+                        $value = substr($value, 0, 19);
+                    }
+                    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
+                        throw new \InvalidArgumentException(sprintf('Invalid datetime format specified for field "%s" of class "%s". Expected "Y-m-d H:i:s", got "%s"', $key, get_class($this), $value));
+                    }
+
+                    $value = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
+
+                //Unix timestamp
+                } elseif (is_int($value)) {
+                    $value = (new \DateTime())->setTimestamp($value);
+
+                // Invalid call
+                } else {
+                    throw new \InvalidArgumentException(sprintf('Invalid type specified for field "%s" of class "%s". Expected string|int|Datetime, got %s', $key, get_class($this), gettype($value)));
                 }
 
-                $value = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
                 if (!$value) {
                     throw new \InvalidArgumentException(sprintf('Unable to create a valid datetime for field "%s" of class "%s" with value "%s"', $key, get_class($this), $value));
                 }
-                $this->{$key} = $value;
-            }
-            catch (\Exception $e) {
-                //TODO
-                // throw $e ?
-                // $this->{$key} = null; ?
+
+            } catch (\Exception $e) {
+                throw $e;
             }
         }
+
+        $this->{$key} = $value;
     }
 }

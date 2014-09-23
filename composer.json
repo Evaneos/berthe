@@ -22,12 +22,16 @@
         }
     ],
     "autoload" : {
-        "psr-0" : {
-            "Berthe\\" : "src/"
+        "psr-4" : {
+            "Berthe\\" : "src/Berthe",
+            "Berthe\\Test\\Fixture\\" : "test/fixtures"
         }
     },
     "require" : {
         "doctrine/annotations": "1.0.*@dev",
         "zf1/zend-db": "1.12.3"
+    },
+    "require-dev" : {
+        "phpunit/phpunit": "4.0.*"
     }
 }
