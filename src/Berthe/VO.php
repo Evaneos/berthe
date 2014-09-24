@@ -10,6 +10,12 @@ interface VO {
     function getTranslatableFields();
 
     /**
+     * Provide
+     * @return array
+     */
+    function getDatetimeFields();
+
+    /**
      * Set the VO version
      * @param integer $version
      */

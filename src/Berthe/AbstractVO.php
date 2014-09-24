@@ -1,12 +1,25 @@
 <?php
 namespace Berthe;
 
+use Berthe\Util\DateTimeConverter;
+
 abstract class AbstractVO implements VO
 {
     protected $version = 1;
     protected $id = 0;
 
+    /**
+     * @inheritdoc
+     */
     public function getTranslatableFields()
+    {
+        return array();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDatetimeFields()
     {
         return array();
     }
@@ -54,6 +67,7 @@ abstract class AbstractVO implements VO
      */
     public function __construct(array $properties = array())
     {
+        $this->version = static::VERSION;
         $this->setProperties($properties);
         $this->calcProperties();
     }
@@ -62,7 +76,11 @@ abstract class AbstractVO implements VO
     {
         foreach ($properties as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->{$key} = $value;
+                if (in_array($key, $this->getDatetimeFields())) {
+                    $this->{$key} = DateTimeConverter::convert($value);
+                } else {
+                    $this->{$key} = $value;
+                }
             }
         }
     }
@@ -72,7 +90,6 @@ abstract class AbstractVO implements VO
      */
     protected function calcProperties()
     {
-        $this->version = static::VERSION;
         return true;
     }
 
