@@ -47,7 +47,6 @@ class DateTimeConverterTest extends PHPUnit_Framework_TestCase
 
     public function testHydratationWithNullDatetimeArgument()
     {
-        $date = DateTimeConverter::convert(null);
-        $this->assertTrue(null === $date);
+        $this->assertNull(DateTimeConverter::convert(null));
     }
 }
