@@ -54,7 +54,8 @@ final class DateTimeConverter
         }
 
         if (is_int($value)) {
-            $date = (new \DateTime())->setTimestamp($value);
+            $date = new \DateTime();
+            $date->setTimestamp($value);
             if (!$date) {
                 throw new \InvalidArgumentException(sprintf('Invalid int to datetime conversion with value "%s"', $value));
             }
