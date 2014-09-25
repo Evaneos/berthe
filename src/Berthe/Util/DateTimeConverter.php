@@ -5,6 +5,9 @@ namespace Berthe\Util;
 final class DateTimeConverter
 {
 
+    const REGEXP_DATETIME = '/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(\.\d{3})?$/';
+    const REGEXP_ISO8601 = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{4}$/';
+
     /**
      * @param mixed $value
      * @return \DateTime|null
@@ -32,9 +35,9 @@ final class DateTimeConverter
     {
         if (is_string($value)) {
 
-            if (preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(\.\d{3})?$/', $value)) {
+            if (preg_match(self::REGEXP_DATETIME, $value)) {
                 $date = \DateTime::createFromFormat('Y-m-d H:i:s', substr($value, 0, 19));
-            } elseif (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{4}$/', $value)) {
+            } elseif (preg_match(self::REGEXP_ISO8601, $value)) {
                 $date = \DateTime::createFromFormat(\DateTime::ISO8601, $value);
             } else {
                 throw new \InvalidArgumentException(sprintf('Invalid datetime string format specified. Expected "%s" or "%s", got "%s"', 'yyyy-mm-dd hh:mm:ss[.iii]', 'yyyy-mm-ddThh:mm:ss[-+]pppp', $value));
