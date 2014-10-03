@@ -122,8 +122,12 @@ SQL;
      * @param bool[] $selectedJoins
      * @return array array(string[] $selectedColumns, bool[] $selectedJoins)
      */
-    protected function getSelectedColumnsJoins($column, $mainTableAlias,
-                                        array $selectedColumns = array(), array $selectedJoins = array()) {
+    protected function getSelectedColumnsJoins(
+        $column,
+        $mainTableAlias,
+        array $selectedColumns = array(),
+        array $selectedJoins = array()
+    ) {
         $columns = $this->getColumns();
         if ($columns != null && array_key_exists($column, $columns)) {
             $selectedColumns[$column] = $columns[$column]['select'];
@@ -173,7 +177,7 @@ SQL;
 
             $toUse = array();
             foreach($selectedColumns as $key => $value) {
-                if (!preg_match('`'.$mainTableAlias.'.id`i', $value)) {
+                if ($mainTableAlias.'.id' !== $value) {
                     $toUse[$key] = $value;
                 }
             }
