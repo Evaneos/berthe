@@ -45,8 +45,11 @@ abstract class AbstractStorage implements Storage {
      */
     public function getObjectFromPrimaryStore($id) {
         if ($this->getPrimaryStore()) {
-            $originalObject = $this->getPrimaryStore()->getById($id);
-            return $originalObject;
+            $results = $this->getPrimaryStore()->load(array($id));
+            if(count($results)) {
+                return reset($results);
+            }
+            return null;
         }
 
         throw new \RuntimeException("No primary store provided in storage", 500);
@@ -207,7 +210,7 @@ abstract class AbstractStorage implements Storage {
         $stores = $this->stores;
 
         foreach($this->stores as $storeName => $store) {
-            
+
             if(count($idsNotFound) > 0) {
                 $objects = $store->load($idsNotFound);
 
