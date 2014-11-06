@@ -111,7 +111,7 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::save()
      */
-    public function save($object, $data = null) {
+    public function save($object, $data = array()) {
         $object = $this->builder->updateFromArray($object, $data);
 
         if (!$this->manager->save($object)) {
