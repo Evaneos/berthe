@@ -24,6 +24,8 @@ abstract class AbstractWriter implements Writer
 
     protected $escapeCharacter = '"';
 
+    protected $deleteColumnName = null;
+
     protected $translator = null;
 
     public function __construct()
@@ -93,6 +95,19 @@ abstract class AbstractWriter implements Writer
 
         return $this;
     }
+
+    /**
+     * Set the soft delete column name
+     *
+     * @param string $deleteColumnName
+     */
+    public function setSoftDelete($deleteColumnName)
+    {
+        $this->deleteColumnName = $deleteColumnName;
+
+        return $this;
+    }
+
 
     protected function validateTableAndIdentityColumn()
     {
@@ -232,11 +247,19 @@ EOQ;
      */
     public function deleteById($id) {
         $this->validateTableAndIdentityColumn();
-
-        $query = <<<EOQ
+        // If the soft delete is activated
+        if ($this->deleteColumnName) {
+            $query = <<<EOQ
+UPDATE {$this->getTableName()}
+SET {$this->deleteColumnName} = true
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
+EOQ;
+        } else {
+            $query = <<<EOQ
 DELETE FROM {$this->getTableName()}
 WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
 EOQ;
+        }
 
         $params = array('identity' => $id);
 

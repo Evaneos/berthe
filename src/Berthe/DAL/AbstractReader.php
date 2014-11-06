@@ -29,6 +29,9 @@ abstract class AbstractReader implements Reader {
 
     protected $translator = null;
 
+    protected $deleteColumnName = null;
+
+
     public function __construct()
     {
         $this->translator = new NullTranslator();
@@ -70,6 +73,18 @@ abstract class AbstractReader implements Reader {
      */
     public function setTableName($name) {
         $this->tableName = $name;
+        return $this;
+    }
+
+    /**
+     * Set the soft delete column name
+     *
+     * @param string $deleteColumnName
+     */
+    public function setSoftDelete($deleteColumnName)
+    {
+        $this->deleteColumnName = $deleteColumnName;
+
         return $this;
     }
 
@@ -323,6 +338,11 @@ FROM
 WHERE
     {$filterInReq}
 EOL;
+        if ($this->deleteColumnName) {
+            $sql.<<<EOL
+AND {$this->deleteColumnName} = false
+EOL;
+        }
         return $this->db->fetchOne($sql, $filterToParameter);
     }
 
@@ -349,6 +369,12 @@ EOL;
 
         $isRandom = $fetcher->isRandomSort();
 
+        if ($this->deleteColumnName){
+            $softDeleteFilter = "AND {$deleteColumnName} = false";
+        } else {
+            $softDeleteFilter = "";
+        }
+
         if ($isRandom) {
             $sql = <<<EOL
 SELECT
@@ -360,7 +386,7 @@ FROM
     FROM
         {$this->getTableName()}
     WHERE
-        {$filterInReq}
+        {$filterInReq} {$softDeleteFilter}
     ORDER BY 2
     {$limit}) randomized
 EOL;
@@ -372,7 +398,7 @@ SELECT
 FROM
     {$this->getTableName()}
 WHERE
-    {$filterInReq}
+    {$filterInReq} {$softDeleteFilter}
 ORDER BY
     {$sortInReq}
 {$limit}
