@@ -101,7 +101,7 @@ abstract class AbstractWriter implements Writer
      *
      * @param string $deleteColumnName
      */
-    public function setSoftDelete($deleteColumnName)
+    public function setSoftDelete(string $deleteColumnName)
     {
         $this->deleteColumnName = $deleteColumnName;
 

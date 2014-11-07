@@ -29,7 +29,7 @@ abstract class AbstractReader implements Reader {
 
     protected $translator = null;
 
-    protected $deleteColumnName = null;
+    protected $filteredColumnName = null;
 
 
     public function __construct()
@@ -77,16 +77,34 @@ abstract class AbstractReader implements Reader {
     }
 
     /**
-     * Set the soft delete column name
+     * Set the filtered column name
      *
-     * @param string $deleteColumnName
+     * If this is set, all the entry that are false in this column will never be fetched. 
+     * Useful for implementing a soft-delete for instance.
+     *
+     * @param string $filteredColumnName
      */
-    public function setSoftDelete($deleteColumnName)
+    public function setAutoFilter(string $filteredColumnName)
     {
-        $this->deleteColumnName = $deleteColumnName;
-
+        $this->filteredColumnName = $filteredColumnName;
         return $this;
     }
+
+    /**
+     * Set the soft delete column name
+     *
+     * @param \Berthe\Fetcher $fetcher
+     * @return \Berthe\Fetcher
+     */
+    private function filterByAutoFilter(\Berthe\Fetcher $fetcher)
+    {
+        if ($this->filteredColumnName) {
+            $fetcher->addFilterOperation(\Berthe\Fetcher::OPERATOR_AND);
+            $fetcher->addFilter($this->filteredColumnName, \Berthe\Fetcher::TYPE_EQ, false);
+        }
+        return $fetcher;
+    }
+
 
     /**
      * Sets the class name of the VO for the current package
@@ -328,6 +346,7 @@ EOQ;
      * @return \Berthe\Fetcher
      */
     public function selectCountByFetcher(\Berthe\Fetcher $fetcher) {
+        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
 
         $sql = <<<EOL
@@ -337,10 +356,6 @@ FROM
     {$this->getTableName()}
 WHERE
     {$filterInReq}
-EOL;
-        if ($this->deleteColumnName) {
-            $sql.<<<EOL
-AND {$this->deleteColumnName} = false
 EOL;
         }
         return $this->db->fetchOne($sql, $filterToParameter);
@@ -363,18 +378,12 @@ EOL;
      * @return array(string, array) the sql and the array of the parameters
      */
     public function getSqlByFetcher(\Berthe\Fetcher $fetcher) {
+        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
         $limit = $this->queryBuilder->buildLimit($fetcher);
 
         $isRandom = $fetcher->isRandomSort();
-
-        if ($this->deleteColumnName){
-            $softDeleteFilter = "AND {$deleteColumnName} = false";
-        } else {
-            $softDeleteFilter = "";
-        }
-
         if ($isRandom) {
             $sql = <<<EOL
 SELECT
@@ -386,7 +395,7 @@ FROM
     FROM
         {$this->getTableName()}
     WHERE
-        {$filterInReq} {$softDeleteFilter}
+        {$filterInReq}
     ORDER BY 2
     {$limit}) randomized
 EOL;
@@ -398,7 +407,7 @@ SELECT
 FROM
     {$this->getTableName()}
 WHERE
-    {$filterInReq} {$softDeleteFilter}
+    {$filterInReq}
 ORDER BY
     {$sortInReq}
 {$limit}
