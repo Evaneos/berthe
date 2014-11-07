@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use InvalidArgumentException;
+
 abstract class AbstractWriter implements Writer
 {
 

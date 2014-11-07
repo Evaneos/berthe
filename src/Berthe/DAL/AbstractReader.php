@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use InvalidArgumentException;
+
 abstract class AbstractReader implements Reader {
     /**
      * Class name of the VO for current package
