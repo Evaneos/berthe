@@ -101,7 +101,7 @@ abstract class AbstractWriter implements Writer
      *
      * @param string $deleteColumnName
      */
-    public function setSoftDelete(string $deleteColumnName)
+    public function setSoftDelete($deleteColumnName)
     {
         if (!is_string($deleteColumnName)) {
              throw new InvalidArgumentException('setSoftDelete only accepts string as argument.');
