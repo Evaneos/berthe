@@ -29,7 +29,8 @@ abstract class AbstractReader implements Reader {
 
     protected $translator = null;
 
-    protected $filteredColumnName = null;
+    private $filteredColumnName = null;
+    private $filteredValue = null;
 
 
     public function __construct()
@@ -79,14 +80,22 @@ abstract class AbstractReader implements Reader {
     /**
      * Set the filtered column name
      *
-     * If this is set, all the entry that are false in this column will never be fetched. 
+     * If this is set, all the entry that have the given $value in this column will never be fetched. 
      * Useful for implementing a soft-delete for instance.
      *
      * @param string $filteredColumnName
+     * @param $filteredValue
      */
-    public function setAutoFilter(string $filteredColumnName)
+    public function setAutoFilter($filteredColumnName, $filteredValue)
     {
+        if (!is_string($filteredColumnName)) {
+             throw new InvalidArgumentException('setAutoFilter only accepts string as argument.');
+        }
+        if (!isset($filteredColumnName)) {
+             throw new InvalidArgumentException('filteredValue must be set.');
+        }
         $this->filteredColumnName = $filteredColumnName;
+        $this->filteredValue = $filteredValue;
         return $this;
     }
 
@@ -100,7 +109,7 @@ abstract class AbstractReader implements Reader {
     {
         if ($this->filteredColumnName) {
             $fetcher->addFilterOperation(\Berthe\Fetcher::OPERATOR_AND);
-            $fetcher->addFilter($this->filteredColumnName, \Berthe\Fetcher::TYPE_EQ, false);
+            $fetcher->addFilter($this->filteredColumnName, \Berthe\Fetcher::TYPE_DIFF, $this->filteredValue);
         }
         return $fetcher;
     }
@@ -201,13 +210,17 @@ abstract class AbstractReader implements Reader {
      */
     protected function getSelectQueryByIds(array $ids = array()) {
         $implode = implode(', ', $ids);
-
-        return <<<EOQ
+        $sql = <<<EOQ
 {$this->getSelectQuery()}
 WHERE
     {$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)
-
 EOQ;
+        if ($this->filteredColumnName) {
+            $sql = $sql.<<<EOQ
+ AND {$this->getTableName()}.{$this->filteredColumnName} != {$this->filteredValue}
+EOQ;
+        }
+        return $sql;
     }
 
     /**
