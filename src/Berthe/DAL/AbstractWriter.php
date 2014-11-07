@@ -103,8 +103,10 @@ abstract class AbstractWriter implements Writer
      */
     public function setSoftDelete(string $deleteColumnName)
     {
+        if (!is_string($deleteColumnName)) {
+             throw new InvalidArgumentException('setSoftDelete only accepts string as argument.');
+        }
         $this->deleteColumnName = $deleteColumnName;
-
         return $this;
     }
 
