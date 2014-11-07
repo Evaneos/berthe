@@ -253,7 +253,7 @@ EOQ;
         if ($this->deleteColumnName) {
             $query = <<<EOQ
 UPDATE {$this->getTableName()}
-SET {$this->deleteColumnName} = true
+SET {$this->deleteColumnName} = 1
 WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
 EOQ;
         } else {
