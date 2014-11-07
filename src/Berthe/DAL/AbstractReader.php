@@ -357,7 +357,6 @@ FROM
 WHERE
     {$filterInReq}
 EOL;
-        }
         return $this->db->fetchOne($sql, $filterToParameter);
     }
 
