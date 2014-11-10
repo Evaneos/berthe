@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use InvalidArgumentException;
+
 abstract class AbstractWriter implements Writer
 {
 
@@ -23,6 +25,8 @@ abstract class AbstractWriter implements Writer
     protected $identityColumn = 'id';
 
     protected $escapeCharacter = '"';
+
+    protected $deleteColumnName = null;
 
     protected $translator = null;
 
@@ -93,6 +97,21 @@ abstract class AbstractWriter implements Writer
 
         return $this;
     }
+
+    /**
+     * Set the soft delete column name
+     *
+     * @param string $deleteColumnName
+     */
+    public function setSoftDelete($deleteColumnName)
+    {
+        if (!is_string($deleteColumnName)) {
+             throw new InvalidArgumentException('setSoftDelete only accepts string as argument.');
+        }
+        $this->deleteColumnName = $deleteColumnName;
+        return $this;
+    }
+
 
     protected function validateTableAndIdentityColumn()
     {
@@ -232,11 +251,19 @@ EOQ;
      */
     public function deleteById($id) {
         $this->validateTableAndIdentityColumn();
-
-        $query = <<<EOQ
+        // If the soft delete is activated
+        if ($this->deleteColumnName) {
+            $query = <<<EOQ
+UPDATE {$this->getTableName()}
+SET {$this->deleteColumnName} = 1
+WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
+EOQ;
+        } else {
+            $query = <<<EOQ
 DELETE FROM {$this->getTableName()}
 WHERE {$this->escapeCharacter}{$this->identityColumn}{$this->escapeCharacter} = %s
 EOQ;
+        }
 
         $params = array('identity' => $id);
 

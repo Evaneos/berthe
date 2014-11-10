@@ -2,6 +2,8 @@
 
 namespace Berthe\DAL;
 
+use InvalidArgumentException;
+
 abstract class AbstractReader implements Reader {
     /**
      * Class name of the VO for current package
@@ -28,6 +30,10 @@ abstract class AbstractReader implements Reader {
     protected $queryBuilder = null;
 
     protected $translator = null;
+
+    private $filteredColumnName = null;
+    private $filteredValue = null;
+
 
     public function __construct()
     {
@@ -72,6 +78,44 @@ abstract class AbstractReader implements Reader {
         $this->tableName = $name;
         return $this;
     }
+
+    /**
+     * Set the filtered column name
+     *
+     * If this is set, all the entry that have the given $value in this column will never be fetched. 
+     * Useful for implementing a soft-delete for instance.
+     *
+     * @param string $filteredColumnName
+     * @param $filteredValue
+     */
+    public function setAutoFilter($filteredColumnName, $filteredValue)
+    {
+        if (!is_string($filteredColumnName)) {
+             throw new InvalidArgumentException('setAutoFilter only accepts string as argument.');
+        }
+        if (!isset($filteredColumnName)) {
+             throw new InvalidArgumentException('filteredValue must be set.');
+        }
+        $this->filteredColumnName = $filteredColumnName;
+        $this->filteredValue = $filteredValue;
+        return $this;
+    }
+
+    /**
+     * Set the soft delete column name
+     *
+     * @param \Berthe\Fetcher $fetcher
+     * @return \Berthe\Fetcher
+     */
+    private function filterByAutoFilter(\Berthe\Fetcher $fetcher)
+    {
+        if ($this->filteredColumnName) {
+            $fetcher->addFilterOperation(\Berthe\Fetcher::OPERATOR_AND);
+            $fetcher->addFilter($this->filteredColumnName, \Berthe\Fetcher::TYPE_DIFF, $this->filteredValue);
+        }
+        return $fetcher;
+    }
+
 
     /**
      * Sets the class name of the VO for the current package
@@ -168,13 +212,17 @@ abstract class AbstractReader implements Reader {
      */
     protected function getSelectQueryByIds(array $ids = array()) {
         $implode = implode(', ', $ids);
-
-        return <<<EOQ
+        $sql = <<<EOQ
 {$this->getSelectQuery()}
 WHERE
     {$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)
-
 EOQ;
+        if ($this->filteredColumnName) {
+            $sql = $sql.<<<EOQ
+ AND {$this->getTableName()}.{$this->filteredColumnName} != {$this->filteredValue}
+EOQ;
+        }
+        return $sql;
     }
 
     /**
@@ -313,6 +361,7 @@ EOQ;
      * @return \Berthe\Fetcher
      */
     public function selectCountByFetcher(\Berthe\Fetcher $fetcher) {
+        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
 
         $sql = <<<EOL
@@ -343,12 +392,12 @@ EOL;
      * @return array(string, array) the sql and the array of the parameters
      */
     public function getSqlByFetcher(\Berthe\Fetcher $fetcher) {
+        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
         $limit = $this->queryBuilder->buildLimit($fetcher);
 
         $isRandom = $fetcher->isRandomSort();
-
         if ($isRandom) {
             $sql = <<<EOL
 SELECT
