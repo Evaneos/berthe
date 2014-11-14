@@ -105,7 +105,7 @@ abstract class AbstractReader implements Reader {
      * Set the soft delete column name
      *
      * @param \Berthe\Fetcher $fetcher
-     * @return \Berthe\Fetcher
+     * @return string
      */
     private function addAutoFilterSql($whereSqlClause)
     {
