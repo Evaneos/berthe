@@ -82,7 +82,7 @@ abstract class AbstractReader implements Reader {
     /**
      * Set the filtered column name
      *
-     * If this is set, all the entry that have the given $value in this column will never be fetched. 
+     * If this is set, only the entry that have the given $value in this column will be fetched. 
      * Useful for implementing a soft-delete for instance.
      *
      * @param string $filteredColumnName
@@ -110,7 +110,7 @@ abstract class AbstractReader implements Reader {
     private function addAutoFilterSql($whereSqlClause)
     {
         if ($this->filteredColumnName) {
-            $whereSqlClause = "(".$whereSqlClause.") AND {$this->filteredColumnName} != {$this->filteredValue}";
+            $whereSqlClause = "(".$whereSqlClause.") AND {$this->filteredColumnName} = {$this->filteredValue}";
         }
         return $whereSqlClause;
     }
