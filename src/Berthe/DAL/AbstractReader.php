@@ -82,7 +82,7 @@ abstract class AbstractReader implements Reader {
     /**
      * Set the filtered column name
      *
-     * If this is set, all the entry that have the given $value in this column will never be fetched. 
+     * If this is set, only the entry that have the given $value in this column will be fetched. 
      * Useful for implementing a soft-delete for instance.
      *
      * @param string $filteredColumnName
@@ -105,15 +105,14 @@ abstract class AbstractReader implements Reader {
      * Set the soft delete column name
      *
      * @param \Berthe\Fetcher $fetcher
-     * @return \Berthe\Fetcher
+     * @return string
      */
-    private function filterByAutoFilter(\Berthe\Fetcher $fetcher)
+    private function addAutoFilterSql($whereSqlClause)
     {
         if ($this->filteredColumnName) {
-            $fetcher->addFilterOperation(\Berthe\Fetcher::OPERATOR_AND);
-            $fetcher->addFilter($this->filteredColumnName, \Berthe\Fetcher::TYPE_DIFF, $this->filteredValue);
+            $whereSqlClause = "(".$whereSqlClause.") AND {$this->filteredColumnName} = {$this->filteredValue}";
         }
-        return $fetcher;
+        return $whereSqlClause;
     }
 
 
@@ -212,17 +211,12 @@ abstract class AbstractReader implements Reader {
      */
     protected function getSelectQueryByIds(array $ids = array()) {
         $implode = implode(', ', $ids);
-        $sql = <<<EOQ
+        $sqlWhereClause = "{$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)";
+        return <<<EOQ
 {$this->getSelectQuery()}
 WHERE
-    {$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)
+    {$this->addAutoFilterSql($sqlWhereClause)}
 EOQ;
-        if ($this->filteredColumnName) {
-            $sql = $sql.<<<EOQ
- AND {$this->getTableName()}.{$this->filteredColumnName} != {$this->filteredValue}
-EOQ;
-        }
-        return $sql;
     }
 
     /**
@@ -361,7 +355,6 @@ EOQ;
      * @return \Berthe\Fetcher
      */
     public function selectCountByFetcher(\Berthe\Fetcher $fetcher) {
-        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
 
         $sql = <<<EOL
@@ -370,7 +363,7 @@ SELECT
 FROM
     {$this->getTableName()}
 WHERE
-    {$filterInReq}
+    {$this->addAutoFilterSql($filterInReq)}
 EOL;
         return $this->db->fetchOne($sql, $filterToParameter);
     }
@@ -392,7 +385,6 @@ EOL;
      * @return array(string, array) the sql and the array of the parameters
      */
     public function getSqlByFetcher(\Berthe\Fetcher $fetcher) {
-        $fetcher = $this->filterByAutoFilter($fetcher);
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
         $limit = $this->queryBuilder->buildLimit($fetcher);
@@ -409,7 +401,7 @@ FROM
     FROM
         {$this->getTableName()}
     WHERE
-        {$filterInReq}
+        {$this->addAutoFilterSql($filterInReq)}
     ORDER BY 2
     {$limit}) randomized
 EOL;
@@ -421,7 +413,7 @@ SELECT
 FROM
     {$this->getTableName()}
 WHERE
-    {$filterInReq}
+    {$this->addAutoFilterSql($filterInReq)}
 ORDER BY
     {$sortInReq}
 {$limit}
