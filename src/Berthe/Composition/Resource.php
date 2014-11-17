@@ -7,7 +7,7 @@ class Resource
     /**
      * A collection of data
      *
-     * @var array|ArrayIterator
+     * @var array|\ArrayIterator
      */
     protected $data;
 
@@ -19,7 +19,7 @@ class Resource
     protected $composer;
 
     /**
-     * @param array|ArrayIterator $data
+     * @param array|\ArrayIterator $data
      * @param callable|string $composer
      */
     public function __construct($data, $composer)
@@ -31,7 +31,7 @@ class Resource
     /**
      * Getter for data
      *
-     * @return array|ArrayIterator
+     * @return array|\ArrayIterator
      */
     public function getData()
     {
@@ -47,5 +47,4 @@ class Resource
     {
         return $this->composer;
     }
-
 }
