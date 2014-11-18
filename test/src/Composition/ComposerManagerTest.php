@@ -17,7 +17,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
 
     public function initialRequestedScopesProvider()
     {
-        return array (
+        return array ( // requestedScopesInput, requestedScopesOutput
             array(array('foo'),                             array('foo')),
             array(array('foo', 'bar'),                      array('foo', 'bar')),
             array(array('foo', 'foo.bar.baz'),              array('foo', 'foo.bar', 'foo.bar.baz')),
@@ -28,7 +28,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
 
     public function additionalRequestedScopesProvider()
     {
-        return array (
+        return array ( // initialScopes,  additionalScopes,  requestedScopesOutput
             array(array('foo'), array('foo'),           array('foo')),
             array(array('foo'), array('bar'),           array('foo', 'bar')),
             array(array('foo'), array('foo.bar.baz'),   array('foo', 'foo.bar', 'foo.bar.baz')),

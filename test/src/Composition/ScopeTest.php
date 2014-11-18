@@ -7,45 +7,41 @@ class ScopeTest extends PHPUnit_Framework_TestCase
     /** @var Scope */
     protected $scope;
 
+    /** @var \Berthe\Composition\ComposerManager */
+    protected $composerManager;
+
+    /** @var \Berthe\Composition\Resource */
+    protected $resource;
+
     protected function setUp()
     {
-        $this->scope = $this->getMockBuilder('\Berthe\Composition\Scope')
+        $this->composerManager = $this->getMockBuilder('\Berthe\Composition\ComposerManager')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
+
+        $this->resource = $this->getMockBuilder('\Berthe\Composition\Resource')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
-    /**
-     * @param array|null    $parentScopes
-     * @param string|null   $currentScope
-     * @param string        $expectedStringScope
-     *
-     * @dataProvider scopeStringCalculatorProvider
-     */
-    public function testThatScopeStringIsWellCalculated($parentScopes, $currentScope, $expectedStringScope)
+    public function testAddDefaultEmbedsToRootScope()
     {
-        //set value for protected currentScope
-        $property = new \ReflectionProperty(get_class($this->scope), 'currentScope');
-        $property->setAccessible(true);
-        $property->setValue($this->scope, $currentScope);
+        $this->scope = new Scope($this->composerManager, $this->resource);
 
-        $this->scope->setParentScopes($parentScopes);
+        $this->scope->addDefaultEmbeds(array('foo', 'bar'));
 
-        //set getStringScope to public
-        $method = new \ReflectionMethod(get_class($this->scope), 'getStringScope');
-        $method->setAccessible(true);
-
-        //call getStringScope
-        $this->assertEquals($expectedStringScope, $method->invoke($this->scope));
+        $this->assertEquals(array('foo', 'bar'), $this->composerManager->getRequestedScopes());
     }
 
-    public function scopeStringCalculatorProvider()
+    public function testAddDefaultEmbedsToChildScope()
     {
-        return array(
-            array(null,                     null,   ''),
-            array(array(''),                'foo',  'foo'),
-            array(array('', 'foo'),         'bar',  'foo.bar'), //1st parent is always empty
-            array(array('', 'foo',  'bar'), 'baz',  'foo.bar.baz'),
-        );
+        $this->scope = new Scope($this->composerManager, $this->resource, 'bar');
+
+        $this->scope->setParentScopes(array('', 'foo'));
+
+        $this->scope->addDefaultEmbeds(array('baz'));
+
+        $this->assertContains('foo.bar.baz', $this->composerManager->getRequestedScopes());
     }
 }
