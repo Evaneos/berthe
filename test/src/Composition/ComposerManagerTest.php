@@ -45,7 +45,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider initialRequestedScopesProvider
      */
-    public function testThatInitialRequestedScopesAreWellParsed($requestedScopesInput, $requestedScopesOutput)
+    public function testInitialRequestedScopesAreWellParsed($requestedScopesInput, $requestedScopesOutput)
     {
         $this->composerManager->setRequestedScopes($requestedScopesInput);
 
@@ -64,7 +64,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider additionalRequestedScopesProvider
      */
-    public function testThatAdditionalRequestedScopesAreWellMerged($initialScopes, $additionalScopes, $requestedScopesOutput)
+    public function testAdditionalRequestedScopesAreWellMerged($initialScopes, $additionalScopes, $requestedScopesOutput)
     {
         $this->composerManager->setRequestedScopes($initialScopes);
         $this->composerManager->addRequestedScopes($additionalScopes);
