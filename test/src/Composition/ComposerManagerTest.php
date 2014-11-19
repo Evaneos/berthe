@@ -50,7 +50,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
         $this->composerManager->setRequestedScopes($requestedScopesInput);
 
         $this->assertEquals(count($requestedScopesOutput), count($this->composerManager->getRequestedScopes()));
-        foreach($requestedScopesOutput as $scope) {
+        foreach ($requestedScopesOutput as $scope) {
             $this->assertContains($scope, $this->composerManager->getRequestedScopes());
         }
     }
@@ -70,7 +70,7 @@ class ComposerManagerTest extends PHPUnit_Framework_TestCase
         $this->composerManager->addRequestedScopes($additionalScopes);
 
         $this->assertEquals(count($requestedScopesOutput), count($this->composerManager->getRequestedScopes()));
-        foreach($requestedScopesOutput as $scope) {
+        foreach ($requestedScopesOutput as $scope) {
             $this->assertContains($scope, $this->composerManager->getRequestedScopes());
         }
     }
