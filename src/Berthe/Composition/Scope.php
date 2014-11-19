@@ -4,14 +4,31 @@ namespace Berthe\Composition;
 
 class Scope {
 
+    /**
+     * @var ComposerManager
+     */
     protected $composerManager;
 
+    /**
+     * @var Resource
+     */
     protected $resource;
 
+    /**
+     * @var Scope[]
+     */
     protected $parentScopes = array();
 
+    /**
+     * @var string
+     */
     protected $currentScope;
 
+    /**
+     * @param ComposerManager $composerManager
+     * @param Resource $resource
+     * @param string|null $currentScope
+     */
     public function __construct(ComposerManager $composerManager, Resource $resource, $currentScope = null)
     {
         $this->composerManager = $composerManager;
@@ -31,13 +48,13 @@ class Scope {
         $composer = $this->composerManager->getComposer($composerName);
 
         $data = is_object($this->resource->getData()) ? array($this->resource->getData()) : $this->resource->getData();
-        
+
         // Get embeded composed models
         $embededModels = $composer->getEmbededModels($this, $data);
-        
+
         // Compose resource
         $embededModels = $embededModels ? $embededModels : array();
-        
+
         return $composer->compose($data, $embededModels);
     }
 
@@ -49,12 +66,40 @@ class Scope {
         } else {
             $scopeArray = array($checkScopeSegment);
         }
-
         $scopeString = implode('.', (array) $scopeArray);
+
 
         $checkAgainstArray = $this->composerManager->getRequestedScopes();
 
         return in_array($scopeString, $checkAgainstArray);
+    }
+
+    /**
+     * @param string[] $defaultEmbeds
+     */
+    public function addDefaultEmbeds(array $defaultEmbeds)
+    {
+        $stringScope = $this->getStringScope();
+        if ($stringScope) {
+            array_walk($defaultEmbeds, function(&$value) use($stringScope) {
+                $value = $stringScope . '.' . $value;
+            });
+        }
+
+        $this->composerManager->addRequestedScopes($defaultEmbeds);
+    }
+
+    /**
+     * @return string The full scope string
+     */
+    protected function getStringScope()
+    {
+        if ($this->parentScopes) {
+            $scopes = array_slice($this->parentScopes, 1);
+            $scopes[] = $this->currentScope;
+            return implode('.', $scopes);
+        }
+        return '';
     }
 
     /**

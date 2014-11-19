@@ -7,21 +7,21 @@ abstract class AbstractComposer
     /**
      * Embed if requested
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableEmbeds;
+    protected $availableEmbeds = array();
 
     /**
      * Embed without needing it to be requested
      *
-     * @var array
+     * @var string[]
      */
-    protected $defaultEmbeds;
+    protected $defaultEmbeds = array();
     
     /**
      * A callable to process the data attached to this resource
      *
-     * @var Berthe\Composition\ComposerManager
+     * @var ComposerManager
      */
     protected $manager;
 
@@ -48,7 +48,7 @@ abstract class AbstractComposer
     /**
      * Getter for manager
      *
-     * @return Berthe\Composition\ComposerManager
+     * @return \Berthe\Composition\ComposerManager
      */
     public function getManager()
     {
@@ -59,40 +59,44 @@ abstract class AbstractComposer
     {
         $embededData = array();
         $embededDataCount = 0;
+        $defaultEmbeds = array();
 
-        if (is_array($this->defaultEmbeds)) {
+        if ($this->defaultEmbeds) {
+            $scope->addDefaultEmbeds($this->defaultEmbeds);
 
-            foreach ($this->defaultEmbeds as $potentialEmbed) {
-
-                if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
-                    continue;
-                }
-
-                $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
-                ++$embededDataCount;
-            }
+            // clean multi level embeds to keep only the 1st child
+            $defaultEmbeds = array_map(function($embed) {
+                $embedKeys = explode('.', $embed, 2);
+                return $embedKeys[0];
+            }, $this->defaultEmbeds);
         }
 
-        if (is_array($this->availableEmbeds)) {
+        $embeds = array_unique(array_merge($defaultEmbeds, $this->availableEmbeds));
 
-            foreach ($this->availableEmbeds as $potentialEmbed) {
-                // Check if an available embed is requested
-                if (! $scope->isRequested($potentialEmbed)) {
-                    continue;
-                }
+        foreach ($embeds as $potentialEmbed) {
 
-                if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
-                    continue;
-                }
-
-                $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
-                ++$embededDataCount;
+            // Check if an available embed is requested
+            if (! $scope->isRequested($potentialEmbed)) {
+                continue;
             }
+
+            if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
+                continue;
+            }
+
+            $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
+            ++$embededDataCount;
         }
 
         return $embededDataCount === 0 ? false : $embededData;
     }
 
+    /**
+     * @param string $embed
+     * @param array $data
+     * @return Resource|false
+     * @throws \Exception
+     */
     protected function callGetMethod($embed, $data)
     {
         // Check if the method name actually exists
@@ -119,10 +123,10 @@ abstract class AbstractComposer
 
     /**
      * Setter for manager
-     *
+     * @param ComposerManager $manager
      * @return self
      */
-    public function setManager($manager)
+    public function setManager(ComposerManager $manager)
     {
         $this->manager = $manager;
         return $this;
@@ -131,9 +135,10 @@ abstract class AbstractComposer
     /**
      * Setter for availableEmbeds
      *
+     * @param string[] $availableEmbeds
      * @return self
      */
-    public function setAvailableEmbeds($availableEmbeds)
+    public function setAvailableEmbeds(array $availableEmbeds)
     {
         $this->availableEmbeds = $availableEmbeds;
         return $this;
@@ -142,9 +147,10 @@ abstract class AbstractComposer
     /**
      * Setter for defaultEmbeds
      *
+     * @param string[] $defaultEmbeds
      * @return self
      */
-    public function setDefaultEmbeds($defaultEmbeds)
+    public function setDefaultEmbeds(array $defaultEmbeds)
     {
         $this->defaultEmbeds = $defaultEmbeds;
         return $this;
@@ -153,7 +159,7 @@ abstract class AbstractComposer
     /**
      * Create a new item resource object
      *
-     * @return Berthe\Composition\Resource
+     * @return Resource
      */
     protected function resource($data, $transformer)
     {
