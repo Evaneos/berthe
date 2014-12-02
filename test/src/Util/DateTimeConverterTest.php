@@ -24,6 +24,7 @@ class DateTimeConverterTest extends PHPUnit_Framework_TestCase
             array(new \DateTime()),
             array('2014-10-10 20:20:14'),
             array('2014-10-10 20:20:14.150'),
+            array('2014-10-10 20:20:14.150566'),
             array('2014-10-10T20:20:14+0100'),
             array('2014-10-10T20:20:14-0200'),
             array(10000),

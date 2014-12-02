@@ -5,7 +5,7 @@ namespace Berthe\Util;
 final class DateTimeConverter
 {
 
-    const REGEXP_DATETIME = '/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(\.\d{3})?$/';
+    const REGEXP_DATETIME = '/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(\.\d+)?$/';
     const REGEXP_ISO8601 = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{4}$/';
 
     /**
