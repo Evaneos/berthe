@@ -4,7 +4,8 @@ namespace Berthe\DAL;
 
 use InvalidArgumentException;
 
-abstract class AbstractReader implements Reader {
+abstract class AbstractReader implements Reader
+{
     /**
      * Class name of the VO for current package
      */
@@ -40,7 +41,8 @@ abstract class AbstractReader implements Reader {
         $this->translator = new NullTranslator();
     }
 
-    public function setQueryBuilder(FetcherQueryBuilder $qb) {
+    public function setQueryBuilder(FetcherQueryBuilder $qb)
+    {
         $this->queryBuilder = $qb;
         return $this;
     }
@@ -49,7 +51,8 @@ abstract class AbstractReader implements Reader {
      * @param DbReader $db
      * @return AbstractReader
      */
-    public function setDb(DbReader $db) {
+    public function setDb(DbReader $db)
+    {
         $this->db = $db;
         return $this;
     }
@@ -65,7 +68,8 @@ abstract class AbstractReader implements Reader {
      * @param string $name Use an empty string to specify the default schema.
      * @return \Berthe\DAL\AbstractReader
      */
-    public function setSchema($name) {
+    public function setSchema($name)
+    {
         $this->schemaName = $name;
         return $this;
     }
@@ -74,7 +78,8 @@ abstract class AbstractReader implements Reader {
      * @param string $name
      * @return Reader
      */
-    public function setTableName($name) {
+    public function setTableName($name)
+    {
         $this->tableName = $name;
         return $this;
     }
@@ -82,11 +87,12 @@ abstract class AbstractReader implements Reader {
     /**
      * Set the filtered column name
      *
-     * If this is set, only the entry that have the given $value in this column will be fetched. 
+     * If this is set, only the entry that have the given $value in this column will be fetched.
      * Useful for implementing a soft-delete for instance.
      *
      * @param string $filteredColumnName
      * @param $filteredValue
+     * @return self
      */
     public function setAutoFilter($filteredColumnName, $filteredValue)
     {
@@ -121,7 +127,8 @@ abstract class AbstractReader implements Reader {
      * @param string $VOFQCN
      * @return AbstractReader
      */
-    public function setVOFQCN($VOFQCN) {
+    public function setVOFQCN($VOFQCN)
+    {
         $this->VOFQCN = $VOFQCN;
         return $this;
     }
@@ -130,7 +137,8 @@ abstract class AbstractReader implements Reader {
      * Returns the Class name of the VO for current package
      * @return string
      */
-    public function getVOFQCN() {
+    public function getVOFQCN()
+    {
         return $this->VOFQCN;
     }
 
@@ -138,7 +146,8 @@ abstract class AbstractReader implements Reader {
      * Returns the name of the primary key column.
      * @return string
      */
-    public function getIdentityColumn() {
+    public function getIdentityColumn()
+    {
         return 'id';
     }
 
@@ -147,16 +156,17 @@ abstract class AbstractReader implements Reader {
      * @param array $datas
      * @return \Berthe\VO
      */
-    protected function implementVOs(array $datas = array()) {
+    protected function implementVOs(array $datas = array())
+    {
         $ret = array();
 
-        if(!$class = $this->getVOFQCN()) {
+        if (!$class = $this->getVOFQCN()) {
             throw new \RuntimeException('VOFQCN is not defined for ' . get_called_class());
         }
 
         $datas = $this->translationLoader($class, $datas);
 
-        foreach($datas as &$row) {
+        foreach ($datas as &$row) {
             $ret[$row[$this->getIdentityColumn()]] = new $class($row);
         }
 
@@ -170,8 +180,8 @@ abstract class AbstractReader implements Reader {
 
         $translationIdsToFetch = array();
         $translationIdsMapping = array();
-        foreach($datas as $rownum => $row) {
-            foreach($translatableFields as $translatableField) {
+        foreach ($datas as $rownum => $row) {
+            foreach ($translatableFields as $translatableField) {
                 if (array_key_exists($translatableField, $row)) {
                     $translationIdsToFetch[] = $row[$translatableField];
 
@@ -185,13 +195,22 @@ abstract class AbstractReader implements Reader {
 
         $translations = $this->translator->getTranslations($translationIdsToFetch);
 
-        foreach($translations as $translationObject) {
+        foreach ($translations as $translationObject) {
             $id = $translationObject->getId();
             $datasToUpdate = $translationIdsMapping[$id];
-            foreach($datasToUpdate as $infos) {
+            unset($translationIdsMapping[$id]);
+            foreach ($datasToUpdate as $infos) {
                 $datas[$infos['rownum']][$infos['field']] = $translationObject;
             }
         }
+
+        /* Translations not found */
+        foreach ($translationIdsMapping as $id => $mapping) {
+            foreach ($mapping as $infos) {
+                $datas[$infos['rownum']][$infos['field']] = null;
+            }
+        }
+
         unset($vo);
 
         return $datas;
@@ -200,7 +219,8 @@ abstract class AbstractReader implements Reader {
     /**
      * Returns the Query String to get data for the VOs
      */
-    protected function getSelectQuery() {
+    protected function getSelectQuery()
+    {
         return sprintf('SELECT * FROM %s', $this->getTableName());
     }
 
@@ -209,7 +229,8 @@ abstract class AbstractReader implements Reader {
      * @param array $ids
      * @return string
      */
-    protected function getSelectQueryByIds(array $ids = array()) {
+    protected function getSelectQueryByIds(array $ids = array())
+    {
         $implode = implode(', ', $ids);
         $sqlWhereClause = "{$this->getTableName()}.{$this->getIdentityColumn()} in ($implode)";
         return <<<EOQ
@@ -224,8 +245,9 @@ EOQ;
      * @param array $ids
      * @return \Berthe\VO
      */
-    public function selectByIds(array $ids = array ()) {
-        if (count($ids) === 0) {
+    public function selectByIds(array $ids = array ())
+    {
+        if (empty($ids)) {
             return array();
         }
 
@@ -242,7 +264,8 @@ EOQ;
      * Extract the list of columns from Select Query
      * @return string[] The list of columns
      */
-    protected function _extractColumnsFromSelectQuery() {
+    protected function _extractColumnsFromSelectQuery()
+    {
         $_query = $this->getSelectQuery();
         $_matches = array();
 
@@ -251,7 +274,7 @@ EOQ;
 
         $_columnsList = explode(',', $_matches[2]);
 
-        array_walk($_columnsList, function(&$value, $index) {
+        array_walk($_columnsList, function (&$value, $index) {
             $value = trim($value);
         });
 
@@ -263,12 +286,13 @@ EOQ;
      * @param string $col
      * @return integer
      */
-    protected function _getColumnIndexInSelectQuery($col) {
+    protected function _getColumnIndexInSelectQuery($col)
+    {
         $_columns = $this->_extractColumnsFromSelectQuery();
 
         $_columnIndex = false;
         foreach ($_columns as $index => $column) {
-            if($col == $column) {
+            if ($col == $column) {
                 $_columnIndex = $index;
                 break;
             }
@@ -283,8 +307,9 @@ EOQ;
      * @return mixed[]
      * @throws InvalidArgumentException
      */
-    public function selectColByIdsPreserveIds(array $ids = array(), $columnName = 'id') {
-        if (count($ids) === 0) {
+    public function selectColByIdsPreserveIds(array $ids = array(), $columnName = 'id')
+    {
+        if (empty($ids)) {
             return array();
         }
 
@@ -292,7 +317,7 @@ EOQ;
         $_columnIndexId = $this->_getColumnIndexInSelectQuery($this->getIdentityColumn());
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
-        if($_columnIndex === false || $_columnIndexId === false) {
+        if ($_columnIndex === false || $_columnIndexId === false) {
             throw new \InvalidArgumentException(get_called_class() . '::' . __FUNCTION__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
@@ -304,8 +329,7 @@ EOQ;
         $res = array_combine($columnIndexId, $columnIndex);
         if ($res !== false) {
             return $res;
-        }
-        else {
+        } else {
             throw new \RuntimeException("Not same count between ID and selected COLUMN");
         }
     }
@@ -317,15 +341,16 @@ EOQ;
      * @return mixed[]
      * @throws InvalidArgumentException
      */
-    public function selectColByIds(array $ids = array(), $columnName = 'id') {
-        if (count($ids) === 0) {
+    public function selectColByIds(array $ids = array(), $columnName = 'id')
+    {
+        if (emtpy($ids)) {
             return array();
         }
 
         $_query = $this->getSelectQueryByIds($ids);
         $_columnIndex = $this->_getColumnIndexInSelectQuery($columnName);
 
-        if($_columnIndex === false) {
+        if ($_columnIndex === false) {
             throw new \InvalidArgumentException(get_called_class() . '::' . __FUNCTION__ . '() Invalid column name given as second parametter. "' . $columnName . '" given');
         }
 
@@ -337,8 +362,9 @@ EOQ;
      * Returns the table name of the table.
      * @return string
      */
-    protected function getTableName() {
-        if($this->tableName) {
+    protected function getTableName()
+    {
+        if ($this->tableName) {
             // @todo Clearly needs refactoring. Blame me, I'll burn in hell for this anyways. - Thibaud
             if (trim($this->schemaName) !== '') {
                 return $this->schemaName .'.' . $this->tableName;
@@ -354,7 +380,8 @@ EOQ;
      * @param \Berthe\Fetcher $fetcher
      * @return \Berthe\Fetcher
      */
-    public function selectCountByFetcher(\Berthe\Fetcher $fetcher) {
+    public function selectCountByFetcher(\Berthe\Fetcher $fetcher)
+    {
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
 
         $sql = <<<EOL
@@ -372,7 +399,8 @@ EOL;
      * @param \Berthe\Fetcher $fetcher
      * @return \Berthe\Fetcher
      */
-    public function selectByFetcher(\Berthe\Fetcher $fetcher) {
+    public function selectByFetcher(\Berthe\Fetcher $fetcher)
+    {
 
         list($sql, $filterToParameter) = $this->getSqlByFetcher($fetcher);
         $resultSet = $this->db->fetchCol($sql, $filterToParameter);
@@ -384,7 +412,8 @@ EOL;
      * @param \Berthe\Fetcher $fetcher
      * @return array(string, array) the sql and the array of the parameters
      */
-    public function getSqlByFetcher(\Berthe\Fetcher $fetcher) {
+    public function getSqlByFetcher(\Berthe\Fetcher $fetcher)
+    {
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
         $limit = $this->queryBuilder->buildLimit($fetcher);
@@ -405,8 +434,7 @@ FROM
     ORDER BY 2
     {$limit}) randomized
 EOL;
-        }
-        else {
+        } else {
             $sql = <<<EOL
 SELECT
     {$this->getIdentityColumn()}
