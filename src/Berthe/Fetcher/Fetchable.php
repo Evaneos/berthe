@@ -11,4 +11,10 @@ interface Fetchable
      * @return Fetcher
      */
     public function getByFetcher(Fetcher $fetcher);
+
+    /**
+     * @param  Fetcher $fetcher
+     * @return int
+     */
+    public function getCountByFetcher(Fetcher $fetcher);
 }

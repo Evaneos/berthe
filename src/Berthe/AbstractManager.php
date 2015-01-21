@@ -127,6 +127,14 @@ abstract class AbstractManager implements Manager
 
     /**
      * @param Fetcher $fetcher
+     * @return int
+     */
+    public function getCountByFetcher(Fetcher $fetcher) {
+        return $this->getStorage()->getCountByFetcher($fetcher);
+    }
+
+    /**
+     * @param Fetcher $fetcher
      * @return Fetcher
      */
     public function getByFetcher(Fetcher $fetcher) {

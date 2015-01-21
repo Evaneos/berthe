@@ -37,7 +37,7 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         return $fetcher;
     }
 
-    protected function getCountByFetcher(Fetcher $fetcher)
+    public function getCountByFetcher(Fetcher $fetcher)
     {
         $query = $this->getQuery($fetcher);
 

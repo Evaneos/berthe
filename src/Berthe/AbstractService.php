@@ -89,6 +89,17 @@ abstract class AbstractService implements Service
 
     /**
      * (non-PHPdoc)
+     * @see \Berthe\Fetcher\Fetchable::getCountByFetcher()
+     */
+    public function getCountByFetcher(Fetcher $fetcher) {
+        if (isset($this->fetchable)) {
+            return $this->fetchable->getCountByFetcher($fetcher);
+        }
+        return $this->manager->getCountByFetcher($fetcher);
+    }
+
+    /**
+     * (non-PHPdoc)
      * @see \Berthe\Fetcher\Fetchable::getByFetcher()
      */
     public function getByFetcher(Fetcher $fetcher) {

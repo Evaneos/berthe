@@ -13,6 +13,16 @@ class FetchableManager implements Fetchable
         $this->fetchables[] = $fetchable;
     }
 
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
+        foreach($this->fetchables as $fetchable) {
+            $count = $fetchable->getCountByFetcher($fetcher);
+            if ($count) {
+                return $count;
+            }
+        }
+    }
+
     public function getByFetcher(Fetcher $fetcher)
     {
         foreach($this->fetchables as $fetchable) {
