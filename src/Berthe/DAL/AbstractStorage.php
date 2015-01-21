@@ -96,21 +96,34 @@ abstract class AbstractStorage implements Storage {
         return $_out;
     }
 
+
+    /**
+     * @param  Fetcher $fetcher
+     * @return int
+     */
+    public function getCountByFetcher(Fetcher $fetcher) {
+        if (!$this->getPrimaryStore()) {
+            throw new \RuntimeException("Primary store is missing", 1);
+        }
+        return $this->getPrimaryStore()->getCountByFetcher($fetcher);
+    }
+
     /**
      * @todo  handle all cases : how to decide which store to load from ? merge ids ? what about object invalidation ? ...
      * @param Fetcher $fetcher
      * @return Fetcher
      */
     public function getByFetcher(Fetcher $fetcher) {
-        if ($this->getPrimaryStore()) {
-            $count = $this->getPrimaryStore()->getCountByFetcher($fetcher);
-            $ids = $this->getPrimaryStore()->getIdsByFetcher($fetcher);
-            $objects = $this->getByIds($ids);
-
-            $fetcher->setTtlCount($count);
-            $fetcher->set($objects);
-            return $fetcher;
+        if (!$this->getPrimaryStore()) {
+            throw new \RuntimeException("Primary store is missing", 1);
         }
+        $count = $this->getPrimaryStore()->getCountByFetcher($fetcher);
+        $ids = $this->getPrimaryStore()->getIdsByFetcher($fetcher);
+        $objects = $this->getByIds($ids);
+
+        $fetcher->setTtlCount($count);
+        $fetcher->set($objects);
+        return $fetcher;
     }
 
     /**
