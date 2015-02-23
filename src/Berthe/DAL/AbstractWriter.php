@@ -29,6 +29,8 @@ abstract class AbstractWriter implements Writer
     protected $deleteColumnName = null;
 
     protected $translator = null;
+    
+    protected $transientFields = array();
 
     public function __construct()
     {
@@ -96,6 +98,15 @@ abstract class AbstractWriter implements Writer
         $this->tableName = $tableName;
 
         return $this;
+    }
+    
+    /**
+     * Set the transient fields (ie. fields that won't be saved in / retrieved from database)
+     * 
+     * @param array $transientFields
+     */
+    public function setTransientFields(array $transientFields = array()) {
+        $this->transientFields = $transientFields;
     }
 
     /**
@@ -269,13 +280,14 @@ EOQ;
 
         return (bool)$this->db->query($query, $params);
     }
-
+    
     protected function getDefaultMappings(\Berthe\VO $vo) {
         $properties = array_keys($vo->__toArray());
         $mappings = array_combine($properties, $properties);
-
-        return array_filter($mappings, function($value) {
-            return ! ($value == 'id' || $value == 'version');
+        $self = $this;
+        
+        return array_filter($mappings, function($value) use ($self) {
+            return ! ($value == 'id' || $value == 'version' || in_array($value, $self->transientFields));
         });
     }
 
