@@ -103,7 +103,7 @@ abstract class AbstractWriter implements Writer
     /**
      * Set the transient fields (ie. fields that won't be saved in / retrieved from database)
      * 
-     * @param array $transientFields
+     * @param string[] $transientFields
      */
     public function setTransientFields(array $transientFields = array()) {
         $this->transientFields = $transientFields;
@@ -284,10 +284,10 @@ EOQ;
     protected function getDefaultMappings(\Berthe\VO $vo) {
         $properties = array_keys($vo->__toArray());
         $mappings = array_combine($properties, $properties);
-        $self = $this;
+        $transientFields = $this->transientFields;
         
-        return array_filter($mappings, function($value) use ($self) {
-            return ! ($value == 'id' || $value == 'version' || in_array($value, $self->transientFields));
+        return array_filter($mappings, function($value) use ($transientFields) {
+            return ! ($value == 'id' || $value == 'version' || in_array($value, $transientFields));
         });
     }
 
