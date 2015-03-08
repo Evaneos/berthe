@@ -17,7 +17,7 @@ abstract class AbstractComposer
      * @var string[]
      */
     protected $defaultEmbeds = array();
-    
+
     /**
      * A callable to process the data attached to this resource
      *
@@ -57,8 +57,8 @@ abstract class AbstractComposer
 
     public function getEmbededModels(Scope $scope, $data)
     {
-        $embededData = array();
-        $embededDataCount = 0;
+        $embeddedData = array();
+        $embeddedDataCount = 0;
         $defaultEmbeds = array();
 
         if ($this->defaultEmbeds) {
@@ -74,35 +74,35 @@ abstract class AbstractComposer
         $embeds = array_unique(array_merge($defaultEmbeds, $this->availableEmbeds));
 
         foreach ($embeds as $potentialEmbed) {
-
             // Check if an available embed is requested
             if (! $scope->isRequested($potentialEmbed)) {
                 continue;
             }
 
-            if (! ($resource = $this->callGetMethod($potentialEmbed, $data))) {
+            if (! ($resource = $this->callGetMethod($potentialEmbed, $data, $embeddedData))) {
                 continue;
             }
 
-            $embededData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
-            ++$embededDataCount;
+            $embeddedData[$potentialEmbed] = $scope->getComposedChildScope($potentialEmbed, $resource)->getComposite();
+            ++$embeddedDataCount;
         }
 
-        return $embededDataCount === 0 ? false : $embededData;
+        return $embeddedDataCount === 0 ? false : $embeddedData;
     }
 
     /**
      * @param string $embed
      * @param array $data
+     * @param array $embeddedData
      * @return Resource|false
      * @throws \Exception
      */
-    protected function callGetMethod($embed, $data)
+    protected function callGetMethod($embed, $data, array $embeddedData)
     {
         // Check if the method name actually exists
         $methodName = 'get'.str_replace(' ', '', ucwords(str_replace('_', ' ', $embed)));
 
-        $resource = call_user_func(array($this, $methodName), $data);
+        $resource = call_user_func(array($this, $methodName), $data, $embeddedData);
 
         if ($resource === null) {
             return false;
