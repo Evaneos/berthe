@@ -55,6 +55,13 @@ abstract class AbstractComposer
         return $this->manager;
     }
 
+    /**
+     * @internal
+     * @param Scope $scope
+     * @param       $data
+     * @return array|bool
+     * @throws \Exception
+     */
     public function getEmbededModels(Scope $scope, $data)
     {
         $embeddedData = array();
@@ -122,6 +129,30 @@ abstract class AbstractComposer
     }
 
     /**
+     * @param array $objects
+     * @param array $embeddedModels
+     * @return array
+     */
+    public function compose(array $objects = array(), array $embeddedModels = array())
+    {
+        $compositesIndexed = array();
+        $composites = array();
+        foreach ($objects as $key => $object) {
+            if (isset($compositesIndexed[$object->getId()])) {
+                $composites[$key] = $compositesIndexed[$object->getId()];
+                continue;
+            }
+
+            $composite = $this->createComposite($object);
+            $compositesIndexed[$object->getId()] = $composite;
+            $composites[$key] = $composite;
+            $this->composeObject($object, $composite, $embeddedModels);
+        }
+
+        return $composites;
+    }
+
+    /**
      * Setter for manager
      * @param ComposerManager $manager
      * @return self
@@ -159,6 +190,8 @@ abstract class AbstractComposer
     /**
      * Create a new item resource object
      *
+     * @param array|\ArrayIterator $data
+     * @param callable $transformer
      * @return Resource
      */
     protected function resource($data, $transformer)
