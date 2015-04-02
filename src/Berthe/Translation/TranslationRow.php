@@ -4,23 +4,24 @@ namespace Berthe\Translation;
 
 class TranslationRow
 {
-    /**
-     * @return string name
-     */
+    /** @var string */
     protected $name;
-    /**
-     * @return string content
-     */
+
+    /** @var string */
     protected $content;
-    /**
-     * @return string iso2
-     */
+
+    /** @var string */
     protected $iso2;
-    /**
-     * @return int language_id
-     */
+
+    /** @var int */
     protected $language_id;
 
+    /**
+     * @param $name
+     * @param $content
+     * @param $languageId
+     * @param $iso2
+     */
     public function __construct($name, $content, $languageId, $iso2)
     {
         $this->name = $name;
@@ -32,14 +33,17 @@ class TranslationRow
     /**
      * @return string name
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
+
     /**
      * @param string $value
-     * @return TranslationRow
+     * @return self
      */
-    public function setName($value) {
+    public function setName($value)
+    {
         $this->name = $value;
         return $this;
     }
@@ -47,14 +51,17 @@ class TranslationRow
     /**
      * @return string content
      */
-    public function getContent() {
+    public function getContent()
+    {
         return $this->content;
     }
+
     /**
      * @param string $value
-     * @return TranslationRow
+     * @return self
      */
-    public function setContent($value) {
+    public function setContent($value)
+    {
         $this->content = $value;
         return $this;
     }
@@ -62,14 +69,17 @@ class TranslationRow
     /**
      * @return string iso2
      */
-    public function getIso2() {
+    public function getIso2()
+    {
         return $this->iso2;
     }
+
     /**
      * @param string $value
-     * @return TranslationRow
+     * @return self
      */
-    public function setIso2($value) {
+    public function setIso2($value)
+    {
         $this->iso2 = $value;
         return $this;
     }
@@ -77,19 +87,26 @@ class TranslationRow
     /**
      * @return int language_id
      */
-    public function getLanguageId() {
+    public function getLanguageId()
+    {
         return $this->language_id;
     }
+
     /**
      * @param int $value
-     * @return TranslationRow
+     * @return self
      */
-    public function setLanguageId($value) {
+    public function setLanguageId($value)
+    {
         $this->language_id = $value;
         return $this;
     }
 
-    public function __toArray() {
+    /**
+     * @return array
+     */
+    public function __toArray()
+    {
         return get_object_vars($this);
     }
 }
