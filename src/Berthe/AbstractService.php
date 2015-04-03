@@ -4,6 +4,7 @@ namespace Berthe;
 
 use Berthe\Fetcher;
 use Berthe\Fetcher\Fetchable;
+use Berthe\ErrorHandler\FunctionalErrorException;
 
 abstract class AbstractService implements Service
 {
@@ -123,10 +124,13 @@ abstract class AbstractService implements Service
      * @see \Berthe\Service::save()
      */
     public function save($object, $data = array()) {
+        if (! is_array($data)){
+            throw new FunctionalErrorException('Wrong data format. Expecting JSON object', 400);
+        }
         $object = $this->builder->updateFromArray($object, $data);
 
         if (!$this->manager->save($object)) {
-            throw new \FunctionalErrorException('Creation failed!', 500);
+            throw new FunctionalErrorException('Creation failed!', 500);
         }
 
         return $object;
