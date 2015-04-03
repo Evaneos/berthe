@@ -124,9 +124,6 @@ abstract class AbstractService implements Service
      * @see \Berthe\Service::save()
      */
     public function save($object, $data = array()) {
-        if (! is_array($data)){
-            throw new FunctionalErrorException('Wrong data format. Expecting JSON object', 400);
-        }
         $object = $this->builder->updateFromArray($object, $data);
 
         if (!$this->manager->save($object)) {
