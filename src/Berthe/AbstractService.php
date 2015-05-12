@@ -7,7 +7,6 @@ use Berthe\Fetcher\Fetchable;
 
 abstract class AbstractService implements Service
 {
-
     /**
      *
      * @var Manager
@@ -113,7 +112,7 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::createNew()
      */
-    public function createNew(array $data = array()) {
+    public function createNew(array $data = null) {
         $object = $this->manager->getVoForCreation();
         return $this->save($object, $data);
     }
@@ -122,8 +121,10 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::save()
      */
-    public function save($object, $data = array()) {
-        $object = $this->builder->updateFromArray($object, $data);
+    public function save($object, $data = null) {
+        if ($data !== null) {
+            $object = $this->builder->updateFromArray($object, $data);
+        }
 
         if (!$this->manager->save($object)) {
             throw new \FunctionalErrorException('Creation failed!', 500);
