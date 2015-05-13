@@ -4,6 +4,7 @@ namespace Berthe;
 
 use Berthe\Fetcher;
 use Berthe\Fetcher\Fetchable;
+use Berthe\ErrorHandler\FunctionalErrorException;
 
 abstract class AbstractService implements Service
 {
@@ -126,7 +127,7 @@ abstract class AbstractService implements Service
         $object = $this->builder->updateFromArray($object, $data);
 
         if (!$this->manager->save($object)) {
-            throw new \FunctionalErrorException('Creation failed!', 500);
+            throw new FunctionalErrorException('Creation failed!', 500);
         }
 
         return $object;
