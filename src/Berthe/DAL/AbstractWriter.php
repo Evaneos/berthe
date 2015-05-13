@@ -51,7 +51,8 @@ abstract class AbstractWriter implements Writer
      *
      * @param DbWriter $db
      */
-    public function setDb(DbWriter $db) {
+    public function setDb(DbWriter $db)
+    {
         $this->db = $db;
 
         return $this;
@@ -102,10 +103,11 @@ abstract class AbstractWriter implements Writer
     
     /**
      * Set the transient fields (ie. fields that won't be saved in / retrieved from database)
-     * 
+     *
      * @param string[] $transientFields
      */
-    public function setTransientFields(array $transientFields = array()) {
+    public function setTransientFields(array $transientFields = array())
+    {
         $this->transientFields = $transientFields;
     }
 
@@ -117,7 +119,7 @@ abstract class AbstractWriter implements Writer
     public function setSoftDelete($deleteColumnName)
     {
         if (!is_string($deleteColumnName)) {
-             throw new InvalidArgumentException('setSoftDelete only accepts string as argument.');
+            throw new InvalidArgumentException('setSoftDelete only accepts string as argument.');
         }
         $this->deleteColumnName = $deleteColumnName;
         return $this;
@@ -153,7 +155,8 @@ abstract class AbstractWriter implements Writer
      * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function insert(\Berthe\VO $object) {
+    public function insert(\Berthe\VO $object)
+    {
         $this->validateTableAndIdentityColumn();
 
         $mappings = $this->getSaveMappings();
@@ -205,7 +208,8 @@ EOQ;
      * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function update(\Berthe\VO $object) {
+    public function update(\Berthe\VO $object)
+    {
         $this->validateTableAndIdentityColumn();
 
         $mappings = $this->getSaveMappings();
@@ -251,7 +255,8 @@ EOQ;
      * @param \Berthe\VO $object the object to insert
      * @return boolean
      */
-    public function delete(\Berthe\VO $object) {
+    public function delete(\Berthe\VO $object)
+    {
         return $this->deleteById($object->getId());
     }
 
@@ -260,7 +265,8 @@ EOQ;
      * @param int $int object identifier
      * @return boolean
      */
-    public function deleteById($id) {
+    public function deleteById($id)
+    {
         $this->validateTableAndIdentityColumn();
         // If the soft delete is activated
         if ($this->deleteColumnName) {
@@ -281,17 +287,19 @@ EOQ;
         return (bool)$this->db->query($query, $params);
     }
     
-    protected function getDefaultMappings(\Berthe\VO $vo) {
+    protected function getDefaultMappings(\Berthe\VO $vo)
+    {
         $properties = array_keys($vo->__toArray());
         $mappings = array_combine($properties, $properties);
         $transientFields = $this->transientFields;
         
-        return array_filter($mappings, function($value) use ($transientFields) {
+        return array_filter($mappings, function ($value) use ($transientFields) {
             return ! ($value == 'id' || $value == 'version' || in_array($value, $transientFields));
         });
     }
 
-    protected function getSaveMappings() {
+    protected function getSaveMappings()
+    {
         return array();
     }
 }

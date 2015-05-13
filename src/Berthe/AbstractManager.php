@@ -34,7 +34,8 @@ abstract class AbstractManager implements Manager
     /**
      * @return Validation\Validator
      */
-    public function getValidator() {
+    public function getValidator()
+    {
         return $this->validator;
     }
 
@@ -42,7 +43,8 @@ abstract class AbstractManager implements Manager
      * @param Validation\Validator $validator
      * @return AbstractManager
      */
-    public function setValidator(Validation\Validator $validator) {
+    public function setValidator(Validation\Validator $validator)
+    {
         $this->validator = $validator;
         return $this;
     }
@@ -50,7 +52,8 @@ abstract class AbstractManager implements Manager
     /**
      * @return DAL\AbstractStorage $storage
      */
-    public function getStorage() {
+    public function getStorage()
+    {
         return $this->storage;
     }
 
@@ -58,7 +61,8 @@ abstract class AbstractManager implements Manager
      * @param DAL\AbstractStorage $storage
      * @return self
      */
-    public function setStorage(DAL\AbstractStorage $storage) {
+    public function setStorage(DAL\AbstractStorage $storage)
+    {
         $this->storage = $storage;
         return $this;
     }
@@ -66,14 +70,16 @@ abstract class AbstractManager implements Manager
     /**
      * @param Hook $hook
      */
-    public function addSaveHook(Hook $hook) {
+    public function addSaveHook(Hook $hook)
+    {
         $this->saveHooks[] = $hook;
     }
 
     /**
      * @param Hook $hook
      */
-    public function addDeleteHook(Hook $hook) {
+    public function addDeleteHook(Hook $hook)
+    {
         $this->deleteHooks[] = $hook;
     }
 
@@ -81,7 +87,8 @@ abstract class AbstractManager implements Manager
      * set VO Fully-Qualified Class Name
      * @param string $VOFQCN
      */
-    public function setVOFQCN($VOFQCN) {
+    public function setVOFQCN($VOFQCN)
+    {
         $this->VOFQCN = $VOFQCN;
         return $this;
     }
@@ -90,7 +97,8 @@ abstract class AbstractManager implements Manager
      * Return a new VO with default values
      * @return VO the VO with its default values
      */
-    public function getVOForCreation() {
+    public function getVOForCreation()
+    {
         if ($this->VOFQCN) {
             return new $this->VOFQCN;
         }
@@ -101,7 +109,8 @@ abstract class AbstractManager implements Manager
     /**
      * @return VO[]
      */
-    public function getAll() {
+    public function getAll()
+    {
         $fetcher = new Fetcher(-1, -1);
         $fetcher->sortById(Fetcher::SORT_ASC);
         return $this->getByFetcher($fetcher)->getResultSet();
@@ -112,7 +121,8 @@ abstract class AbstractManager implements Manager
      * @param int $id
      * @return VO
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         return $this->getStorage()->getById($id);
     }
 
@@ -121,7 +131,8 @@ abstract class AbstractManager implements Manager
      * @param array $ids
      * @return VO[]
      */
-    public function getByIds(array $ids = array()) {
+    public function getByIds(array $ids = array())
+    {
         return $this->getStorage()->getByIds($ids);
     }
 
@@ -129,7 +140,8 @@ abstract class AbstractManager implements Manager
      * @param Fetcher $fetcher
      * @return int
      */
-    public function getCountByFetcher(Fetcher $fetcher) {
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
         return $this->getStorage()->getCountByFetcher($fetcher);
     }
 
@@ -137,7 +149,8 @@ abstract class AbstractManager implements Manager
      * @param Fetcher $fetcher
      * @return Fetcher
      */
-    public function getByFetcher(Fetcher $fetcher) {
+    public function getByFetcher(Fetcher $fetcher)
+    {
         $fetcher = $this->getStorage()->getByFetcher($fetcher);
         return $fetcher;
     }
@@ -147,7 +160,8 @@ abstract class AbstractManager implements Manager
      * @param VO $object
      * @return boolean
      */
-    public function save($object) {
+    public function save($object)
+    {
         $ret = $this->getValidator()->validateSave($object);
         if ($ret) {
             $ret = $this->_save($object);
@@ -155,14 +169,15 @@ abstract class AbstractManager implements Manager
         return $ret;
     }
 
-    protected function _save($object) {
-        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
+    protected function _save($object)
+    {
+        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->save($object);
 
-        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->after($object);
         }
 
@@ -174,7 +189,8 @@ abstract class AbstractManager implements Manager
      * @param int $id
      * @return boolean
      */
-    public function delete($object) {
+    public function delete($object)
+    {
         $ret = $this->getValidator()->validateDelete($object);
         if ($ret) {
             $ret = $this->_delete($object);
@@ -182,14 +198,15 @@ abstract class AbstractManager implements Manager
         return $ret;
     }
 
-    protected function _delete($object) {
-        foreach($this->deleteHooks as /* @var $hook Hook */ $hook) {
+    protected function _delete($object)
+    {
+        foreach ($this->deleteHooks as /* @var $hook Hook */ $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->delete($object);
 
-        foreach($this->saveHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
             $hook->after($object);
         }
 
@@ -201,7 +218,8 @@ abstract class AbstractManager implements Manager
      * @param int $id
      * @return boolean
      */
-    public function deleteById($id) {
+    public function deleteById($id)
+    {
         $object = $this->getById($id);
         return $this->delete($object);
     }

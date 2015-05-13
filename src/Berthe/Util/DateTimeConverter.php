@@ -21,12 +21,15 @@ final class DateTimeConverter
             return $value;
         }
 
-        if (!$v) { $v = self::intConverter($value); }
-        if (!$v) { $v = self::stringConverter($value); }
+        if (!$v) {
+            $v = self::intConverter($value);
+        }
+        if (!$v) {
+            $v = self::stringConverter($value);
+        }
         if (!$v) {
             throw new \InvalidArgumentException(sprintf('Invalid type specified for datetime conversion : "%s"', gettype($value)));
-        }
-        else {
+        } else {
             return $v;
         }
     }
@@ -34,7 +37,6 @@ final class DateTimeConverter
     private static function stringConverter($value)
     {
         if (is_string($value)) {
-
             if (preg_match(self::REGEXP_DATETIME, $value)) {
                 $date = \DateTime::createFromFormat('Y-m-d H:i:s', substr($value, 0, 19));
             } elseif (preg_match(self::REGEXP_ISO8601, $value)) {

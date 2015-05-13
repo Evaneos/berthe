@@ -3,7 +3,8 @@ namespace Berthe;
 
 use Berthe\Fetcher\Fetchable;
 
-interface Service extends Fetchable {
+interface Service extends Fetchable
+{
 
     /**
      * @return VO[]

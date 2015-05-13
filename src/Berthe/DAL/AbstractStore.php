@@ -5,7 +5,8 @@ namespace Berthe\DAL;
 use Berthe\VO;
 use Berthe\Fetcher;
 
-abstract class AbstractStore implements Store {
+abstract class AbstractStore implements Store
+{
     /**
      * @var boolean
      */
@@ -40,11 +41,13 @@ abstract class AbstractStore implements Store {
      */
     abstract protected function _delete(VO $vo);
 
-    public function getCountByFetcher(Fetcher $fetcher) {
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
         throw new \RuntimeException(sprintf("No default implementation for %s::%s", get_called_class(), __FUNCTION__), 500);
     }
 
-    public function getIdsByFetcher(Fetcher $fetcher) {
+    public function getIdsByFetcher(Fetcher $fetcher)
+    {
         throw new \RuntimeException(sprintf("No default implementation for %s::%s", get_called_class(), __FUNCTION__), 500);
     }
 
@@ -53,7 +56,8 @@ abstract class AbstractStore implements Store {
      * @param mixed $bool bool|null
      * @return boolean
      */
-    public function isEnabled($bool = null) {
+    public function isEnabled($bool = null)
+    {
         if ($bool === true || $bool === false) {
             $this->isEnabled = $bool;
         }
@@ -63,13 +67,15 @@ abstract class AbstractStore implements Store {
     /**
      * @return boolean
      */
-    public function isPersistent() {
+    public function isPersistent()
+    {
         return $this->isPersistent;
     }
     /**
      * @return boolean
      */
-    public function isTTLAble() {
+    public function isTTLAble()
+    {
         return $this->isTTLAble;
     }
 
@@ -77,11 +83,11 @@ abstract class AbstractStore implements Store {
      * @param array $ids
      * @return array id=>object
      */
-    final public function load(array $ids = array()) {
-        if($this->isEnabled()) {
+    final public function load(array $ids = array())
+    {
+        if ($this->isEnabled()) {
             return $this->_load($ids);
-        }
-        else {
+        } else {
             return array();
         }
     }
@@ -90,7 +96,8 @@ abstract class AbstractStore implements Store {
      * @param VO $vo
      * @return boolean
      */
-    final public function delete(VO $vo) {
+    final public function delete(VO $vo)
+    {
         return $this->_delete($vo);
     }
 
@@ -98,12 +105,12 @@ abstract class AbstractStore implements Store {
      * @param VO $vo
      * @return boolean success
      */
-    final public function save(VO $vo) {
+    final public function save(VO $vo)
+    {
         $ret = null;
         if ($vo->getId()) {
             $ret = $this->_update($vo);
-        }
-        else {
+        } else {
             $ret = $this->_insert($vo);
         }
 
@@ -119,7 +126,8 @@ abstract class AbstractStore implements Store {
      * @param VO[] $vos
      * @return boolean false if at least one save has failed
      */
-    final public function saveMulti(array $vos = array()) {
+    final public function saveMulti(array $vos = array())
+    {
         return $this->_saveMulti($vos);
     }
 
@@ -128,9 +136,10 @@ abstract class AbstractStore implements Store {
      * @param array $vos
      * @return boolean
      */
-    protected function _saveMulti(array $vos = array()) {
+    protected function _saveMulti(array $vos = array())
+    {
         $isOk = true;
-        foreach($vos as $vo) {
+        foreach ($vos as $vo) {
             $ret = $this->save($vo);
             if (!$ret) {
                 $isOk = false;

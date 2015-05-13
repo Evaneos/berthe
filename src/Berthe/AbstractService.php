@@ -32,7 +32,8 @@ abstract class AbstractService implements Service
      *
      * @param Manager $manager
      */
-    public function __construct(Manager $manager = null, Builder $builder = null) {
+    public function __construct(Manager $manager = null, Builder $builder = null)
+    {
         $this->manager = $manager;
         $this->builder = $builder;
     }
@@ -42,7 +43,8 @@ abstract class AbstractService implements Service
      *
      * @param Manager $manager
      */
-    public function setManager(Manager $manager) {
+    public function setManager(Manager $manager)
+    {
         $this->manager = $manager;
     }
 
@@ -51,7 +53,8 @@ abstract class AbstractService implements Service
      *
      * @param Builder $builder
      */
-    public function setBuilder(Builder $builder) {
+    public function setBuilder(Builder $builder)
+    {
         $this->builder = $builder;
     }
 
@@ -60,7 +63,8 @@ abstract class AbstractService implements Service
     *
     * @param Fetchable $fetchable
     */
-    public function setFetchable(Fetchable $fetchable) {
+    public function setFetchable(Fetchable $fetchable)
+    {
         $this->fetchable = $fetchable;
     }
 
@@ -68,7 +72,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::getAll()
      */
-    public function getAll() {
+    public function getAll()
+    {
         return $this->manager->getAll();
     }
 
@@ -76,7 +81,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::getById()
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         return $this->manager->getById($id);
     }
 
@@ -84,7 +90,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::getByIds()
      */
-    public function getByIds(array $ids = array()) {
+    public function getByIds(array $ids = array())
+    {
         return $this->manager->getByIds($ids);
     }
 
@@ -92,7 +99,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Fetcher\Fetchable::getCountByFetcher()
      */
-    public function getCountByFetcher(Fetcher $fetcher) {
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
         if (isset($this->fetchable)) {
             return $this->fetchable->getCountByFetcher($fetcher);
         }
@@ -103,7 +111,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Fetcher\Fetchable::getByFetcher()
      */
-    public function getByFetcher(Fetcher $fetcher) {
+    public function getByFetcher(Fetcher $fetcher)
+    {
         if (isset($this->fetchable)) {
             return $this->fetchable->getByFetcher($fetcher);
         }
@@ -114,7 +123,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::createNew()
      */
-    public function createNew(array $data = array()) {
+    public function createNew(array $data = array())
+    {
         $object = $this->manager->getVoForCreation();
         return $this->save($object, $data);
     }
@@ -123,7 +133,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::save()
      */
-    public function save($object, $data = array()) {
+    public function save($object, $data = array())
+    {
         $object = $this->builder->updateFromArray($object, $data);
 
         if (!$this->manager->save($object)) {
@@ -137,7 +148,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::delete()
      */
-    public function delete($object) {
+    public function delete($object)
+    {
         return $this->manager->delete($object);
     }
 
@@ -145,7 +157,8 @@ abstract class AbstractService implements Service
      * (non-PHPdoc)
      * @see \Berthe\Service::deleteById()
      */
-    public function deleteById($id) {
+    public function deleteById($id)
+    {
         return $this->manager->deleteById($id);
     }
 }

@@ -15,7 +15,7 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
         $sorts = array();
         $_sorts = $fetcher->getSorts();
 
-        foreach($_sorts as $column => $sort) {
+        foreach ($_sorts as $column => $sort) {
             $sorts[] = $column . ' ' . $sort;
         }
 
@@ -30,8 +30,7 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
     {
         if (!$fetcher->hasLimit()) {
             return '';
-        }
-        else {
+        } else {
             $offset = ($fetcher->getPage() - 1) * $fetcher->getNbByPage();
             $sql = sprintf(" LIMIT %s OFFSET %s", $fetcher->getNbByPage(), $offset);
             return $sql;
@@ -41,9 +40,9 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
     public function buildFilters(Fetcher $fetcher)
     {
         list($filterInReq, $filterToParameter) = $this->buildOperation($fetcher);
-        if($fetcher->hasEmptyIN()) {
+        if ($fetcher->hasEmptyIN()) {
             $filterInReq = '1=2';
-        } else if ($filterInReq == '' || $filterInReq == '()') {
+        } elseif ($filterInReq == '' || $filterInReq == '()') {
             $filterInReq = '1=1';
         }
         return array($filterInReq, $filterToParameter);
@@ -68,7 +67,6 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
         $rootOperation->setOperator($fetcher->getMainOperator());
 
         return $this->getOperationAsString($fetcher, $rootOperation);
-
     }
 
     /**
@@ -82,33 +80,28 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
         $params = array();
 
         if ($operation instanceof SimpleOperation) {
-
             $operator = $operation->getOperator();
 
             if ($operator === Fetcher::TYPE_IN) {
-
                 $newOperation = new ListOperation(Fetcher::OPERATOR_OR);
 
-                foreach($operation->getValue() as $val) {
+                foreach ($operation->getValue() as $val) {
                     $newOperation->addOperation(
                         new SimpleOperation(Fetcher::TYPE_EQ, $operation->getColumnName(), $val)
                     );
                 }
 
                 list($query, $params) = $this->getOperationAsString($fetcher, $newOperation);
-
-            } else if ($operator === Fetcher::TYPE_NOT_IN) {
-
+            } elseif ($operator === Fetcher::TYPE_NOT_IN) {
                 $newOperation = new ListOperation(Fetcher::OPERATOR_AND);
 
-                foreach($operation->getValue() as $val) {
+                foreach ($operation->getValue() as $val) {
                     $newOperation->addOperation(
                         new SimpleOperation(Fetcher::TYPE_DIFF, $operation->getColumnName(), $val)
                     );
                 }
 
                 list($query, $params) = $this->getOperationAsString($fetcher, $newOperation);
-
             } else {
                 if ($operator === Fetcher::TYPE_CUSTOM) {
                     $value = $operation->getValue();
@@ -136,14 +129,11 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
                     }
                 }
             }
-
-        } else if ($operation instanceof ListOperation) {
-
+        } elseif ($operation instanceof ListOperation) {
             $operations = $operation->getOperations();
             $strings = array();
 
             foreach ($operations as $currentOperation) {
-
                 list($returnQuery, $returnParams) = $this->getOperationAsString($fetcher, $currentOperation);
 
                 $strings[] = $returnQuery;
@@ -151,7 +141,6 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
             }
 
             $query = implode($operation->getOperator(), $strings);
-
         } else {
             throw new \InvalidArgumentException('Givent operation is not supported');
         }
@@ -161,7 +150,7 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
 
     protected function getOperationValue(SimpleOperation $operation)
     {
-        switch($operation->getOperator()) {
+        switch ($operation->getOperator()) {
             case Fetcher::TYPE_LIKE :
             case Fetcher::TYPE_ILIKE :
                 return '%' . $operation->getValue() . '%';

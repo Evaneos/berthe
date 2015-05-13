@@ -10,7 +10,6 @@ class NullTranslator implements Translator
      */
     public function setDb(\Berthe\DAL\DbReader $db)
     {
-
     }
 
     /**
@@ -20,7 +19,7 @@ class NullTranslator implements Translator
     public function getTranslations(array $ids = array())
     {
         $output = array();
-        foreach($ids as $id) {
+        foreach ($ids as $id) {
             $t = new \Berthe\Translation\Translation();
             $t->setId($id);
             $output[] = $t;

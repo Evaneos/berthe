@@ -1,6 +1,6 @@
 <?php
 namespace Berthe;
 
-class BaseBuilder extends AbstractBuilder {
-    
+class BaseBuilder extends AbstractBuilder
+{
 }

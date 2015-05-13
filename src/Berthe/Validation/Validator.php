@@ -1,19 +1,21 @@
 <?php
 
 namespace Berthe\Validation;
+
 use Berthe as Berthe;
 
-interface Validator {
+interface Validator
+{
     /**
      * @return ErrorHandler\FunctionalErrorListException
      */
-    function getErrors();
-    function setErrors(\Berthe\ErrorHandler\FunctionalErrorListException $errors);
+    public function getErrors();
+    public function setErrors(\Berthe\ErrorHandler\FunctionalErrorListException $errors);
 
-    function validateSave($object);
-    function validateDelete($object);
+    public function validateSave($object);
+    public function validateDelete($object);
 
-    function addHook(Berthe\Hook $hook, $name);
-    function delHook($name);
-    function hasHook($name);
+    public function addHook(Berthe\Hook $hook, $name);
+    public function delHook($name);
+    public function hasHook($name);
 }

@@ -84,7 +84,7 @@ class ComposerManager
      * @param string[] $scopes
      * @return string[]
      */
-    static private function parseNestedScopes(array $scopes)
+    private static function parseNestedScopes(array $scopes)
     {
         $parsed = array();
 

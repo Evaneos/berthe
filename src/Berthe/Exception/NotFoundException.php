@@ -2,6 +2,6 @@
 
 namespace Berthe\Exception;
 
-class NotFoundException extends \LogicException {
-
+class NotFoundException extends \LogicException
+{
 }

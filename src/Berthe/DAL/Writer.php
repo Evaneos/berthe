@@ -2,11 +2,12 @@
 
 namespace Berthe\DAL;
 
-interface Writer {
+interface Writer
+{
     /**
      * @param Translator $translator
      */
-    function setTranslator(Translator $translator);
+    public function setTranslator(Translator $translator);
     /**
      * Insert the object in database
      * @param \Berthe\VO $object the object to insert
@@ -34,5 +35,4 @@ interface Writer {
      * @return boolean
      */
     public function deleteById($id);
-
 }

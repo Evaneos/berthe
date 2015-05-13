@@ -5,7 +5,8 @@ namespace Berthe\DAL;
 use Berthe\VO;
 use Berthe\Fetcher;
 
-abstract class AbstractStorage implements Storage {
+abstract class AbstractStorage implements Storage
+{
     /**
      * Storage id
      * @var string
@@ -24,12 +25,14 @@ abstract class AbstractStorage implements Storage {
      * @param string $guid
      * @return Storage
      */
-    public function setStorageGUID($guid) {
+    public function setStorageGUID($guid)
+    {
         $this->storageGUID = $guid;
         return $this;
     }
 
-    public function addStore(Store $store, $isPrimary = true) {
+    public function addStore(Store $store, $isPrimary = true)
+    {
         $storeName = uniqid();
         $this->stores[$storeName] = $store;
         if ($isPrimary) {
@@ -43,10 +46,11 @@ abstract class AbstractStorage implements Storage {
      * @param int $id
      * @return VO
      */
-    public function getObjectFromPrimaryStore($id) {
+    public function getObjectFromPrimaryStore($id)
+    {
         if ($this->getPrimaryStore()) {
             $results = $this->getPrimaryStore()->load(array($id));
-            if(count($results)) {
+            if (count($results)) {
                 return reset($results);
             }
             return null;
@@ -59,7 +63,8 @@ abstract class AbstractStorage implements Storage {
      * @param int $id
      * @return VO
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $id = (int)$id;
         if (!is_numeric($id)) {
             throw new \InvalidArgumentException(sprintf("%s::%s only accepts integer, '%s' given", get_called_class(), __FUNCTION__, $id));
@@ -78,19 +83,20 @@ abstract class AbstractStorage implements Storage {
      * @param array $ids
      * @return VO[]
      */
-    public function getByIds(array $ids = array()) {
+    public function getByIds(array $ids = array())
+    {
         $ids = array_filter(array_unique($ids));
 
         $_res = $this->load($ids);
         // In order to keep the same order than given in method parameter
         $_out = array();
-        foreach($ids as &$v) {
+        foreach ($ids as &$v) {
             if (array_key_exists($v, $_res)) {
                 $_out[$v] = $_res[$v];
             }
         }
 
-        if(count($ids) != count($_out)) {
+        if (count($ids) != count($_out)) {
             trigger_error(get_called_class() . '::' . __FUNCTION__ . '() : Did not get all VOs : ' . implode(',', $ids), E_USER_NOTICE);
         }
         return $_out;
@@ -101,7 +107,8 @@ abstract class AbstractStorage implements Storage {
      * @param  Fetcher $fetcher
      * @return int
      */
-    public function getCountByFetcher(Fetcher $fetcher) {
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
         if (!$this->getPrimaryStore()) {
             throw new \RuntimeException("Primary store is missing", 1);
         }
@@ -113,7 +120,8 @@ abstract class AbstractStorage implements Storage {
      * @param Fetcher $fetcher
      * @return Fetcher
      */
-    public function getByFetcher(Fetcher $fetcher) {
+    public function getByFetcher(Fetcher $fetcher)
+    {
         if (!$this->getPrimaryStore()) {
             throw new \RuntimeException("Primary store is missing", 1);
         }
@@ -131,7 +139,8 @@ abstract class AbstractStorage implements Storage {
      * @param VO $vo
      * @return boolean
      */
-    public function save(VO $vo) {
+    public function save(VO $vo)
+    {
         $store = $this->getPrimaryStore();
         $success = $store->save($vo);
 
@@ -139,7 +148,7 @@ abstract class AbstractStorage implements Storage {
             throw new \RuntimeException("Couldn't store object in primary store", 500);
         }
 
-        foreach($this->stores as $storeName => $store) {
+        foreach ($this->stores as $storeName => $store) {
             if (!$this->isPrimaryStore($storeName)) {
                 $store->save($vo);
             }
@@ -153,8 +162,9 @@ abstract class AbstractStorage implements Storage {
      * Deletes a VO
      * @param VO $vo
      */
-    public function delete(VO $vo) {
-        foreach($this->stores as $storeName => $store) {
+    public function delete(VO $vo)
+    {
+        foreach ($this->stores as $storeName => $store) {
             if (!$this->isPrimaryStore($storeName)) {
                 $ret = $store->delete($vo);
                 if (!$ret) {
@@ -177,13 +187,13 @@ abstract class AbstractStorage implements Storage {
      * Deletes a VO by its id
      * @param integer $vo
      */
-    public function deleteById($id) {
+    public function deleteById($id)
+    {
         try {
             $obj = $this->getById($id);
             $this->delete($obj);
             return true;
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -191,7 +201,8 @@ abstract class AbstractStorage implements Storage {
     /**
      * returns the package name guid
      */
-    final protected function getStorageGUID() {
+    final protected function getStorageGUID()
+    {
         if ($this->storageGUID) {
             return $this->storageGUID;
         }
@@ -200,14 +211,16 @@ abstract class AbstractStorage implements Storage {
     }
 
 
-    protected function getPrimaryStore() {
+    protected function getPrimaryStore()
+    {
         if ($this->primaryStore && array_key_exists($this->primaryStore, $this->stores)) {
             return $this->stores[$this->primaryStore];
         }
         return null;
     }
 
-    protected function isPrimaryStore($storeName) {
+    protected function isPrimaryStore($storeName)
+    {
         return $this->primaryStore === $storeName;
     }
 
@@ -215,16 +228,16 @@ abstract class AbstractStorage implements Storage {
      * Try to load requested objects from stores
      * @param array $ids
      */
-    protected function load(array $ids = array()) {
+    protected function load(array $ids = array())
+    {
         $idsNotFound = array_filter($ids);
 
         $output = array();
 
         $stores = $this->stores;
 
-        foreach($this->stores as $storeName => $store) {
-
-            if(count($idsNotFound) > 0) {
+        foreach ($this->stores as $storeName => $store) {
+            if (count($idsNotFound) > 0) {
                 $objects = $store->load($idsNotFound);
 
                 $loadedKeys = array_keys($objects);
@@ -233,7 +246,7 @@ abstract class AbstractStorage implements Storage {
                 $output = $output + $objects;
 
                 if (count($objects) > 0 && $store == $this->primaryStore) {
-                    foreach($stores as $storeName2 => $store2) {
+                    foreach ($stores as $storeName2 => $store2) {
                         if ($storeName2 !== $storeName) {
                             $ret = $store2->saveMulti($objects);
                         }

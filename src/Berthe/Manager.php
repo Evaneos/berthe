@@ -4,7 +4,8 @@ namespace Berthe;
 
 use Berthe\Fetcher\Fetchable;
 
-interface Manager extends Fetchable {
+interface Manager extends Fetchable
+{
 
     /**
      * Get validator

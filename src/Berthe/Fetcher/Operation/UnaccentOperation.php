@@ -42,7 +42,7 @@ class UnaccentOperation implements OperationValue
      */
     public function getOperationValue($fieldName)
     {
-        return array (
+        return array(
             sprintf('unaccent(%s) %s unaccent(?)', $fieldName, self::strFilterToDbNotation($this->fetcherType)),
             array($this->value)
         );

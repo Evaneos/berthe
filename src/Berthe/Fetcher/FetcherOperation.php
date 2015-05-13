@@ -6,7 +6,7 @@ interface FetcherOperation
     
     /**
      * @param mixed $operator
-     * 
+     *
      * @return \Berthe\Fetcher\FetcherOperation;
      */
     public function setOperator($operator);
@@ -18,7 +18,7 @@ interface FetcherOperation
     
     /**
      * @param string $groupName
-     * 
+     *
      * @return \Berthe\Fetcher\FetcherOperation;
      */
     public function setGroupName($groupName);
