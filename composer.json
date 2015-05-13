@@ -1,7 +1,7 @@
 {
     "name": "evaneos/berthe",
     "description": "The model Framework made by Evaneos",
-    "version": "1.3.0",
+    "version": "2.0.0",
     "type": "library",
     "homepage" : "http://github.com/oliviermadre/berthe",
     "keywords": [],
@@ -28,10 +28,15 @@
         }
     },
     "require" : {
-        "doctrine/annotations": "1.0.*@dev",
-        "zf1/zend-db": "1.12.3"
+        "doctrine/annotations": "~1.0",
+        "zf1/zend-db": "~1.12"
     },
     "require-dev" : {
-        "phpunit/phpunit": "4.0.*"
+        "phpunit/phpunit": "~4.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1.x-dev"
+        }
     }
 }

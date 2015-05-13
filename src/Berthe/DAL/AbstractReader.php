@@ -97,10 +97,10 @@ abstract class AbstractReader implements Reader
     public function setAutoFilter($filteredColumnName, $filteredValue)
     {
         if (!is_string($filteredColumnName)) {
-             throw new InvalidArgumentException('setAutoFilter only accepts string as argument.');
+            throw new InvalidArgumentException('setAutoFilter only accepts string as argument.');
         }
         if (!isset($filteredColumnName)) {
-             throw new InvalidArgumentException('filteredValue must be set.');
+            throw new InvalidArgumentException('filteredValue must be set.');
         }
         $this->filteredColumnName = $filteredColumnName;
         $this->filteredValue = $filteredValue;
@@ -249,7 +249,7 @@ EOQ;
      * @param array $ids
      * @return \Berthe\VO
      */
-    public function selectByIds(array $ids = array ())
+    public function selectByIds(array $ids = array())
     {
         if (empty($ids)) {
             return array();
@@ -405,7 +405,6 @@ EOL;
      */
     public function selectByFetcher(\Berthe\Fetcher $fetcher)
     {
-
         list($sql, $filterToParameter) = $this->getSqlByFetcher($fetcher);
         $resultSet = $this->db->fetchCol($sql, $filterToParameter);
 

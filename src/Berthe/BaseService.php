@@ -1,6 +1,6 @@
 <?php
 namespace Berthe;
 
-class BaseService extends AbstractService {
-    
+class BaseService extends AbstractService
+{
 }

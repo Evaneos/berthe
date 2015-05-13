@@ -4,19 +4,21 @@ namespace Berthe;
 use \DateTime;
 use \DateTimeZone;
 
-abstract class AbstractBuilder implements Builder {
+abstract class AbstractBuilder implements Builder
+{
 
     /**
      * @var the timezone to which the date will be transformed
-     */ 
+     */
     private $timeZone = 'Europe/Paris';
 
     /**
      * Set the timezone
-     * 
+     *
      * @param the time zone to which the date will be transformed.
      */
-    public function setTimeZone($timeZone) {
+    public function setTimeZone($timeZone)
+    {
         $this->timeZone = $timeZone;
     }
 
@@ -27,13 +29,15 @@ abstract class AbstractBuilder implements Builder {
      *
      * @return \DateTime
      */
-    protected function dateToTimeZone($stringDate) {
+    protected function dateToTimeZone($stringDate)
+    {
         $date = new DateTime($stringDate);
         $date->setTimezone(new DateTimeZone($this->timeZone));
         return $date;
     }
     
-    public function updateFromArray($object, array $data = array()) {
+    public function updateFromArray($object, array $data = array())
+    {
         return $object;
     }
 }

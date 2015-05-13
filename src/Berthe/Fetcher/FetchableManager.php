@@ -15,7 +15,7 @@ class FetchableManager implements Fetchable
 
     public function getCountByFetcher(Fetcher $fetcher)
     {
-        foreach($this->fetchables as $fetchable) {
+        foreach ($this->fetchables as $fetchable) {
             $count = $fetchable->getCountByFetcher($fetcher);
             if ($count) {
                 return $count;
@@ -25,7 +25,7 @@ class FetchableManager implements Fetchable
 
     public function getByFetcher(Fetcher $fetcher)
     {
-        foreach($this->fetchables as $fetchable) {
+        foreach ($this->fetchables as $fetchable) {
             $fetcher = $fetchable->getByFetcher($fetcher);
             if (count($fetcher->getResultSet())) {
                 break;

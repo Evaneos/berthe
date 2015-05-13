@@ -11,7 +11,8 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
 
     abstract protected function getQuery(Fetcher $fetcher=null);
 
-    public function setQueryBuilder(\Berthe\DAL\FetcherPGSQLQueryBuilder $qb) {
+    public function setQueryBuilder(\Berthe\DAL\FetcherPGSQLQueryBuilder $qb)
+    {
         $this->queryBuilder = $qb;
         return $this;
     }
@@ -20,7 +21,8 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
      * @param DbReader $db
      * @return AbstractReader
      */
-    public function setDb(\Berthe\DAL\DbReader $db) {
+    public function setDb(\Berthe\DAL\DbReader $db)
+    {
         $this->db = $db;
         return $this;
     }
@@ -92,8 +94,7 @@ ORDER BY
     RANDOM() ASC
 {$limit}
 SQL;
-        }
-        else {
+        } else {
             $sql = <<<SQL
 SELECT
     {$sortWrappingQuery}
@@ -134,12 +135,12 @@ SQL;
 
             if (isset($columns[$column]['join'])) {
                 $join = $columns[$column]['join'];
-                foreach(range($join[0], $join[1]) as $joinValue) {
+                foreach (range($join[0], $join[1]) as $joinValue) {
                     $selectedJoins[$joinValue] = true;
                 }
             } else {
                 $joins = $columns[$column]['joins'];
-                foreach($joins as $join) {
+                foreach ($joins as $join) {
                     $selectedJoins[$join] = true;
                 }
             }
@@ -161,7 +162,6 @@ SQL;
         $from = '';
 
         if ($fetcher != null) {
-
             $selectedColumns = array();
             $selectedJoins = array();
 
@@ -176,7 +176,7 @@ SQL;
             }
 
             $toUse = array();
-            foreach($selectedColumns as $key => $value) {
+            foreach ($selectedColumns as $key => $value) {
                 if ($mainTableAlias.'.id' !== $value) {
                     $toUse[$key] = $value;
                 }
@@ -196,11 +196,13 @@ SQL;
         return array($select, $from);
     }
 
-    protected function getColumns() {
+    protected function getColumns()
+    {
         return array();
     }
 
-    protected function getJoins() {
+    protected function getJoins()
+    {
         return array();
     }
 }

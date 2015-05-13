@@ -1,7 +1,8 @@
 <?php
 namespace Berthe;
 
-class Paginator implements \ArrayAccess {
+class Paginator implements \ArrayAccess
+{
     /**
      * Filters set
      * @var array
@@ -18,7 +19,8 @@ class Paginator implements \ArrayAccess {
      * @param string $offset
      * @return boolean
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->_elements[$offset]);
     }
 
@@ -27,7 +29,8 @@ class Paginator implements \ArrayAccess {
      * @param type $offset
      * @return type
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return is_int($offset) ? $this->_elements[$offset] : null;
     }
 
@@ -36,10 +39,11 @@ class Paginator implements \ArrayAccess {
      * @param type $offset
      * @param type $value
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         !is_int($offset) and trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Only accepts integer offsets', E_USER_WARNING);
         ($this->_count >= $this->_nbByPage) and trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Max number of elements by page reached', E_USER_ERROR);
-        if(is_int($offset) and ($this->hasLimit() && ($this->_count >= $this->_nbByPage))) {
+        if (is_int($offset) and ($this->hasLimit() && ($this->_count >= $this->_nbByPage))) {
             $this->_elements[$offset] = $value;
             $this->_count = count($this->_elements);
         }
@@ -49,9 +53,10 @@ class Paginator implements \ArrayAccess {
      * Unsets an offset
      * @param type $offset
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         !is_int($offset) and trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Only accepts integer offsets', E_USER_WARNING);
-        if(is_int($offset) and isset($this->_elements[$offset])) {
+        if (is_int($offset) and isset($this->_elements[$offset])) {
             unset($this->_elements[$offset]);
             $this->_count = count($this->_elements);
         }
@@ -63,26 +68,25 @@ class Paginator implements \ArrayAccess {
      * @param boolean $preserveIds
      * @return type
      */
-    public function set(array $array = array(), $preserveIds = false) {
-        if($this->hasLimit() and ($this->_nbByPage >= 0 and count($array) > $this->_nbByPage)) {
+    public function set(array $array = array(), $preserveIds = false)
+    {
+        if ($this->hasLimit() and ($this->_nbByPage >= 0 and count($array) > $this->_nbByPage)) {
             trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() : Max number of elements by page reached', E_USER_ERROR);
             return false;
         }
 
         if ($preserveIds) {
-            if($this->_keyGetter !== null) {
+            if ($this->_keyGetter !== null) {
                 $elementsWithNewKey = array();
-                foreach($array as $element) {
+                foreach ($array as $element) {
                     $key = $element->{$this->_keyGetter}();
                     $elementsWithNewKey[$key] = $element;
                 }
                 $this->_elements = $elementsWithNewKey;
-            }
-            else {
+            } else {
                 $this->_elements = $array;
             }
-        }
-        else {
+        } else {
             $this->_elements = array_values($array);
         }
 
@@ -95,71 +99,83 @@ class Paginator implements \ArrayAccess {
      * @param integer $nbByPage
      * @param array $filters
      */
-    public function __construct($page = 1, $nbByPage = 25, array $elements = array()) {
+    public function __construct($page = 1, $nbByPage = 25, array $elements = array())
+    {
         $this->_page = $page;
         $this->_nbByPage = $nbByPage;
         $this->set($elements);
     }
 
-    public function hasLimit() {
+    public function hasLimit()
+    {
         return ($this->_page >= 0 || $this->_nbByPage >= 0);
     }
 
-    public function getPage() {
+    public function getPage()
+    {
         return $this->_page;
     }
 
-    public function setPage($pageNumber) {
+    public function setPage($pageNumber)
+    {
         $this->_page = $pageNumber;
     }
 
-    public function getNbByPage() {
+    public function getNbByPage()
+    {
         return $this->_nbByPage;
     }
 
-    public function setNbByPage($nbByPage) {
+    public function setNbByPage($nbByPage)
+    {
         $this->_nbByPage = $nbByPage;
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->_count;
     }
 
-    public function clear() {
+    public function clear()
+    {
         $this->set(array());
     }
 
-    public function getResultSet() {
+    public function getResultSet()
+    {
         if (reset($this->_elements) instanceof VO) {
             $res = array();
-            foreach($this->_elements as $key => /* @var $value VO */ $value) {
+            foreach ($this->_elements as $key => /* @var $value VO */ $value) {
                 $key = $this->_keyGetter !== null ? $value->{$this->_keyGetter}() : $value->getId();
                 $res[$key] = $value;
             }
             return $res;
-        }
-        else {
+        } else {
             return $this->_elements;
         }
     }
 
-    public function getTtlCount() {
+    public function getTtlCount()
+    {
         return $this->_ttlCount;
     }
 
-    public function setTtlCount($ttlCount) {
-        if($ttlCount >= $this->count()) {
+    public function setTtlCount($ttlCount)
+    {
+        if ($ttlCount >= $this->count()) {
             $this->_ttlCount = (int)$ttlCount;
         } else {
             $this->_ttlCount = $this->count();
         }
     }
 
-    public function getNbPages() {
+    public function getNbPages()
+    {
         return ceil((float)$this->_ttlCount / (float)$this->_nbByPage);
     }
 
-    public function setKeyGetter($keyGetter) {
+    public function setKeyGetter($keyGetter)
+    {
         $this->_keyGetter = $keyGetter;
     }
 }

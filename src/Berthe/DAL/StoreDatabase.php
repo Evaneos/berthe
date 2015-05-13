@@ -5,7 +5,8 @@ namespace Berthe\DAL;
 use Berthe\VO;
 use Berthe\Fetcher;
 
-class StoreDatabase extends AbstractStore {
+class StoreDatabase extends AbstractStore
+{
     /**
      * @var Reader
      */
@@ -23,40 +24,48 @@ class StoreDatabase extends AbstractStore {
      */
     protected $isTTLAble = false;
 
-    public function getReader() {
+    public function getReader()
+    {
         return $this->reader;
     }
 
-    public function getWriter() {
+    public function getWriter()
+    {
         return $this->writer;
     }
 
-    public function setReader(Reader $reader) {
+    public function setReader(Reader $reader)
+    {
         $this->reader = $reader;
         return $this;
     }
 
-    public function setWriter(Writer $writer) {
+    public function setWriter(Writer $writer)
+    {
         $this->writer = $writer;
         return $this;
     }
 
-    public function getCountByFetcher(Fetcher $fetcher) {
+    public function getCountByFetcher(Fetcher $fetcher)
+    {
         return $this->getReader()->selectCountByFetcher($fetcher);
     }
 
-    public function getIdsByFetcher(Fetcher $fetcher) {
+    public function getIdsByFetcher(Fetcher $fetcher)
+    {
         return $this->getReader()->selectByFetcher($fetcher);
     }
     /**
      * @param array $ids
      * @return array id=>object
      */
-    protected function _load(array $ids = array()) {
+    protected function _load(array $ids = array())
+    {
         return $this->getReader()->selectByIds($ids);
     }
 
-    protected function _insert(VO $vo) {
+    protected function _insert(VO $vo)
+    {
         $ret = $this->getWriter()->insert($vo);
         if ($ret) {
             $results = $this->load(array($vo->getId()));
@@ -67,7 +76,8 @@ class StoreDatabase extends AbstractStore {
         return $ret;
     }
 
-    protected function _update(VO $vo) {
+    protected function _update(VO $vo)
+    {
         $ret = $this->getWriter()->update($vo);
         if ($ret) {
             $results = $this->load(array($vo->getId()));
@@ -78,7 +88,8 @@ class StoreDatabase extends AbstractStore {
         return $ret;
     }
 
-    protected function _delete(VO $vo) {
+    protected function _delete(VO $vo)
+    {
         $ret = $this->getWriter()->delete($vo);
         return $ret;
     }

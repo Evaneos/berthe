@@ -2,6 +2,6 @@
 
 namespace Berthe\DAL;
 
-class BaseReader extends AbstractReader implements Reader {
-
+class BaseReader extends AbstractReader implements Reader
+{
 }

@@ -11,7 +11,8 @@ class DbWriter extends DbReader
      * @param array $values array of key => value
      * @return boolean
      */
-    public function query($sql, array $values = array()) {
+    public function query($sql, array $values = array())
+    {
         // retro-compatibility
         if (empty($values) || isset($values[0])) {
             $binds = $values;
@@ -30,7 +31,8 @@ class DbWriter extends DbReader
      * @param string $primaryKey
      * @return int
      */
-    public function lastInsertId($tableName = null, $primaryKey = null) {
+    public function lastInsertId($tableName = null, $primaryKey = null)
+    {
         return $this->db->lastInsertId($tableName, $primaryKey);
     }
 
@@ -38,7 +40,8 @@ class DbWriter extends DbReader
      * Open transaction
      * @return boolean
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         return $this->db->beginTransaction();
     }
 
@@ -46,7 +49,8 @@ class DbWriter extends DbReader
      * Commit transaction
      * @return boolean
      */
-    public function commit() {
+    public function commit()
+    {
         return $this->db->commit();
     }
 
@@ -54,7 +58,8 @@ class DbWriter extends DbReader
      * Rollback transaction
      * @return boolean
      */
-    public function rollback() {
+    public function rollback()
+    {
         return $this->db->rollback();
     }
 }

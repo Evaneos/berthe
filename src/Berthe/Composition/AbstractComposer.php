@@ -72,7 +72,7 @@ abstract class AbstractComposer
             $scope->addDefaultEmbeds($this->defaultEmbeds);
 
             // clean multi level embeds to keep only the 1st child
-            $defaultEmbeds = array_map(function($embed) {
+            $defaultEmbeds = array_map(function ($embed) {
                 $embedKeys = explode('.', $embed, 2);
                 return $embedKeys[0];
             }, $this->defaultEmbeds);

@@ -92,7 +92,7 @@ class Translation
         }
 
         if (array_key_exists($iso2, $this->translations)) {
-            switch($param) {
+            switch ($param) {
                 case 'content':
                     return $this->translations[$iso2]->getContent();
                 case 'name':

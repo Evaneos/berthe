@@ -7,5 +7,5 @@ interface ComplexType
     /**
      * @return array array of query and params
      */
-    function toDbRepresentation();
+    public function toDbRepresentation();
 }

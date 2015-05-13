@@ -2,6 +2,6 @@
 
 namespace Berthe;
 
-class BaseComposer extends AbstractComposer {
-
+class BaseComposer extends AbstractComposer
+{
 }
