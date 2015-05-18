@@ -159,6 +159,7 @@ abstract class AbstractService implements Service
      */
     public function deleteById($id)
     {
-        return $this->manager->deleteById($id);
+        $object = $this->getById($id);
+        return $this->delete($object);
     }
 }
