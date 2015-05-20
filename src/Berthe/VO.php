@@ -1,47 +1,48 @@
 <?php
 namespace Berthe;
 
-interface VO {
+interface VO
+{
 
     /**
      * Provide
      * @return array
      */
-    function getTranslatableFields();
+    public function getTranslatableFields();
 
     /**
      * Provide
      * @return array
      */
-    function getDatetimeFields();
+    public function getDatetimeFields();
 
     /**
      * Set the VO version
      * @param integer $version
      */
-    function setVersion($version);
+    public function setVersion($version);
 
     /**
      * Get the VO version
      * @return integer
      */
-    function getVersion();
+    public function getVersion();
 
     /**
      * Set the VO id
      * @param mixed $id
      */
-    function setId($id);
+    public function setId($id);
 
     /**
      * Get the VO id
      * @return mixed
      */
-    function getId();
+    public function getId();
 
     /**
      * Return an array representation of the VO
      * @return array
      */
-    function __toArray();
+    public function __toArray();
 }

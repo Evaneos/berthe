@@ -1,11 +1,12 @@
 <?php
 
 namespace Berthe\DAL;
+
 use Berthe\Fetcher;
 
-
-interface FetcherQueryBuilder {
-    function buildSort(Fetcher $fetcher);
-    function buildFilters(Fetcher $fetcher);
-    function buildLimit(Fetcher $fetcher);
+interface FetcherQueryBuilder
+{
+    public function buildSort(Fetcher $fetcher);
+    public function buildFilters(Fetcher $fetcher);
+    public function buildLimit(Fetcher $fetcher);
 }

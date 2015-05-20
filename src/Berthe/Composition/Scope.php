@@ -2,7 +2,8 @@
 
 namespace Berthe\Composition;
 
-class Scope {
+class Scope
+{
 
     /**
      * @var ComposerManager
@@ -36,7 +37,7 @@ class Scope {
         $this->currentScope = $currentScope;
     }
 
-    function getComposedChildScope($scopeIdentifier, $resource)
+    public function getComposedChildScope($scopeIdentifier, $resource)
     {
         return $this->composerManager->compose($resource, $scopeIdentifier, $this);
     }
@@ -81,7 +82,7 @@ class Scope {
     {
         $stringScope = $this->getStringScope();
         if ($stringScope) {
-            array_walk($defaultEmbeds, function(&$value) use($stringScope) {
+            array_walk($defaultEmbeds, function (&$value) use ($stringScope) {
                 $value = $stringScope . '.' . $value;
             });
         }
@@ -134,5 +135,4 @@ class Scope {
     {
         return $this->parentScopes;
     }
-
 }

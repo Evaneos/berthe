@@ -2,6 +2,6 @@
 
 namespace Berthe;
 
-class BaseManager extends AbstractManager implements Manager {
-
+class BaseManager extends AbstractManager implements Manager
+{
 }

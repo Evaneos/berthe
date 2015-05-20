@@ -2,7 +2,8 @@
 
 namespace Berthe;
 
-interface Composer {
+interface Composer
+{
 
     public function composeSeveral(array $objects = array(), array $embeds = array());
 

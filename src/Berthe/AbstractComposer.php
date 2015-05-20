@@ -2,7 +2,8 @@
 
 namespace Berthe;
 
-abstract class AbstractComposer implements Composer {
+abstract class AbstractComposer implements Composer
+{
 
     public function composeSeveral(array $objects = array(), array $embeds = array())
     {
