@@ -1,7 +1,6 @@
 {
     "name": "evaneos/berthe",
     "description": "The model Framework made by Evaneos",
-    "version": "2.0.0",
     "type": "library",
     "homepage" : "http://github.com/oliviermadre/berthe",
     "keywords": [],
@@ -23,13 +22,22 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Berthe\\" : "src/Berthe",
+            "Berthe\\" : "src/Berthe"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Berthe\\Test\\Fixture\\" : "test/fixtures"
         }
     },
+    "suggest": {
+        "monolog/monolog": "Allows more advanced logging of the application flow"
+    },
     "require" : {
-        "doctrine/annotations": "~1.0",
-        "zf1/zend-db": "~1.12"
+        "doctrine/annotations": "~1.2",
+        "zf1/zend-db": "~1.12",
+        "psr/log": "~1.0",
+        "symfony/stopwatch": "~2.6"
     },
     "require-dev" : {
         "phpunit/phpunit": "~4.0"
