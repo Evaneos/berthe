@@ -31,15 +31,22 @@ class DbReaderLoggerDecorator implements DbReader
     protected $parameterTransformer;
 
     /**
+     * @var string
+     */
+    protected $backendName;
+
+    /**
      * @param DbReader             $reader
      * @param ParameterTransformer $parameterTransformer
+     * @param string               $backendName
      */
-    public function __construct(DbReader $reader, ParameterTransformer $parameterTransformer)
+    public function __construct(DbReader $reader, ParameterTransformer $parameterTransformer, $backendName)
     {
         $this->reader = $reader;
         $this->parameterTransformer = $parameterTransformer;
         $this->stopWatch = new Stopwatch();
         $this->logger = new NullLogger();
+        $this->backendName = $backendName;
     }
 
     /**
@@ -70,9 +77,10 @@ class DbReaderLoggerDecorator implements DbReader
         $this->logger->debug($query, array(
             'execution_time' => $event->getDuration(),
             'real_memory_usage' => $event->getMemory(),
-            'sql_parameters' => $parameters,
+            'parameters' => $parameters,
             'action' => $action,
-            'mode' => $mode
+            'mode' => $mode,
+            'backend_name' => $this->backendName
         ));
     }
 
