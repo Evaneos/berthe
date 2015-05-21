@@ -21,6 +21,42 @@ class DefaultDbWriter extends DbAdapter implements DbWriter
     }
 
     /**
+     * @param string $table
+     * @param string $where
+     *
+     * @return int
+     */
+    public function delete($table, $where = '')
+    {
+        return $this->getAdapter()->delete($table, $where);
+    }
+
+    /**
+     * @param string $table
+     * @param array  $bind
+     * @param string $where
+     *
+     * @return mixed
+     */
+    public function update($table, array $bind, $where = '')
+    {
+        return $this->getAdapter()->update($table, $bind, $where);
+    }
+
+    /**
+     * @param string      $table
+     * @param array $bind
+     *
+     * @return int
+     * @throws \Zend_Db_Adapter_Exception
+     */
+    public function insert($table, array $bind)
+    {
+        return $this->getAdapter()->insert($table, $bind);
+    }
+
+
+    /**
      * @param string $query
      * @param array $parameters
      */
@@ -89,14 +125,15 @@ class DefaultDbWriter extends DbAdapter implements DbWriter
     }
 
     /**
-     * @param string $query
-     * @param array  $parameters
+     * @param string      $sql
+     * @param array $bind
      *
-     * @return boolean
+     * @return \Zend_Db_Statement_Interface
      */
-    public function query($query, array $parameters = array())
+    public function query($sql, $bind = array())
     {
-        $this->prepare($query, $parameters);
-        return $this->db->query($query, $parameters);
+        $this->prepare($sql, $bind);
+
+        return $this->db->query($sql, $bind);
     }
 }

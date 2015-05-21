@@ -2,7 +2,7 @@
 
 namespace Berthe\DAL;
 
-interface DbReader
+interface DbReader extends Connection
 {
     /**
      * @param string $query
@@ -61,4 +61,6 @@ interface DbReader
      * @return array
      */
     public function describeTable($tableName, $schemaName = null);
+
+    public function getFetchMode();
 }

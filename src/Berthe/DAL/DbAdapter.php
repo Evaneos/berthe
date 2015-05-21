@@ -16,7 +16,7 @@ class DbAdapter
     }
 
     /**
-     * @return Zend_Db_Adapter_Abstract
+     * @return \Zend_Db_Adapter_Abstract
      */
     public function getAdapter()
     {

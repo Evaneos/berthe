@@ -347,7 +347,7 @@ EOQ;
      */
     public function selectColByIds(array $ids = array(), $columnName = 'id')
     {
-        if (emtpy($ids)) {
+        if (empty($ids)) {
             return array();
         }
 

@@ -22,6 +22,25 @@ class DefaultDbReader extends DbAdapter implements DbReader
     }
 
     /**
+     * @param string      $sql
+     * @param array $bind
+     *
+     * @return \Zend_Db_Statement_Interface
+     */
+    public function query($sql, $bind = array())
+    {
+        return $this->getAdapter()->query($sql, $bind);
+    }
+
+    /**
+     * @return int
+     */
+    public function getFetchMode()
+    {
+        return $this->getAdapter()->getFetchMode();
+    }
+
+    /**
      * @param string $query
      * @param array  $parameters
      * @param string $fetchMode
