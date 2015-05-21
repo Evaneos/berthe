@@ -50,6 +50,15 @@ class DbReaderLoggerDecorator implements DbReader
     }
 
     /**
+     * @return \Zend_Db_Adapter_Abstract
+     * @TODO Find a way to remove this usage
+     */
+    public function getAdapter()
+    {
+        return $this->reader->getAdapter();
+    }
+
+    /**
      * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger)
