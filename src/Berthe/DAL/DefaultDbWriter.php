@@ -62,31 +62,33 @@ class DefaultDbWriter extends DbAdapter implements DbWriter
      */
     protected function prepare(&$query, array &$parameters = array())
     {
-        if (empty($parameters) || isset($parameters[0])) {
-            return;
-        }
-
-        $replaced = array();
         $binds = array();
+        $sprintfArgs = array();
 
         foreach ($parameters as $key => $value) {
             if ($value instanceof \Berthe\DAL\ComplexType) {
-                list($query, $params) = $value->toDbRepresentation();
+                list($subQuery, $params) = $value->toDbRepresentation();
                 $args = array();
+
                 foreach ($params as $paramKey => $paramValue) {
                     $paramName = $key . '_' . $paramKey;
                     $args[] = ':' . $paramName;
                     $binds[':' . $paramName] = $paramValue;
                 }
-                $replaced[] = vsprintf($query, $args);
+                $sprintfArgs[] = vsprintf($subQuery, $args);
             } else {
-                $replaced[] = ':' . $key;
+                $sprintfArgs[] = ':' . $key;
                 $binds[':' . $key] = $value;
             }
         }
 
-        $query = vsprintf($query, $replaced);
-        $parameters = $this->parametersTransformer->transform($parameters);
+        if (empty($parameters) || isset($parameters[0])) {
+            $binds = $parameters;
+        } else {
+            $query = vsprintf($query, $sprintfArgs);
+        }
+
+        $parameters = $this->parametersTransformer->transform($binds);
     }
 
     /**
