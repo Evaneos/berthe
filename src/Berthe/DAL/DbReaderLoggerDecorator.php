@@ -200,7 +200,7 @@ class DbReaderLoggerDecorator implements DbReader
         $parameters = $this->parameterTransformer->transform($parameters);
 
         $this->stopWatch->start('query', 'database');
-        $result = $this->reader->fetchCol($query, $parameters);
+        $result = $this->reader->fetchPairs($query, $parameters);
         $event = $this->stopWatch->stop('query');
 
         $this->log($query, $parameters, $event, 'fetch', 'pairs');
