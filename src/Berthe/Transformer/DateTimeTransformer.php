@@ -34,6 +34,6 @@ class DateTimeTransformer implements TransformerInterface
      */
     public function supports($value)
     {
-        return $value instanceof \DateTime;
+        return $value instanceof \DateTime || $value instanceof \DateTimeInterface;
     }
 }
