@@ -74,9 +74,10 @@ abstract class AbstractVO implements VO
 
     protected function setProperties($properties)
     {
+        $datetimeFields = $this->getDatetimeFields();
         foreach ($properties as $key => $value) {
             if (property_exists($this, $key)) {
-                if (in_array($key, $this->getDatetimeFields())) {
+                if (in_array($key, $datetimeFields)) {
                     $this->{$key} = DateTimeConverter::convert($value);
                 } else {
                     $this->{$key} = $value;
