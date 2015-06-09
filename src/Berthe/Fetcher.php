@@ -81,8 +81,7 @@ class Fetcher extends Paginator implements \Serializable
 
     protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
         if (is_array($value) &&
-            $typeFilter != self::TYPE_ARRAY_CONTAINS &&
-            $typeFilter != self::TYPE_ARRAY_LENGTH) {
+            $typeFilter != self::TYPE_ARRAY_CONTAINS) {
             $this->addFilters($columnName, $typeFilter, $value, $groupName);
             return $this;
         }
