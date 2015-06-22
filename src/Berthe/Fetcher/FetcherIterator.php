@@ -4,11 +4,12 @@ namespace Berthe\Fetcher;
 
 use Berthe\Fetcher;
 use Berthe\Service;
+use Berthe\VO;
 
 /**
  * Class FetcherIterator
  *
- * Fetch from a Service a result set according to a fetcher
+ * Fetch from a Fetchable a result set according to a fetcher
  * and allow to iterate across these results
  *
  * @package Berthe\Fetcher
@@ -16,9 +17,9 @@ use Berthe\Service;
 class FetcherIterator implements \Iterator
 {
     /**
-     * @var Service
+     * @var Fetchable
      */
-    protected $service;
+    protected $fetchable;
 
     /**
      * @var Fetcher
@@ -28,12 +29,7 @@ class FetcherIterator implements \Iterator
     /**
      * @var int
      */
-    protected $page = 1;
-
-    /**
-     * @var int
-     */
-    protected $nbByPage = 10;
+    protected $lastId;
 
     /**
      * @var int
@@ -46,25 +42,20 @@ class FetcherIterator implements \Iterator
     protected $results = array();
 
     /**
-     * @var int
+     * @var bool
      */
-    protected $nbPages;
+    protected $ended = false;
 
     /**
-     * @param Service $service
-     */
-    public function setService(Service $service)
-    {
-        $this->service = $service;
-    }
-
-    /**
+     * @param Fetchable $fetchable
      * @param Fetcher $fetcher
      */
-    public function setFetcher(Fetcher $fetcher)
+    public function __construct(Fetchable $fetchable, Fetcher $fetcher)
     {
+        $this->fetchable = $fetchable;
         $this->fetcher = $fetcher;
-        $this->fetcher->setNbByPage($this->nbByPage);
+        $this->fetcher->setPage(1);
+        $this->fetcher->sortById(Fetcher::SORT_ASC);
     }
 
     /**
@@ -84,12 +75,16 @@ class FetcherIterator implements \Iterator
      */
     public function next()
     {
-        next($this->results);
+        /** @var VO $vo */
+        $vo = next($this->results);
         $this->currentKey = key($this->results);
 
-        if (null === $this->currentKey && $this->nbPages > $this->page) {
-            $this->page++;
-            $this->reloadResults();
+        if ($this->currentKey === null) {
+            if ($this->ended !== true) {
+                $this->reloadResults();
+            }
+        } else {
+            $this->lastId = $vo->getId();
         }
     }
 
@@ -121,15 +116,27 @@ class FetcherIterator implements \Iterator
      */
     public function rewind()
     {
-        $this->page = 1;
+        $this->lastId = null;
+        $this->ended = false;
         $this->reloadResults();
-        $this->nbPages = $this->fetcher->getNbPages();
     }
 
     private function reloadResults()
     {
-        $this->fetcher->setPage($this->page);
-        $this->results = $this->service->getByFetcher($this->fetcher)->getResultSet();
-        $this->currentKey = key($this->results);
+        if ($this->lastId !== null) {
+            $this->fetcher->filterByGreaterThanId($this->lastId);
+        }
+        $this->results = $this->fetchable->getByFetcher($this->fetcher)->getResultSet();
+        if (empty($this->results)) {
+            $this->ended = true;
+            $this->currentKey = null;
+        } else {
+            if (count($this->results) !== $this->fetcher->getNbByPage()) {
+                $this->ended = true;
+            }
+            $this->currentKey = key($this->results);
+            $vo = current($this->results);
+            $this->lastId = $vo->getId();
+        }
     }
 }

@@ -57,6 +57,30 @@ class Fetcher extends Paginator implements \Serializable
         $this->rootOperation = new ListOperation($this->mainOperator);
     }
 
+    /**
+     * @param int $id
+     */
+    public function filterById($id)
+    {
+        $this->addFilter('id', self::TYPE_EQ, $id);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function filterByGreaterThanId($id)
+    {
+        $this->addFilter('id', self::TYPE_SUP_STRICT, $id);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function filterByLowerThanId($id)
+    {
+        $this->addFilter('id', self::TYPE_INF_STRICT, $id);
+    }
+
     public function sortById($direction)
     {
         $this->addSort('id', $direction);
