@@ -28,6 +28,9 @@ class Fetcher extends Paginator implements \Serializable
     const TYPE_IN = 13;
     const TYPE_NOT_IN = 14;
 
+    const TYPE_ARRAY_CONTAINS = 15;
+    const TYPE_ARRAY_LENGTH = 16;
+
     const OPERATOR_AND = ' AND ';
     const OPERATOR_OR  = ' OR ';
 
@@ -75,9 +78,10 @@ class Fetcher extends Paginator implements \Serializable
      *
      * @return Fetcher
      */
-    protected function addFilter($columnName, $typeFilter, $value, $groupName = false)
-    {
-        if (is_array($value)) {
+
+    protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
+        if (is_array($value) &&
+            $typeFilter != self::TYPE_ARRAY_CONTAINS) {
             $this->addFilters($columnName, $typeFilter, $value, $groupName);
             return $this;
         }
