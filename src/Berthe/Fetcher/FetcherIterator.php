@@ -5,6 +5,7 @@ namespace Berthe\Fetcher;
 use Berthe\Fetcher;
 use Berthe\Service;
 use Berthe\VO;
+use Berthe\Fetcher\Operation\SimpleOperation;
 
 /**
  * Class FetcherIterator
@@ -16,42 +17,42 @@ use Berthe\VO;
  */
 class FetcherIterator implements \Iterator
 {
-    /**
-     * @var Fetchable
-     */
+    /** @var Fetchable */
     protected $fetchable;
 
-    /**
-     * @var Fetcher
-     */
+    /** @var Fetcher */
     protected $fetcher;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $lastId;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $currentKey;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $results = array();
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $ended = false;
+
+    /** @var SimpleOperation */
+    private $filterIdOperation;
 
     /**
      * @param Fetchable $fetchable
-     * @param Fetcher $fetcher
+     * @param Fetcher   $fetcher
+     * @throws \Exception
      */
     public function __construct(Fetchable $fetchable, Fetcher $fetcher)
     {
+        if ($fetcher->getNbByPage() <= 0) {
+            throw new \Exception('Fetcher should have a limit of results per page');
+        }
+
+        if ($fetcher->hasSort()) {
+            throw new \Exception('Sorted fetcher is not supported');
+        }
+
         $this->fetchable = $fetchable;
         $this->fetcher = $fetcher;
         $this->fetcher->setPage(1);
@@ -124,19 +125,29 @@ class FetcherIterator implements \Iterator
     private function reloadResults()
     {
         if ($this->lastId !== null) {
-            $this->fetcher->filterByGreaterThanId($this->lastId);
+            if ($this->filterIdOperation === null) {
+                $this->filterIdOperation = $this->fetcher->filterByGreaterThanId($this->lastId);
+            } else {
+                $this->filterIdOperation->setValue($this->lastId);
+            }
         }
+
         $this->results = $this->fetchable->getByFetcher($this->fetcher)->getResultSet();
-        if (empty($this->results)) {
+
+        if (!$this->fetcher->hasResults()) {
             $this->ended = true;
             $this->currentKey = null;
         } else {
-            if (count($this->results) !== $this->fetcher->getNbByPage()) {
+            if ($this->fetcher->count() !== $this->fetcher->getNbByPage()) {
                 $this->ended = true;
             }
+
             $this->currentKey = key($this->results);
+            /** @var VO $vo */
             $vo = current($this->results);
-            $this->lastId = $vo->getId();
+            if ($vo !== false) {
+                $this->lastId = $vo->getId();
+            }
         }
     }
 }

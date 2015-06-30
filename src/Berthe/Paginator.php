@@ -141,6 +141,14 @@ class Paginator implements \ArrayAccess
         $this->set(array());
     }
 
+    /**
+     * @return bool
+     */
+    public function hasResults()
+    {
+        return $this->_count !== 0;
+    }
+
     public function getResultSet()
     {
         if (reset($this->_elements) instanceof VO) {
