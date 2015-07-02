@@ -74,7 +74,7 @@ class MongoDbAdapter extends \Zend_Db_Adapter_Abstract
         }
         if (!isset($config['options'])) {
             throw new \InvalidArgumentException(
-                "Configuration array must have a key for 'port'"
+                "Configuration array must have a key for 'options'"
             );
         }
     }
