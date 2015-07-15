@@ -82,7 +82,7 @@ class DefaultDbWriter extends DbAdapter implements DbWriter
             }
         }
 
-        if (empty($parameters) || isset($parameters[0])) {
+        if (empty($parameters) || array_key_exists(0, $parameters)) {
             $binds = $parameters;
         } else {
             $query = vsprintf($query, $sprintfArgs);
