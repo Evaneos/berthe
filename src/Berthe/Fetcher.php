@@ -57,11 +57,50 @@ class Fetcher extends Paginator implements \Serializable
         $this->rootOperation = new ListOperation($this->mainOperator);
     }
 
+    /**
+     * @param int $id
+     * @return SimpleOperation
+     */
+    public function filterById($id)
+    {
+        $operation = new SimpleOperation(Fetcher::TYPE_EQ, 'id', $id);
+        $this->addFilterOperation($operation);
+        return $operation;
+    }
+
+    /**
+     * @param int $id
+     * @return SimpleOperation
+     */
+    public function filterByGreaterThanId($id)
+    {
+        $operation = new SimpleOperation(Fetcher::TYPE_SUP_STRICT, 'id', $id);
+        $this->addFilterOperation($operation);
+        return $operation;
+    }
+
+    /**
+     * @param int $id
+     * @return SimpleOperation
+     */
+    public function filterByLowerThanId($id)
+    {
+        $operation = new SimpleOperation(Fetcher::TYPE_INF_STRICT, 'id', $id);
+        $this->addFilterOperation($operation);
+        return $operation;
+    }
+
+    /**
+     * @param string $direction
+     */
     public function sortById($direction)
     {
         $this->addSort('id', $direction);
     }
 
+    /**
+     * @return bool
+     */
     public function hasEmptyIN()
     {
         return $this->hasEmptyIN;
@@ -150,7 +189,7 @@ class Fetcher extends Paginator implements \Serializable
      *
      * @param string $columnName
      * @param int $typeFilter
-     * @param string $values
+     * @param array $values
      * @param mixed $groupName false if not in group, string if in group
      * @return Fetcher
      */
@@ -222,7 +261,7 @@ class Fetcher extends Paginator implements \Serializable
 
     /**
      * @param array $filters
-     * @throws Exception
+     * @throws \Exception
      */
     protected function setFilters(array $filters = array())
     {
@@ -231,7 +270,7 @@ class Fetcher extends Paginator implements \Serializable
             $bType = array_key_exists(self::FILTER_TYPE, $filter);
             $bVal = array_key_exists(self::FILTER_VALUE, $filter);
 
-            if ($bCol && $bTYpe && $bVal) {
+            if ($bCol && $bType && $bVal) {
                 $this->addFilter($filter[self::FILTER_COLUMN], $filter[self::FILTER_TYPE], $filter[self::FILTER_VALUE]);
             } else {
                 throw new \RuntimeException('Invalid filter');
@@ -328,6 +367,15 @@ class Fetcher extends Paginator implements \Serializable
 
     /**
      *
+     * @return bool
+     */
+    public function hasSort()
+    {
+        return !empty($this->sorts) || $this->isRandomSort;
+    }
+
+    /**
+     *
      * @return array
      */
     public function getSorts()
@@ -337,7 +385,7 @@ class Fetcher extends Paginator implements \Serializable
 
     /**
      * @param array $sorts
-     * @throws Exception
+     * @throws \Exception
      */
     protected function setSorts(array $sorts = array())
     {
@@ -380,7 +428,7 @@ class Fetcher extends Paginator implements \Serializable
     /**
      * Sets the main operator (AND or OR)
      * @param string $operator self::OPERATOR_AND or self::OPERATOR_OR
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setMainOperator($operator)
     {
