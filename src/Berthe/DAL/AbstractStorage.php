@@ -124,12 +124,30 @@ abstract class AbstractStorage implements Storage
     public function getByFetcher(Fetcher $fetcher)
     {
         $primaryStore = $this->getPrimaryStore();
-        $count = $primaryStore->getCountByFetcher($fetcher);
-        $ids = $primaryStore->getIdsByFetcher($fetcher);
-        $objects = $this->getByIds($ids);
 
-        $fetcher->setTtlCount($count);
+        if ($fetcher->hasLimit()) {
+            $count = $primaryStore->getCountByFetcher($fetcher);
+            $fetcher->setTtlCount($count);
+            if (empty($count)) {
+                $fetcher->set(array());
+                return $fetcher;
+            }
+        }
+
+        $ids = $primaryStore->getIdsByFetcher($fetcher);
+        if (empty($ids)) {
+            $fetcher->set(array());
+            return $fetcher;
+        }
+
+        $objects = $this->getByIds($ids);
         $fetcher->set($objects);
+
+        // set ttlcount for unlimited results fetcher
+        if (!$fetcher->hasLimit()) {
+            $fetcher->setTtlCount($fetcher->count());
+        }
+
         return $fetcher;
     }
 
