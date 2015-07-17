@@ -47,12 +47,29 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
     public function getByFetcher(Fetcher $fetcher)
     {
         $this->checkFetcherValidity($fetcher);
-        $count = $this->getCountByFetcher($fetcher);
-        $ids = $this->getIdsByFetcher($fetcher);
-        $objects = $this->manager->getByIds($ids);
 
-        $fetcher->setTtlCount($count);
+
+        $ids = $this->getIdsByFetcher($fetcher);
+        if (empty($ids)) {
+            $fetcher->setTtlCount(0);
+            $fetcher->clear();
+            return $fetcher;
+        }
+
+        $objects = $this->manager->getByIds($ids);
         $fetcher->set($objects);
+
+        if ($fetcher->hasLimit()) {
+            if ($fetcher->count() < $fetcher->getNbByPage()) {
+                $fetcher->setTtlCount($fetcher->count());
+            } else {
+                $count = $this->getCountByFetcher($fetcher);
+                $fetcher->setTtlCount($count);
+            }
+        } else {
+            $fetcher->setTtlCount($fetcher->count());
+        }
+
         return $fetcher;
     }
 

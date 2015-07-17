@@ -125,17 +125,9 @@ abstract class AbstractStorage implements Storage
     {
         $primaryStore = $this->getPrimaryStore();
 
-        if ($fetcher->hasLimit()) {
-            $count = $primaryStore->getCountByFetcher($fetcher);
-            $fetcher->setTtlCount($count);
-            if ($count === 0) {
-                $fetcher->clear();
-                return $fetcher;
-            }
-        }
-
         $ids = $primaryStore->getIdsByFetcher($fetcher);
         if (empty($ids)) {
+            $fetcher->setTtlCount(0);
             $fetcher->clear();
             return $fetcher;
         }
@@ -143,8 +135,14 @@ abstract class AbstractStorage implements Storage
         $objects = $this->getByIds($ids);
         $fetcher->set($objects);
 
-        // set ttlcount for unlimited results fetcher
-        if (!$fetcher->hasLimit()) {
+        if ($fetcher->hasLimit()) {
+            if ($fetcher->count() < $fetcher->getNbByPage()) {
+                $fetcher->setTtlCount($fetcher->count());
+            } else {
+                $count = $primaryStore->getCountByFetcher($fetcher);
+                $fetcher->setTtlCount($count);
+            }
+        } else {
             $fetcher->setTtlCount($fetcher->count());
         }
 
