@@ -2,16 +2,29 @@
 
 namespace Berthe\Fetcher;
 
+use Berthe\DAL\DbReader;
+use Berthe\DAL\FetcherPGSQLQueryBuilder;
 use Berthe\Fetcher;
 
 abstract class AbstractPGSQLFetchable extends AbstractFetchable
 {
-    protected $queryBuilder = null;
-    protected $db = null;
+    /** @var FetcherPGSQLQueryBuilder */
+    protected $queryBuilder;
 
-    abstract protected function getQuery(Fetcher $fetcher=null);
+    /** @var DbReader */
+    protected $db;
 
-    public function setQueryBuilder(\Berthe\DAL\FetcherPGSQLQueryBuilder $qb)
+    /**
+     * @param Fetcher|null $fetcher
+     * @return mixed
+     */
+    abstract protected function getQuery(Fetcher $fetcher = null);
+
+    /**
+     * @param FetcherPGSQLQueryBuilder $qb
+     * @return self
+     */
+    public function setQueryBuilder(FetcherPGSQLQueryBuilder $qb)
     {
         $this->queryBuilder = $qb;
         return $this;
@@ -19,14 +32,18 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
 
     /**
      * @param DbReader $db
-     * @return AbstractReader
+     * @return self
      */
-    public function setDb(\Berthe\DAL\DbReader $db)
+    public function setDb(DbReader $db)
     {
         $this->db = $db;
         return $this;
     }
 
+    /**
+     * @param Fetcher $fetcher
+     * @return Fetcher
+     */
     public function getByFetcher(Fetcher $fetcher)
     {
         $this->checkFetcherValidity($fetcher);
@@ -39,6 +56,10 @@ abstract class AbstractPGSQLFetchable extends AbstractFetchable
         return $fetcher;
     }
 
+    /**
+     * @param  Fetcher $fetcher
+     * @return int
+     */
     public function getCountByFetcher(Fetcher $fetcher)
     {
         $query = $this->getQuery($fetcher);
@@ -56,16 +77,23 @@ SQL;
         return $this->db->fetchOne($sql, $filterToParameter);
     }
 
-    protected function getIdsByFetcher(Fetcher $fetcher)
+    /**
+     * @param Fetcher $fetcher
+     * @return Fetcher
+     */
+    public function getIdsByFetcher(Fetcher $fetcher)
     {
         $query = $this->getQuery($fetcher);
 
         list($filterInReq, $filterToParameter) = $this->queryBuilder->buildFilters($fetcher);
         $sortInReq = $this->queryBuilder->buildSort($fetcher);
-        $sortWrappingQuery = implode(', ', array_merge(
-            array("DISTINCT (lastsub.id) AS id"),
-            array_keys($fetcher->getSorts())
-        ));
+        $sortWrappingQuery = implode(
+            ', ',
+            array_merge(
+                array("DISTINCT (lastsub.id) AS id"),
+                array_keys($fetcher->getSorts())
+            )
+        );
         $limit = $this->queryBuilder->buildLimit($fetcher);
 
         $isRandom = $fetcher->isRandomSort();
@@ -115,7 +143,6 @@ SQL;
         return $this->db->fetchCol($sql, $filterToParameter);
     }
 
-
     /**
      * @param string $column
      * @param string $mainTableAlias
@@ -145,7 +172,7 @@ SQL;
                 }
             }
         } else {
-            $selectedColumns[$column] = $mainTableAlias.'.'.$column;
+            $selectedColumns[$column] = $mainTableAlias . '.' . $column;
         }
 
         return array($selectedColumns, $selectedJoins);
@@ -153,10 +180,10 @@ SQL;
 
     /**
      * @param Fetcher $fetcher
-     * @param string $mainTableAlias
+     * @param string  $mainTableAlias
      * @return string[]
      */
-    protected function getQueryParameters(Fetcher $fetcher = null, $mainTableAlias='ref')
+    protected function getQueryParameters(Fetcher $fetcher = null, $mainTableAlias = 'ref')
     {
         $select = '';
         $from = '';
@@ -167,23 +194,33 @@ SQL;
 
             $columns = $fetcher->getFilterColumns();
             foreach ($columns as $column) {
-                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins($column, $mainTableAlias, $selectedColumns, $selectedJoins);
+                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins(
+                    $column,
+                    $mainTableAlias,
+                    $selectedColumns,
+                    $selectedJoins
+                );
             }
 
             $sorts = $fetcher->getSorts();
-            foreach ($sorts as $column=>$sortOrder) {
-                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins($column, $mainTableAlias, $selectedColumns, $selectedJoins);
+            foreach ($sorts as $column => $sortOrder) {
+                list($selectedColumns, $selectedJoins) = $this->getSelectedColumnsJoins(
+                    $column,
+                    $mainTableAlias,
+                    $selectedColumns,
+                    $selectedJoins
+                );
             }
 
             $toUse = array();
             foreach ($selectedColumns as $key => $value) {
-                if ($mainTableAlias.'.id' !== $value) {
+                if ($mainTableAlias . '.id' !== $value) {
                     $toUse[$key] = $value;
                 }
             }
 
-            if (count($toUse)>0) {
-                $select = ', '.implode(', ', $toUse);
+            if (!empty($toUse)) {
+                $select = ', ' . implode(', ', $toUse);
             }
 
             if (!empty($selectedJoins)) {
