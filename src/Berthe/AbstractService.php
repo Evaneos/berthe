@@ -91,14 +91,19 @@ abstract class AbstractService implements Service
     }
 
     /**
+     * @return Fetchable
+     */
+    protected function getFetchable()
+    {
+        return isset($this->fetchable) ? $this->fetchable : $this->manager;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getIdsByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getIdsByFetcher($fetcher);
-        }
-        return $this->manager->getIdsByFetcher($fetcher);
+        return $this->getFetchable()->getIdsByFetcher($fetcher);
     }
 
     /**
@@ -106,10 +111,7 @@ abstract class AbstractService implements Service
      */
     public function getCountByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getCountByFetcher($fetcher);
-        }
-        return $this->manager->getCountByFetcher($fetcher);
+        return $this->getFetchable()->getCountByFetcher($fetcher);
     }
 
     /**
@@ -117,10 +119,7 @@ abstract class AbstractService implements Service
      */
     public function getByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getByFetcher($fetcher);
-        }
-        return $this->manager->getByFetcher($fetcher);
+        return $this->getFetchable()->getByFetcher($fetcher);
     }
 
     /**
@@ -128,10 +127,7 @@ abstract class AbstractService implements Service
      */
     public function getFirstByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getFirstByFetcher($fetcher);
-        }
-        return $this->manager->getFirstByFetcher($fetcher);
+        return $this->getFetchable()->getFirstByFetcher($fetcher);
     }
 
     /**
@@ -139,10 +135,7 @@ abstract class AbstractService implements Service
      */
     public function getUniqueByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getUniqueByFetcher($fetcher);
-        }
-        return $this->manager->getUniqueByFetcher($fetcher);
+        return $this->getFetchable()->getUniqueByFetcher($fetcher);
     }
 
     /**
