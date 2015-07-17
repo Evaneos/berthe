@@ -129,14 +129,14 @@ abstract class AbstractStorage implements Storage
             $count = $primaryStore->getCountByFetcher($fetcher);
             $fetcher->setTtlCount($count);
             if (empty($count)) {
-                $fetcher->set(array());
+                $fetcher->clear();
                 return $fetcher;
             }
         }
 
         $ids = $primaryStore->getIdsByFetcher($fetcher);
         if (empty($ids)) {
-            $fetcher->set(array());
+            $fetcher->clear();
             return $fetcher;
         }
 
