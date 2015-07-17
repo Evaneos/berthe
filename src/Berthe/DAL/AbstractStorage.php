@@ -128,7 +128,7 @@ abstract class AbstractStorage implements Storage
         if ($fetcher->hasLimit()) {
             $count = $primaryStore->getCountByFetcher($fetcher);
             $fetcher->setTtlCount($count);
-            if (empty($count)) {
+            if ($count === 0) {
                 $fetcher->clear();
                 return $fetcher;
             }
