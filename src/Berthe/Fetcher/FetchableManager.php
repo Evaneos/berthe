@@ -21,18 +21,18 @@ class FetchableManager implements Fetchable
 
     /**
      * @param Fetcher $fetcher
-     * @return Fetcher
+     * @return int[]|null
      */
     public function getIdsByFetcher(Fetcher $fetcher)
     {
         foreach ($this->fetchables as $fetchable) {
-            $fetcher = $fetchable->getIdsByFetcher($fetcher);
-            if ($fetcher->hasResults()) {
-                break;
+            $ids = $fetchable->getIdsByFetcher($fetcher);
+            if (!empty($ids)) {
+                return $ids;
             }
         }
 
-        return $fetcher;
+        return null;
     }
     /**
      * @param Fetcher $fetcher
