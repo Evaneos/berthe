@@ -66,33 +66,33 @@ class FetchableManager implements Fetchable
 
     /**
      * @param Fetcher $fetcher
-     * @return Fetcher
+     * @return mixed
      */
     public function getFirstByFetcher(Fetcher $fetcher)
     {
         foreach ($this->fetchables as $fetchable) {
-            $fetcher = $fetchable->getFirstByFetcher($fetcher);
-            if ($fetcher->hasResults()) {
-                break;
+            $result = $fetchable->getFirstByFetcher($fetcher);
+            if ($result !== null) {
+                return $result;
             }
         }
 
-        return $fetcher;
+        return null;
     }
 
     /**
      * @param Fetcher $fetcher
-     * @return Fetcher
+     * @return mixed
      */
     public function getUniqueByFetcher(Fetcher $fetcher)
     {
         foreach ($this->fetchables as $fetchable) {
-            $fetcher = $fetchable->getUniqueByFetcher($fetcher);
-            if ($fetcher->hasResults()) {
-                break;
+            $result = $fetchable->getUniqueByFetcher($fetcher);
+            if ($result !== null) {
+                return $result;
             }
         }
 
-        return $fetcher;
+        return null;
     }
 }
