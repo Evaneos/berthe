@@ -56,7 +56,7 @@ class FetchableManager implements Fetchable
     {
         foreach ($this->fetchables as $fetchable) {
             $fetcher = $fetchable->getByFetcher($fetcher);
-            if (count($fetcher->getResultSet())) {
+            if ($fetcher->hasResults()) {
                 break;
             }
         }
