@@ -8,13 +8,14 @@ use Berthe\Fetcher\Fetchable;
 interface Storage extends Fetchable
 {
     /**
-     * @param Store $store
+     * @param Store   $store
      * @param boolean $isPrimary
      */
     public function addStore(Store $store, $isPrimary = true);
 
     /**
      * Set storage GUID
+     *
      * @param string $guid
      * @return Storage
      */
@@ -40,6 +41,7 @@ interface Storage extends Fetchable
 
     /**
      * Saves a VO
+     *
      * @param VO $vo
      * @return boolean
      */
@@ -47,13 +49,15 @@ interface Storage extends Fetchable
 
     /**
      * Deletes a VO
+     *
      * @param VO $vo
      */
     public function delete(VO $vo);
 
     /**
      * Deletes a VO by its id
-     * @param integer $vo
+     *
+     * @param integer $id
      */
     public function deleteById($id);
 }

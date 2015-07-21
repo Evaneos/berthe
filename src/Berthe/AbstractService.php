@@ -10,20 +10,17 @@ abstract class AbstractService implements Service
 {
 
     /**
-     *
      * @var Manager
      */
     protected $manager;
 
     /**
-     *
      * @var Builder
      */
     protected $builder;
 
     /**
-     *
-     * @var Builder
+     * @var Fetchable
      */
     protected $fetchable;
 
@@ -31,6 +28,7 @@ abstract class AbstractService implements Service
      * Constructor
      *
      * @param Manager $manager
+     * @param Builder $builder
      */
     public function __construct(Manager $manager = null, Builder $builder = null)
     {
@@ -59,18 +57,17 @@ abstract class AbstractService implements Service
     }
 
     /**
-    * Fetchable setter
-    *
-    * @param Fetchable $fetchable
-    */
+     * Fetchable setter
+     *
+     * @param Fetchable $fetchable
+     */
     public function setFetchable(Fetchable $fetchable)
     {
         $this->fetchable = $fetchable;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::getAll()
+     * @inheritdoc
      */
     public function getAll()
     {
@@ -78,8 +75,7 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::getById()
+     * @inheritdoc
      */
     public function getById($id)
     {
@@ -87,8 +83,7 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::getByIds()
+     * @inheritdoc
      */
     public function getByIds(array $ids = array())
     {
@@ -96,32 +91,55 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Fetcher\Fetchable::getCountByFetcher()
+     * @return Fetchable
+     */
+    protected function getFetchable()
+    {
+        return isset($this->fetchable) ? $this->fetchable : $this->manager;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIdsByFetcher(Fetcher $fetcher)
+    {
+        return $this->getFetchable()->getIdsByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getCountByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getCountByFetcher($fetcher);
-        }
-        return $this->manager->getCountByFetcher($fetcher);
+        return $this->getFetchable()->getCountByFetcher($fetcher);
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Fetcher\Fetchable::getByFetcher()
+     * @inheritdoc
      */
     public function getByFetcher(Fetcher $fetcher)
     {
-        if (isset($this->fetchable)) {
-            return $this->fetchable->getByFetcher($fetcher);
-        }
-        return $this->manager->getByFetcher($fetcher);
+        return $this->getFetchable()->getByFetcher($fetcher);
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::createNew()
+     * @inheritdoc
+     */
+    public function getFirstByFetcher(Fetcher $fetcher)
+    {
+        return $this->getFetchable()->getFirstByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUniqueByFetcher(Fetcher $fetcher)
+    {
+        return $this->getFetchable()->getUniqueByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function createNew(array $data = array())
     {
@@ -130,8 +148,7 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::save()
+     * @inheritdoc
      */
     public function save($object, $data = array())
     {
@@ -145,8 +162,7 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::delete()
+     * @inheritdoc
      */
     public function delete($object)
     {
@@ -154,8 +170,7 @@ abstract class AbstractService implements Service
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Berthe\Service::deleteById()
+     * @inheritdoc
      */
     public function deleteById($id)
     {

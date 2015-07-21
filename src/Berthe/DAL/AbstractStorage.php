@@ -2,6 +2,7 @@
 
 namespace Berthe\DAL;
 
+use Berthe\Exception\NotUniqueResultException;
 use Berthe\VO;
 use Berthe\Fetcher;
 
@@ -9,7 +10,7 @@ abstract class AbstractStorage implements Storage
 {
     /**
      * Storage id
-     * @var string
+     * @var string|null
      */
     protected $storageGUID = null;
 
@@ -18,7 +19,8 @@ abstract class AbstractStorage implements Storage
      */
     protected $stores = array();
 
-    protected $primaryStore = null;
+    /** @var string|null key of the primary store */
+    protected $primaryStore;
 
     /**
      * Set storage GUID
@@ -31,6 +33,11 @@ abstract class AbstractStorage implements Storage
         return $this;
     }
 
+    /**
+     * @param Store $store
+     * @param bool  $isPrimary
+     * @return $this
+     */
     public function addStore(Store $store, $isPrimary = true)
     {
         $storeName = uniqid();
@@ -48,15 +55,11 @@ abstract class AbstractStorage implements Storage
      */
     public function getObjectFromPrimaryStore($id)
     {
-        if ($this->getPrimaryStore()) {
-            $results = $this->getPrimaryStore()->load(array($id));
-            if (count($results)) {
-                return reset($results);
-            }
-            return null;
+        $results = $this->getPrimaryStore()->load(array($id));
+        if (!empty($results)) {
+            return reset($results);
         }
-
-        throw new \RuntimeException("No primary store provided in storage", 500);
+        return null;
     }
 
     /**
@@ -66,10 +69,6 @@ abstract class AbstractStorage implements Storage
     public function getById($id)
     {
         $id = (int)$id;
-        if (!is_numeric($id)) {
-            throw new \InvalidArgumentException(sprintf("%s::%s only accepts integer, '%s' given", get_called_class(), __FUNCTION__, $id));
-        }
-
         $object = $this->load(array($id));
 
         if (array_key_exists($id, $object)) {
@@ -102,36 +101,83 @@ abstract class AbstractStorage implements Storage
         return $_out;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getIdsByFetcher(Fetcher $fetcher)
+    {
+        return $this->getPrimaryStore()->getIdsByFetcher($fetcher);
+    }
 
     /**
-     * @param  Fetcher $fetcher
-     * @return int
+     * @inheritdoc
      */
     public function getCountByFetcher(Fetcher $fetcher)
     {
-        if (!$this->getPrimaryStore()) {
-            throw new \RuntimeException("Primary store is missing", 1);
-        }
         return $this->getPrimaryStore()->getCountByFetcher($fetcher);
     }
 
     /**
      * @todo  handle all cases : how to decide which store to load from ? merge ids ? what about object invalidation ? ...
-     * @param Fetcher $fetcher
-     * @return Fetcher
+     * @inheritdoc
      */
     public function getByFetcher(Fetcher $fetcher)
     {
-        if (!$this->getPrimaryStore()) {
-            throw new \RuntimeException("Primary store is missing", 1);
-        }
-        $count = $this->getPrimaryStore()->getCountByFetcher($fetcher);
-        $ids = $this->getPrimaryStore()->getIdsByFetcher($fetcher);
-        $objects = $this->getByIds($ids);
+        $primaryStore = $this->getPrimaryStore();
 
-        $fetcher->setTtlCount($count);
+        $ids = $primaryStore->getIdsByFetcher($fetcher);
+        if (empty($ids)) {
+            $fetcher->setTtlCount(0);
+            $fetcher->clear();
+            return $fetcher;
+        }
+
+        $objects = $this->getByIds($ids);
         $fetcher->set($objects);
+
+        if ($fetcher->hasLimit()) {
+            if ($fetcher->count() < $fetcher->getNbByPage()) {
+                $fetcher->setTtlCount($fetcher->count());
+            } else {
+                $count = $primaryStore->getCountByFetcher($fetcher);
+                $fetcher->setTtlCount($count);
+            }
+        } else {
+            $fetcher->setTtlCount($fetcher->count());
+        }
+
         return $fetcher;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFirstByFetcher(Fetcher $fetcher)
+    {
+        $fetcher->setPage(1);
+        $fetcher->setNbByPage(1);
+        $ids = $this->getIdsByFetcher($fetcher);
+        if (empty($ids)) {
+            return null;
+        }
+        return $this->getById(reset($ids));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUniqueByFetcher(Fetcher $fetcher)
+    {
+        $fetcher->setPage(1);
+        $fetcher->setNbByPage(2);
+        $ids = $this->getIdsByFetcher($fetcher);
+        if (empty($ids)) {
+            return null;
+        }
+        if (count($ids) === 2) {
+            throw new NotUniqueResultException();
+        }
+        return $this->getById(reset($ids));
     }
 
     /**
@@ -185,7 +231,7 @@ abstract class AbstractStorage implements Storage
 
     /**
      * Deletes a VO by its id
-     * @param integer $vo
+     * @param integer $id
      */
     public function deleteById($id)
     {
@@ -210,15 +256,21 @@ abstract class AbstractStorage implements Storage
         throw new \RuntimeException('The package used has no GUID');
     }
 
-
+    /**
+     * @return Store|null
+     */
     protected function getPrimaryStore()
     {
-        if ($this->primaryStore && array_key_exists($this->primaryStore, $this->stores)) {
+        if ($this->primaryStore && isset($this->stores[$this->primaryStore])) {
             return $this->stores[$this->primaryStore];
         }
-        return null;
+        throw new \RuntimeException("Primary store is missing", 1);
     }
 
+    /**
+     * @param string $storeName
+     * @return bool
+     */
     protected function isPrimaryStore($storeName)
     {
         return $this->primaryStore === $storeName;
@@ -226,7 +278,7 @@ abstract class AbstractStorage implements Storage
 
     /**
      * Try to load requested objects from stores
-     * @param array $ids
+     * @param int[] $ids
      */
     protected function load(array $ids = array())
     {
@@ -237,7 +289,7 @@ abstract class AbstractStorage implements Storage
         $stores = $this->stores;
 
         foreach ($this->stores as $storeName => $store) {
-            if (count($idsNotFound) > 0) {
+            if (!empty($idsNotFound)) {
                 $objects = $store->load($idsNotFound);
 
                 $loadedKeys = array_keys($objects);
@@ -245,7 +297,7 @@ abstract class AbstractStorage implements Storage
                 $idsNotFound = $remainingKeys;
                 $output = $output + $objects;
 
-                if (count($objects) > 0 && $store == $this->primaryStore) {
+                if (!empty($objects) && $store == $this->primaryStore) {
                     foreach ($stores as $storeName2 => $store2) {
                         if ($storeName2 !== $storeName) {
                             $ret = $store2->saveMulti($objects);

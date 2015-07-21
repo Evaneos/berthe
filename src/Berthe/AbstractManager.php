@@ -7,6 +7,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * VO class name
+     *
      * @var string
      */
     protected $VOFQCN = null;
@@ -85,6 +86,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * set VO Fully-Qualified Class Name
+     *
      * @param string $VOFQCN
      */
     public function setVOFQCN($VOFQCN)
@@ -95,6 +97,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * Return a new VO with default values
+     *
      * @return VO the VO with its default values
      */
     public function getVOForCreation()
@@ -118,6 +121,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * Default method to get an object by its id
+     *
      * @param int $id
      * @return VO
      */
@@ -128,6 +132,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * Default method to get a list of objects with a list of ids
+     *
      * @param array $ids
      * @return VO[]
      */
@@ -137,8 +142,15 @@ abstract class AbstractManager implements Manager
     }
 
     /**
-     * @param Fetcher $fetcher
-     * @return int
+     * @inheritdoc
+     */
+    public function getIdsByFetcher(Fetcher $fetcher)
+    {
+        return $this->getStorage()->getIdsByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getCountByFetcher(Fetcher $fetcher)
     {
@@ -146,17 +158,32 @@ abstract class AbstractManager implements Manager
     }
 
     /**
-     * @param Fetcher $fetcher
-     * @return Fetcher
+     * @inheritdoc
      */
     public function getByFetcher(Fetcher $fetcher)
     {
-        $fetcher = $this->getStorage()->getByFetcher($fetcher);
-        return $fetcher;
+        return $this->getStorage()->getByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFirstByFetcher(Fetcher $fetcher)
+    {
+        return $this->getStorage()->getFirstByFetcher($fetcher);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUniqueByFetcher(Fetcher $fetcher)
+    {
+        return $this->getStorage()->getUniqueByFetcher($fetcher);
     }
 
     /**
      * Default method to save (insert or update depending on context) an object
+     *
      * @param VO $object
      * @return boolean
      */
@@ -171,13 +198,13 @@ abstract class AbstractManager implements Manager
 
     protected function _save($object)
     {
-        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->saveHooks as $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->save($object);
 
-        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->saveHooks as $hook) {
             $hook->after($object);
         }
 
@@ -186,7 +213,8 @@ abstract class AbstractManager implements Manager
 
     /**
      * Default method to delete an object
-     * @param int $id
+     *
+     * @param VO $object
      * @return boolean
      */
     public function delete($object)
@@ -200,13 +228,13 @@ abstract class AbstractManager implements Manager
 
     protected function _delete($object)
     {
-        foreach ($this->deleteHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->deleteHooks as $hook) {
             $hook->before($object);
         }
 
         $ret = $this->getStorage()->delete($object);
 
-        foreach ($this->saveHooks as /* @var $hook Hook */ $hook) {
+        foreach ($this->saveHooks as $hook) {
             $hook->after($object);
         }
 
@@ -215,6 +243,7 @@ abstract class AbstractManager implements Manager
 
     /**
      * Default method to delete an object by its id
+     *
      * @param int $id
      * @return boolean
      */
