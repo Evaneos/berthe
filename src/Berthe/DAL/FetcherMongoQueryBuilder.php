@@ -66,6 +66,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
         //We replace the operator by the main operator value from the fetcher
         $rootOperation->setOperator($fetcher->getMainOperator());
 
+
         return $this->getOperationAsArray($rootOperation);
 
     }
@@ -77,7 +78,6 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
         if ($operation instanceof SimpleOperation) {
 
             $filters = $this->addSimpleOperation($operation);
-
         } else if ($operation instanceof ListOperation) {
             // All Lists managed as AND
             // TODO deal with OR
@@ -101,6 +101,8 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
         switch($operation->getOperator()) {
             case Fetcher::TYPE_EQ:
                 return array($operation->getColumnName()=>$operation->getValue());
+            case Fetcher::TYPE_IN:
+                return array($operation->getColumnName()=>array('$in'=>$operation->getValue()));
             case Fetcher::TYPE_ARRAY_CONTAINS:
                 return array($operation->getColumnName()=>array('$all'=>$operation->getValue()));
             case Fetcher::TYPE_ARRAY_LENGTH:
