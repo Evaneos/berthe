@@ -120,9 +120,15 @@ class Fetcher extends Paginator implements \Serializable
 
     protected function addFilter($columnName, $typeFilter, $value, $groupName = false) {
         if (is_array($value) &&
-            $typeFilter != self::TYPE_ARRAY_CONTAINS) {
+            $typeFilter != self::TYPE_ARRAY_CONTAINS &&
+            $typeFilter != self::TYPE_IN &&
+            $typeFilter != self::TYPE_NOT_IN) {
             $this->addFilters($columnName, $typeFilter, $value, $groupName);
             return $this;
+        }
+
+        if ($typeFilter === self::TYPE_IN && count($value) === 0) {
+            $this->hasEmptyIN = true;
         }
 
         $this->filters[] = array(
@@ -195,27 +201,9 @@ class Fetcher extends Paginator implements \Serializable
      */
     protected function addFilters($columnName, $typeFilter, array $values, $groupName = false)
     {
-        if ($typeFilter === self::TYPE_IN && count($values) === 0) {
-            $this->hasEmptyIN = true;
-        } else {
-            if ($typeFilter === self::TYPE_IN) {
-                $typeFilter = self::TYPE_EQ;
-            }
-            if ($typeFilter === self::TYPE_NOT_IN) {
-                $newOperation = new ListOperation(Fetcher::OPERATOR_AND);
-                $this->addFilterOperation($newOperation);
-                foreach ($values as $val) {
-                    $newOperation->addOperation(
-                        new SimpleOperation(Fetcher::TYPE_DIFF, $columnName, $val)
-                    );
-                }
-                return $this;
-            }
-            foreach ($values as $value) {
-                $this->addFilter($columnName, $typeFilter, $value, $groupName);
-            }
+        foreach ($values as $value) {
+            $this->addFilter($columnName, $typeFilter, $value, $groupName);
         }
-
         return $this;
     }
 
