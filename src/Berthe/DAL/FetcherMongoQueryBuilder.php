@@ -100,7 +100,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
     {
         switch($operation->getOperator()) {
             case Fetcher::TYPE_EQ:
-                return array($operation->getColumnName()=>$operation->getValue());
+                return array($operation->getColumnName()=>array('$eq'=>$operation->getValue()));
             case Fetcher::TYPE_IN:
                 return array($operation->getColumnName()=>array('$in'=>$operation->getValue()));
             case Fetcher::TYPE_ARRAY_CONTAINS:
