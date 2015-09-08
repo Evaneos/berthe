@@ -51,7 +51,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:Evaneos/berthe.git"
+            "url": "git@github.com:Evaneos/event.git"
         }
     ]
 }
