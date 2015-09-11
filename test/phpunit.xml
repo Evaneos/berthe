@@ -3,5 +3,9 @@
     convertWarningsToExceptions="false"
     convertNoticesToExceptions="false"
 >
-
+    <testsuites>
+        <testsuite name="Berthe test suite">
+            <directory>src</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
