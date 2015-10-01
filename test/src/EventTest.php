@@ -34,14 +34,6 @@ final class EventTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function it_should_be_JsonSerializable()
-    {
-        $this->assertInstanceOf('JsonSerializable', new Event('eventName'));
-    }
-
-    /**
-     * @test
-     */
     public function it_should_return_a_json_representation_of_itself()
     {
         $event = new Event('eventName', array('aData' => 'aValue'));
