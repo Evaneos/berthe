@@ -4,7 +4,7 @@ namespace Berthe;
 
 use League\Event\Event as LeagueEvent;
 
-final class Event extends LeagueEvent implements \JsonSerializable
+final class Event extends LeagueEvent
 {
     /**
      * @var array
@@ -62,4 +62,5 @@ final class Event extends LeagueEvent implements \JsonSerializable
             'params' => $this->params
         ));
     }
+
 }
