@@ -30,6 +30,18 @@ final class EventTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('something', $event->get('aKey'));
     }
+    
+    /**
+     * @test
+     */
+    public function it_should_return_the_array_of_all_params()
+    {
+        $event = new Event('eventName', array(
+                'aKey' => 'something'
+        ));
+    
+        $this->assertEquals(array('aKey' => 'something'), $event->getParameters());
+    }
 
     /**
      * @test

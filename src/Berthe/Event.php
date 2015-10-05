@@ -51,6 +51,14 @@ final class Event extends LeagueEvent
 
         return $this->params[$key];
     }
+    
+    /**
+     * @return array:
+     */
+    public function getParameters()
+    {
+        return $this->params;
+    }
 
     /**
      * @return string
