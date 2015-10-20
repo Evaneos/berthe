@@ -108,9 +108,9 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
             case Fetcher::TYPE_ARRAY_LENGTH:
                 return array($operation->getColumnName()=>array('$size'=>$operation->getValue()));
             case Fetcher::TYPE_ILIKE:
-                return array($operation->getColumnName()=>array('$regex' => $operation->getValue(), '$options' => 'i'));
+                return array($operation->getColumnName()=>array('$regex' => preg_quote($operation->getValue()), '$options' => 'i'));
             case Fetcher::TYPE_LIKE:
-                return array($operation->getColumnName()=>array('$regex' => $operation->getValue()));
+                return array($operation->getColumnName()=>array('$regex' => preg_quote($operation->getValue())));
             default :
                 throw new \InvalidArgumentException(sprintf('Unsupported operation : %s !', $operation->getOperator()));
         }
