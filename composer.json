@@ -1,7 +1,7 @@
 {
     "name": "evaneos/berthe",
     "description": "The model Framework made by Evaneos",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "type": "library",
     "homepage" : "http://github.com/oliviermadre/berthe",
     "keywords": [],
