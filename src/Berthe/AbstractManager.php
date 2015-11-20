@@ -234,7 +234,7 @@ abstract class AbstractManager implements Manager
 
         $ret = $this->getStorage()->delete($object);
 
-        foreach ($this->saveHooks as $hook) {
+        foreach ($this->deleteHooks as $hook) {
             $hook->after($object);
         }
 
