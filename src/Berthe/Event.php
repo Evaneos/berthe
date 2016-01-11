@@ -25,14 +25,13 @@ final class Event extends LeagueEvent
      * @param $jsonEvent
      * @return Event
      */
-    static public function fromJson($jsonEvent)
+    public static function fromJson($jsonEvent)
     {
         $arrayEvent = json_decode($jsonEvent, true);
 
-        $eventParams = isset($arrayEvent['params']) && is_array($arrayEvent['params']) ? $arrayEvent['params'] : array();
+        $eventParams = isset($arrayEvent['params']) && is_array($arrayEvent['params'])?$arrayEvent['params']:array();
 
-        if(!isset($arrayEvent['name']))
-        {
+        if (!isset($arrayEvent['name'])) {
             throw new \InvalidArgumentException('Json representation of an event must contain a name');
         }
 
@@ -45,7 +44,7 @@ final class Event extends LeagueEvent
      */
     public function get($key)
     {
-        if(!array_key_exists($key, $this->params)) {
+        if (!array_key_exists($key, $this->params)) {
             throw new \DomainException(sprintf("Key %s doesn't exist in event %s", $key, $this->getName()));
         }
 
@@ -71,4 +70,36 @@ final class Event extends LeagueEvent
         ));
     }
 
+    /**
+     * They're equal if this is the same type of event and the same id
+     * Allows to know if an event concerns a same type of action on the same object.
+     * Very useful to delete doubles.
+     *
+     * @param  Event $event
+     * @return boolean
+     */
+    public function isEqual(Event $event)
+    {
+        try {
+            return $this->getName() === $event->getName()
+            && $this->get('id') === $event->get('id')
+            && self::getSortedKeys($this->getParameters()) === self::getSortedKeys($event->getParameters());
+        } catch (\Exception $e) {
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the parameters keys sorted by alphabetical order
+     *
+     * @param array $params
+     * @return array
+     */
+    private static function getSortedKeys(array $params)
+    {
+        $keys = array_keys($params);
+        sort($keys);
+        return $keys;
+    }
 }
