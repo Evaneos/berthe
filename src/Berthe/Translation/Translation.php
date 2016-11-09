@@ -115,6 +115,53 @@ class Translation
     }
 
     /**
+     * @return string[]
+     */
+    public function getIso2WithoutName()
+    {
+        return array_keys(
+            array_filter(
+                $this->getTranslations(),
+                function ($translation) {
+                    return empty($translation->getName());
+                }
+            )
+        );
+    }
+
+    /**
+     * @return TranslationRow|null
+     */
+    public function getFirstNonEmptyTranslation()
+    {
+        foreach ($this->getTranslations() as $translation) {
+            if (!empty($translation->getName())) {
+                return $translation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Translation $otherTranslation
+     * @return TranslationRow|null
+     */
+    public function getFirstDifferentTranslation(Translation $otherTranslation) {
+        /** @var TranslationRow $translation */
+        foreach ($this->getTranslations() as $translation) {
+            $oldTranslation = $otherTranslation->getTranslation($translation->getIso2());
+            if ($oldTranslation === null ||
+                $translation->getName() !== $oldTranslation->getName()
+            ) {
+                return $translation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
