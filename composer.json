@@ -46,8 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "5.0.x-dev",
-            "dev-add-method-translation": "5.1.x-dev"
+            "dev-master": "5.2.x-dev"
         }
     }
 }
