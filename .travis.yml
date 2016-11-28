@@ -1,0 +1,16 @@
+language: php
+
+sudo: false
+
+php:
+  - 5.5
+
+before_install:
+    - phpenv config-rm xdebug.ini
+    - composer selfupdate -q
+
+install:
+    - composer install
+
+script:
+    - $TRAVIS_BUILD_DIR/vendor/bin/phpunit test/
