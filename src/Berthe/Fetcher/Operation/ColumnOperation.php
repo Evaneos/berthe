@@ -19,13 +19,6 @@ class ColumnOperation implements OperationValue
     private $columnToCompare;
 
     /**
-     * The column compared
-     *
-     * @var string
-     */
-    private $columnCompared;
-
-    /**
      * The fetcher type
      *
      * @var int
@@ -43,13 +36,11 @@ class ColumnOperation implements OperationValue
     /**
      * @param int $fetcherType
      * @param string $columnToCompare
-     * @param string $columnCompared
      */
-    public function construct($fetcherType, $columnToCompare, $columnCompared)
+    public function construct($fetcherType, $columnToCompare)
     {
         $this->setFetcherType($fetcherType);
         $this->columnToCompare = $columnToCompare;
-        $this->columnCompared = $columnCompared;
     }
 
     /**
@@ -61,9 +52,9 @@ class ColumnOperation implements OperationValue
     {
         $sql = sprintf(
             '%s %s %s',
-            $this->columnToCompare,
+            $fieldName,
             $this->strFilterToDbNotation(),
-            $this->columnCompared
+            $this->columnToCompare
         );
 
         return [
