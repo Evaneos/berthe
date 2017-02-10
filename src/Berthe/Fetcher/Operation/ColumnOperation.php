@@ -37,7 +37,7 @@ class ColumnOperation implements OperationValue
      * @param int $fetcherType
      * @param string $columnToCompare
      */
-    public function construct($fetcherType, $columnToCompare)
+    public function __construct($fetcherType, $columnToCompare)
     {
         $this->setFetcherType($fetcherType);
         $this->columnToCompare = $columnToCompare;
