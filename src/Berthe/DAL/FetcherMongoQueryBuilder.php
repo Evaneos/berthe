@@ -71,26 +71,36 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
 
     }
 
+    /**
+     * @param FetcherOperation $operation
+     *
+     * @return array
+     * @throws \InvalidArgumentException
+     */
     protected function getOperationAsArray(FetcherOperation $operation)
     {
         $filters = array();
 
         if ($operation instanceof SimpleOperation) {
-
             $filters = $this->addSimpleOperation($operation);
         } else if ($operation instanceof ListOperation) {
-            // All Lists managed as AND
-            // TODO deal with OR
             $operations = $operation->getOperations();
 
-            foreach ($operations as $currentOperation) {
-
-                $currentFilters = $this->getOperationAsArray($currentOperation);
-                $filters = array_merge_recursive($filters, $currentFilters);
+            if ($operation->getOperator() === Fetcher::OPERATOR_OR) {
+                $filters['$or'] = array_map(
+                    function (FetcherOperation $operation) {
+                        return $this->getOperationAsArray($operation);
+                    },
+                    $operations
+                );
+            } else {
+                foreach ($operations as $currentOperation) {
+                    $currentFilters = $this->getOperationAsArray($currentOperation);
+                    $filters = array_merge_recursive($filters, $currentFilters);
+                }
             }
-
         } else {
-            throw new \InvalidArgumentException('Givent operation is not supported');
+            throw new \InvalidArgumentException('Given operation is not supported');
         }
 
         return $filters;
