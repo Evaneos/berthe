@@ -181,4 +181,12 @@ class Translation
         }
         return $toArray;
     }
+
+    public function copy()
+    {
+        $copy = clone $this;
+        $copy->id = 0;
+
+        return $copy;
+    }
 }
