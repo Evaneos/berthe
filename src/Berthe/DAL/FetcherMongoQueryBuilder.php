@@ -34,7 +34,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
             $offset = ($fetcher->getPage() - 1) * $fetcher->getNbByPage();
             $limit = $fetcher->getNbByPage();
         }
-        return array('offset'=>$offset, 'limit'=>$limit);
+        return array('offset'=> (int) $offset, 'limit' => (int) $limit);
     }
 
     public function buildFilters(Fetcher $fetcher)
