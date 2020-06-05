@@ -14,7 +14,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
         $sorts = array();
         $_sorts = $fetcher->getSorts();
 
-        foreach($_sorts as $column => $sort) {
+        foreach ($_sorts as $column => $sort) {
             $sorts[$column] = ($sort === Fetcher::SORT_ASC) ? 1 : -1;
         }
 
@@ -34,14 +34,14 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
             $offset = ($fetcher->getPage() - 1) * $fetcher->getNbByPage();
             $limit = $fetcher->getNbByPage();
         }
-        return array('offset'=>$offset, 'limit'=>$limit);
+        return array('offset'=> (int)$offset, 'limit' => (int)$limit);
     }
 
     public function buildFilters(Fetcher $fetcher)
     {
         $filters = $this->buildOperation($fetcher);
 
-        if($fetcher->hasEmptyIN()) {
+        if ($fetcher->hasEmptyIN()) {
             $filters = array('1'=>'2');
         }
 
@@ -88,7 +88,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
 
             if ($operation->getOperator() === Fetcher::OPERATOR_OR) {
                 $filters['$or'] = array_map(
-                    function (FetcherOperation $operation) {
+                    function(FetcherOperation $operation) {
                         return $this->getOperationAsArray($operation);
                     },
                     $operations
@@ -108,7 +108,7 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
 
     protected function addSimpleOperation(SimpleOperation $operation)
     {
-        switch($operation->getOperator()) {
+        switch ($operation->getOperator()) {
             case Fetcher::TYPE_EQ:
                 return array($operation->getColumnName()=>array('$eq'=>$operation->getValue()));
             case Fetcher::TYPE_IN:
