@@ -42,8 +42,10 @@ class FetcherPGSQLQueryBuilder implements FetcherQueryBuilder
         list($filterInReq, $filterToParameter) = $this->buildOperation($fetcher);
         if ($fetcher->hasEmptyIN()) {
             $filterInReq = '1=2';
+            $filterToParameter = [];
         } elseif ($filterInReq == '' || $filterInReq == '()') {
             $filterInReq = '1=1';
+            $filterToParameter = [];
         }
         return array($filterInReq, $filterToParameter);
     }
