@@ -46,7 +46,7 @@ class FetcherPGSQLQueryBuilderTest extends PHPUnit_Framework_TestCase
         list($query, $params) = (new FetcherPGSQLQueryBuilder())->buildFilters($fetcher);
 
         self::assertEquals('1=2', $query);
-        self::assertEquals([6543], $params);
+        self::assertEmpty($params);
     }
 
     /** @test */
