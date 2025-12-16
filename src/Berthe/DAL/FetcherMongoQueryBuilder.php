@@ -42,7 +42,10 @@ class FetcherMongoQueryBuilder implements FetcherQueryBuilder
         $filters = $this->buildOperation($fetcher);
 
         if ($fetcher->hasEmptyIN()) {
-            $filters = array('1'=>'2');
+            // Use an impossible filter on _id (which is always indexed) to return 0 results
+            // without causing a full collection scan. The previous filter { '1': '2' } was
+            // not indexed and caused COLLSCAN on large collections (940k+ docs scanned).
+            $filters = array('_id' => array('$exists' => false));
         }
 
         return $filters;
